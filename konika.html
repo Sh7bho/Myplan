@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>For Konika 🌸</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:#0d0208;color:#f5f0f8;min-height:100vh;overflow-x:hidden}
+
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes fadein{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-8px)}80%{transform:translateX(8px)}}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+
+/* pages */
+.page{display:none;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;padding:32px 22px;text-align:center}
+.page.on{display:flex}
+
+/* password */
+#pg-pwd .lock{font-size:54px;margin-bottom:18px;animation:bounce 1.8s infinite}
+#pg-pwd h1{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#f5c6e8;margin-bottom:8px}
+#pg-pwd p{font-size:13px;color:#5a3a52;margin-bottom:28px;line-height:1.7;max-width:270px}
+#pwd-input{background:#180d14;border:1.5px solid #2e1020;border-radius:14px;padding:15px 20px;font-size:16px;color:#f5f0f8;font-family:'DM Sans',sans-serif;width:100%;max-width:280px;outline:none;text-align:center;letter-spacing:.12em;margin-bottom:12px;display:block}
+#pwd-input::placeholder{color:#3a1a2e;letter-spacing:0}
+#pwd-input:focus{border-color:#f5c6e8}
+#pwd-btn{background:#f5c6e8;color:#1a0a14;font-family:'Syne',sans-serif;font-size:14px;font-weight:800;padding:14px 0;border-radius:50px;border:none;cursor:pointer;width:100%;max-width:280px;transition:transform .15s}
+#pwd-btn:active{transform:scale(.96)}
+#pwd-err{font-size:12px;color:#e07070;margin-top:10px;min-height:18px}
+#pg-pwd .wm{font-size:10px;color:#1e0816;font-family:'DM Mono',monospace;margin-top:28px;letter-spacing:.05em}
+
+/* splash */
+#pg-splash{background:#0d0208}
+#splash-inner{opacity:0;transition:opacity .5s ease}
+#splash-emoji{font-size:80px;transform:scale(.4);transition:transform .6s cubic-bezier(.34,1.56,.64,1),opacity .6s ease;opacity:0}
+#splash-name{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;color:#f5c6e8;letter-spacing:-1px;margin-top:16px;opacity:0;transform:translateY(18px);transition:opacity .5s ease .35s,transform .5s ease .35s}
+#splash-tag{font-size:13px;color:#3a1a2e;margin-top:8px;opacity:0;transition:opacity .5s ease .6s}
+
+/* intro */
+#pg-intro .big-emoji{font-size:58px;margin-bottom:18px;animation:bounce 1.8s infinite}
+#pg-intro h1{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#f5c6e8;margin-bottom:10px}
+#pg-intro .sub{font-size:13px;color:#7a5a70;line-height:1.8;margin-bottom:12px;max-width:286px}
+#pg-intro .warn{font-size:12px;color:#5a3a50;background:#180d14;border:1px solid #2e1020;border-radius:12px;padding:12px 16px;max-width:286px;line-height:1.7;margin-bottom:26px}
+.start-btn{background:#f5c6e8;color:#1a0a14;font-family:'Syne',sans-serif;font-size:15px;font-weight:800;padding:16px 44px;border-radius:50px;border:none;cursor:pointer;transition:transform .15s;letter-spacing:.03em}
+.start-btn:active{transform:scale(.95)}
+#pg-intro .wm{font-size:10px;color:#2a1020;font-family:'DM Mono',monospace;margin-top:28px;letter-spacing:.05em}
+
+/* question */
+#pg-q{justify-content:flex-start;padding-top:48px}
+.top-row{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:340px;margin-bottom:14px}
+.q-counter{font-size:11px;color:#6a3a58;letter-spacing:.1em;text-transform:uppercase}
+.timer-wrap{position:relative;width:44px;height:44px}
+.timer-wrap svg{transform:rotate(-90deg)}
+.timer-wrap circle{fill:none;stroke-width:3}
+.timer-bg{stroke:#1e0e1a}
+.timer-track{stroke:#f5c6e8;stroke-dasharray:113;stroke-dashoffset:0;stroke-linecap:round;transition:stroke-dashoffset .9s linear}
+.timer-wrap.danger .timer-track{stroke:#e87070}
+.timer-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:#f5c6e8}
+.timer-wrap.danger .timer-num{color:#e87070;animation:pulse .5s infinite}
+.prog-wrap{width:100%;max-width:340px;height:3px;background:#1e0e1a;border-radius:2px;margin-bottom:24px}
+.prog-fill{height:100%;border-radius:2px;background:#f5c6e8;transition:width .4s ease}
+.twist-tag{font-size:10px;background:#2a0d1e;border:1px solid #5a1a3a;color:#c060a0;padding:4px 12px;border-radius:20px;margin-bottom:10px;letter-spacing:.06em;text-transform:uppercase}
+.q-text{font-family:'Syne',sans-serif;font-size:19px;font-weight:800;color:#f5f0f8;line-height:1.45;margin-bottom:8px;max-width:320px}
+.q-hint{font-size:12px;color:#5a3a52;margin-bottom:22px;font-style:italic;max-width:300px;line-height:1.6}
+.opts{display:flex;flex-direction:column;gap:9px;width:100%;max-width:340px}
+.opt{background:#140a10;border:1px solid #2a1422;border-radius:14px;padding:14px 16px;font-size:13px;font-weight:500;color:#c090a8;cursor:pointer;transition:all .15s;text-align:left;line-height:1.4;width:100%}
+.opt:active{transform:scale(.98)}
+.opt.correct{background:#0a2012;border-color:#206030;color:#70d880;animation:pop .3s ease}
+.opt.wrong{background:#200a0a;border-color:#602020;color:#e07070}
+.opt.reveal{background:#0a2012;border-color:#206030;color:#70d880}
+.opt.off{pointer-events:none}
+.fb{margin-top:16px;background:#180d14;border:1px solid #2e1020;border-radius:14px;padding:14px 16px;font-size:13px;color:#c090a8;line-height:1.7;max-width:320px;display:none;animation:fadein .3s ease}
+.fb.on{display:block}
+.next-btn{margin-top:16px;background:#f5c6e8;color:#1a0a14;font-family:'Syne',sans-serif;font-size:14px;font-weight:800;padding:13px 36px;border-radius:50px;border:none;cursor:pointer;display:none;animation:fadein .3s ease;transition:transform .15s}
+.next-btn.on{display:inline-block}
+.next-btn:active{transform:scale(.96)}
+
+/* timeout overlay */
+#timeout-ov{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(20,4,12,.96);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:200;padding:32px;text-align:center}
+#timeout-ov.on{display:flex;animation:fadein .2s ease}
+#timeout-ov .t-emoji{font-size:64px;margin-bottom:16px;animation:bounce 1s infinite}
+#timeout-ov h2{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#f5c6e8;margin-bottom:10px}
+#timeout-ov p{font-size:13px;color:#8a5a70;max-width:270px;line-height:1.8;margin-bottom:26px}
+#timeout-ov button{background:#f5c6e8;color:#1a0a14;font-family:'Syne',sans-serif;font-size:14px;font-weight:800;padding:13px 36px;border-radius:50px;border:none;cursor:pointer}
+
+/* result */
+#pg-result .r-emoji{font-size:70px;margin-bottom:14px;animation:bounce 1.5s infinite}
+#pg-result h1{font-family:'Syne',sans-serif;font-size:25px;font-weight:800;color:#f5c6e8;margin-bottom:6px}
+#pg-result .r-score{font-family:'Syne',sans-serif;font-size:52px;font-weight:800;color:#f5f0f8;margin-bottom:16px;letter-spacing:-2px}
+#pg-result .r-card{background:#180d14;border:1px solid #2e1020;border-radius:16px;padding:18px 18px;font-size:13px;color:#b080a0;line-height:1.9;max-width:320px;margin-bottom:22px;text-align:left}
+#pg-result .r-card b{color:#f5c6e8;font-weight:600}
+.replay-btn{background:#f5c6e8;color:#1a0a14;font-family:'Syne',sans-serif;font-size:14px;font-weight:800;padding:14px 40px;border-radius:50px;border:none;cursor:pointer;transition:transform .15s}
+.replay-btn:active{transform:scale(.96)}
+
+/* canvases */
+#c-hearts,#c-celebrate{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:500}
+#c-celebrate{display:none;z-index:501}
+</style>
+</head>
+<body>
+
+<canvas id="c-hearts"></canvas>
+<canvas id="c-celebrate"></canvas>
+
+<!-- TIMEOUT -->
+<div id="timeout-ov">
+  <div class="t-emoji">⏰</div>
+  <h2>TOO SLOW TSHEPAY.</h2>
+  <p id="timeout-msg"></p>
+  <button onclick="dismissTimeout()">okay fine 😭</button>
+</div>
+
+<!-- PASSWORD -->
+<div id="pg-pwd" class="page on">
+  <div class="lock">🔒</div>
+  <h1>Enter the password.</h1>
+  <p>Shubho made this just for you. But you gotta prove you deserve it first. 😌</p>
+  <p style="font-size:12px;color:#3a1a2e;margin-top:-18px;margin-bottom:0;font-style:italic">hint: it's ur nickname 😇</p>
+  <input id="pwd-input" type="text" placeholder="type it here..." autocomplete="off" autocorrect="off" autocapitalize="off" onkeydown="if(event.key==='Enter')checkPwd()"/>
+  <div style="height:12px"></div>
+  <button id="pwd-btn" onclick="checkPwd()">Let me in 🌸</button>
+  <div id="pwd-err"></div>
+  <div style="margin-top:28px;font-family:'DM Mono',monospace;font-size:12px;color:#8a4068;letter-spacing:0.07em">by Shubho</div>
+</div>
+
+<!-- SPLASH -->
+<div id="pg-splash" class="page">
+  <div id="splash-inner">
+    <div id="splash-emoji">🌸</div>
+    <div id="splash-name">Hey Konika.</div>
+    <div id="splash-tag">something's waiting for you...</div>
+  </div>
+</div>
+
+<!-- INTRO -->
+<div id="pg-intro" class="page">
+  <div class="big-emoji">🌸</div>
+  <h1>Hey Konika.</h1>
+  <div class="sub">Shubho made this. He thinks you'll fail. Prove him wrong. Or don't. He'll probably be right. 😌</div>
+  <div class="warn">⚠️ There's a timer on each question. You have 12 seconds. If you run out — automatic wrong answer. No excuses. No crying. No blaming Shubho. Good luck. 😇</div>
+  <button class="start-btn" onclick="startGame()">Fine. Let's go. 😤</button>
+  <div style="margin-top:28px;font-family:'DM Mono',monospace;font-size:12px;color:#8a4068;letter-spacing:0.07em">by your boss Shubho</div>
+</div>
+
+<!-- QUESTION -->
+<div id="pg-q" class="page">
+  <div class="top-row">
+    <div class="q-counter" id="q-counter">Q1 of 5</div>
+    <div class="timer-wrap" id="timer-wrap">
+      <svg width="44" height="44" viewBox="0 0 44 44">
+        <circle class="timer-bg" cx="22" cy="22" r="18"/>
+        <circle class="timer-track" id="timer-track" cx="22" cy="22" r="18"/>
+      </svg>
+      <div class="timer-num" id="timer-num">12</div>
+    </div>
+  </div>
+  <div class="prog-wrap"><div class="prog-fill" id="prog-fill"></div></div>
+  <div class="twist-tag" id="twist-tag" style="display:none">⚡ Twist question</div>
+  <div class="q-text" id="q-text"></div>
+  <div class="q-hint" id="q-hint"></div>
+  <div class="opts" id="opts"></div>
+  <div class="fb" id="fb"></div>
+  <button class="next-btn" id="next-btn" onclick="nextQ()">Next →</button>
+</div>
+
+<!-- RESULT -->
+<div id="pg-result" class="page">
+  <div class="r-emoji" id="r-emoji"></div>
+  <h1 id="r-title"></h1>
+  <div class="r-score" id="r-score"></div>
+  <div class="r-card" id="r-card"></div>
+  <button class="replay-btn" onclick="replay()">Try again 🔄</button>
+</div>
+
+<script>
+// ── DATA ──
+const Qs = [
+  {q:"What's the most important number to both of you?",hint:"You definitely know this one. ...Right? 👀",opts:["12","15","1","14"],ans:2,twist:false,
+   right:"1! Obviously. How could you forget? It's literally our anniversary date. 🌸",
+   wrong:"It's 1, Konika. ONE. The number that literally belongs to you two. How. 💀",
+   tout:"12 seconds and you couldn't even remember our anniversary date"},
+  {q:"Okay so who ACTUALLY confessed first?",hint:"Think before you answer. The obvious answer might not save you here. 😏",opts:["Shubho did, clearly 🙄","She did but okay fine 💅","It was mutual","Does it matter?"],ans:1,twist:true,
+   right:"She did. YOU did. And deep down you know it. Even if you'll never say it out loud. 💅",
+   wrong:"KONIKA. You proposed. YOU. Not Shubho. You. He just accepted. Own it. 😭",
+   tout:"You had 12 seconds to admit you proposed first and you panicked. That's so you. 💀"},
+  {q:"What does konika do specifically to annoy Shubho?",hint:"It's something very natural for a bachu. Very.... 🌬️",opts:["Ignores his texts","Yells at him out of nowhere.","Fucks him too roughly","shows him her boobies"],ans:1,twist:true,
+   right:"YES. Fully intentional. Fully unashamed. Truly iconic behaviour. 💨😂",
+   wrong:"It's the shouting konika. The deliberate, strategic, targeted yelling. You know what you do. 💨💀",
+   tout:"You had 12 seconds and you still couldn't admit the yelling thing. We all know. 💨"},
+  {q:"What does Shubho call Konika?",hint:"It's a nickname. A very fitting one. 🌸",opts:["Babe","Kiddo","Konu","Chomu"],ans:3,twist:false,
+   right:"Chomu! Because that's exactly what you are. Chaotic, funny, Shubho's. 🌸",
+   wrong:"CHOMU. Shubho calls you Chomu. Which honestly suits you perfectly. 😌",
+   tout:"You forgot your own nickname. Chomu behaviour. Literally. 💀"},
+  {q:"Final question. What do Shubho and Konika do the absolute most together?",hint:"It's not fighting. It's not farting. Think harder. 🤔",opts:["Fight about everything","Laugh at everything","Fuck each other all the time","Irritates each other"],ans:3,twist:false,
+   right:"Irritates. Just irritate. Through everything. That's the whole thing. That's you two. 🥹💕",
+   wrong:"They irritate eachother. More than anything else. Don't forget that part,thats their love language. 🥹",
+   tout:"12 seconds and you forgot the most important thing. The roasting. That's everything. 🥹"}
+];
+
+// ── STATE ──
+let cur=0, score=0, timeouts=0, answered=false, timerInterval=null, timeLeft=0;
+
+// ── PAGE SWITCH ──
+function show(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  window.scrollTo(0,0);
+}
+
+// ── PASSWORD ──
+function checkPwd() {
+  const v = document.getElementById('pwd-input').value.trim().toLowerCase();
+  const err = document.getElementById('pwd-err');
+  if (v === 'konu' || v === 'Konu') {
+    err.textContent = '';
+    show('pg-splash');
+    startHearts();
+    runSplash();
+  } else if (v === '') {
+    err.textContent = 'password ke likhbe 😐';
+  } else {
+    err.textContent = 'etao janis na chi';
+    const inp = document.getElementById('pwd-input');
+    inp.value = '';
+    inp.style.borderColor = '#602020';
+    setTimeout(()=>{ inp.style.borderColor = '#2e1020'; }, 800);
+  }
+}
+
+// ── SPLASH ──
+function runSplash() {
+  const inner = document.getElementById('splash-inner');
+  const emoji = document.getElementById('splash-emoji');
+  const name  = document.getElementById('splash-name');
+  const tag   = document.getElementById('splash-tag');
+  setTimeout(()=>{ inner.style.opacity='1'; }, 100);
+  setTimeout(()=>{ emoji.style.opacity='1'; emoji.style.transform='scale(1)'; }, 200);
+  setTimeout(()=>{ name.style.opacity='1'; name.style.transform='translateY(0)'; }, 500);
+  setTimeout(()=>{ tag.style.opacity='1'; }, 800);
+  setTimeout(()=>{ inner.style.transition='opacity .4s ease'; inner.style.opacity='0'; }, 2200);
+  setTimeout(()=>{ show('pg-intro'); }, 2650);
+}
+
+// ── GAME ──
+function startGame() {
+  cur=0; score=0; timeouts=0; answered=false;
+  stopHearts();
+  show('pg-q');
+  loadQ();
+}
+
+function loadQ() {
+  answered=false;
+  clearInterval(timerInterval);
+  const q = Qs[cur];
+  document.getElementById('q-counter').textContent = 'Q'+(cur+1)+' of '+Qs.length;
+  document.getElementById('prog-fill').style.width = (cur/Qs.length*100)+'%';
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('q-hint').textContent = q.hint;
+  document.getElementById('twist-tag').style.display = q.twist ? 'inline-block' : 'none';
+  document.getElementById('fb').textContent = '';
+  document.getElementById('fb').classList.remove('on');
+  document.getElementById('next-btn').classList.remove('on');
+  const opts = document.getElementById('opts');
+  opts.innerHTML = '';
+  q.opts.forEach((o,i)=>{
+    const b = document.createElement('button');
+    b.className = 'opt';
+    b.textContent = o;
+    b.onclick = ()=>answer(i, b);
+    opts.appendChild(b);
+  });
+  startTimer(q);
+}
+
+function startTimer(q) {
+  timeLeft = 12;
+  const wrap  = document.getElementById('timer-wrap');
+  const track = document.getElementById('timer-track');
+  const num   = document.getElementById('timer-num');
+  const circ  = 2 * Math.PI * 18;
+  wrap.classList.remove('danger');
+  track.style.strokeDashoffset = '0';
+  num.textContent = 12;
+  timerInterval = setInterval(()=>{
+    timeLeft--;
+    num.textContent = timeLeft;
+    track.style.strokeDashoffset = circ * (1 - timeLeft/12);
+    if (timeLeft <= 4) wrap.classList.add('danger');
+    if (timeLeft <= 0) { clearInterval(timerInterval); if(!answered) timeoutQ(q); }
+  }, 1000);
+}
+
+function answer(idx, btn) {
+  if (answered) return;
+  answered = true;
+  clearInterval(timerInterval);
+  const q = Qs[cur];
+  document.querySelectorAll('.opt').forEach(b=>b.classList.add('off'));
+  const fb = document.getElementById('fb');
+  if (idx === q.ans) {
+    score++;
+    btn.classList.add('correct');
+    fb.textContent = '✅ ' + q.right;
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt')[q.ans].classList.add('reveal');
+    fb.textContent = '❌ ' + q.wrong;
+    document.body.style.animation='none';
+    setTimeout(()=>{ document.body.style.animation='shake .4s ease'; }, 10);
+  }
+  fb.classList.add('on');
+  const nb = document.getElementById('next-btn');
+  nb.classList.add('on');
+  nb.textContent = cur < Qs.length-1 ? 'Next →' : 'See results 🌸';
+}
+
+function timeoutQ(q) {
+  if (answered) return;
+  answered = true;
+  timeouts++;
+  document.querySelectorAll('.opt').forEach(b=>b.classList.add('off'));
+  document.querySelectorAll('.opt')[q.ans].classList.add('reveal');
+  document.getElementById('timeout-msg').textContent = q.tout;
+  document.getElementById('timeout-ov').classList.add('on');
+}
+
+function dismissTimeout() {
+  document.getElementById('timeout-ov').classList.remove('on');
+  document.body.style.animation='none';
+  setTimeout(()=>{ document.body.style.animation='shake .4s ease'; }, 10);
+  const q = Qs[cur];
+  const fb = document.getElementById('fb');
+  fb.textContent = '⏰ ' + q.tout;
+  fb.classList.add('on');
+  const nb = document.getElementById('next-btn');
+  nb.classList.add('on');
+  nb.textContent = cur < Qs.length-1 ? 'Next →' : 'See results 🌸';
+}
+
+function nextQ() {
+  cur++;
+  document.body.style.animation='none';
+  if (cur < Qs.length) loadQ();
+  else showResult();
+}
+
+// ── RESULT ──
+function showResult() {
+  clearInterval(timerInterval);
+  show('pg-result');
+  const emojis = ['💀','😬','🙂','😊','🌸'];
+  const titles = ['Konika...','lojja kore na.','lojja kore na chomu ato kom.','chi chi chi .','besi khusi hos na simple questions chilo'];
+  const subs = [
+    score+'/5 is genuinely shocking. Shubho is cringing as you read this. Shubho knew you\'d struggle. Shubho was right. As always. 😌',
+    score+'/5. You got some right at least. Shubho is neither proud nor surprised. Just... nodding slowly. 🙄',
+    score+'/5. You know some things. Not all things. But some. Shubho approves. Barely. 😌',
+    score+'/5. Okay. You know your Shubho. Shubho would never say this out loud but Shub\'s a little proud. A little. 🥹',
+    score+'/5. You got everything right. Every single one. Shubho is 0% surprised and 100% happy. Not that Shubho\'ll say it. 🥹'
+  ];
+  const notes = [
+    '<b>The facts:</b> The number is 1. She proposed first (she knows it). The yelling is intentional. Shubho calls her chomu cuz she is. And they irritate eachother. That\'s the whole relationship. 📝',
+    '<b>What you missed:</b> The important stuff. 1. The proposal. The fighting(love) through everything. Study up. There might be a retest. 😌',
+    '<b>You got the basics.</b> 1 is the number. She proposed. They yell through everything. That\'s what matters. 🌸',
+    '<b>Almost perfect.</b> One wrong answer doesn\'t define you. The yelling does though. But you already knew that. 😂',
+    '<b>You know Shubho.</b> The number 1. The proposal she\'ll never fully own. The yelling. The Chomu nickname. The irritating through everything. That\'s you two. 💕'
+  ];
+  const idx = Math.min(score, 4);
+  document.getElementById('r-emoji').textContent = emojis[idx];
+  document.getElementById('r-title').textContent = titles[idx];
+  document.getElementById('r-score').textContent = score+'/5';
+  let card = '<div style="margin-bottom:10px;color:#e0a0c0;font-size:12px">'+subs[idx]+'</div>'+notes[idx];
+  if (timeouts > 0) card += '<div style="margin-top:12px;font-size:12px;color:#6a3050;border-top:1px solid #2e1020;padding-top:10px">Also you ran out of time '+timeouts+' time'+(timeouts>1?'s':'')+'. '+(timeouts>=2?'Shub is wheezing. 💀':'Shub clocked it. 👀')+'</div>';
+  document.getElementById('r-card').innerHTML = card;
+  if (score === 5) setTimeout(launchCelebration, 500);
+}
+
+function replay() {
+  show('pg-intro');
+  startHearts();
+}
+
+// ── FLOATING HEARTS ──
+const hc = document.getElementById('c-hearts');
+const hx = hc.getContext('2d');
+let hearts=[], heartsOn=false, heartRAF=null;
+
+function resizeC() {
+  hc.width = window.innerWidth; hc.height = window.innerHeight;
+  cc.width = window.innerWidth; cc.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeC);
+
+function drawHeart(ctx,x,y,s) {
+  ctx.beginPath();
+  ctx.moveTo(x,y+s*.3);
+  ctx.bezierCurveTo(x,y,x-s*.5,y,x-s*.5,y+s*.3);
+  ctx.bezierCurveTo(x-s*.5,y+s*.65,x,y+s*.9,x,y+s);
+  ctx.bezierCurveTo(x,y+s*.9,x+s*.5,y+s*.65,x+s*.5,y+s*.3);
+  ctx.bezierCurveTo(x+s*.5,y,x,y,x,y+s*.3);
+  ctx.closePath(); ctx.fill();
+}
+
+function spawnHeart() {
+  hearts.push({x:Math.random()*hc.width,y:hc.height+20,s:Math.random()*14+7,sp:Math.random()*.9+.3,op:Math.random()*.35+.06,sw:Math.random()*2-1,swSp:Math.random()*.02+.008,t:Math.random()*100});
+}
+
+function animHearts() {
+  if (!heartsOn) return;
+  hx.clearRect(0,0,hc.width,hc.height);
+  if (Math.random()<.05) spawnHeart();
+  hearts = hearts.filter(h=>h.y>-30);
+  hearts.forEach(h=>{
+    h.t+=h.swSp; h.x+=Math.sin(h.t)*h.sw; h.y-=h.sp;
+    hx.save(); hx.globalAlpha=h.op; hx.fillStyle='#f5c6e8';
+    drawHeart(hx,h.x-h.s*.5,h.y-h.s*.5,h.s); hx.restore();
+  });
+  heartRAF = requestAnimationFrame(animHearts);
+}
+
+function startHearts() { heartsOn=true; animHearts(); }
+function stopHearts()  { heartsOn=false; cancelAnimationFrame(heartRAF); hx.clearRect(0,0,hc.width,hc.height); hearts=[]; }
+
+// ── CELEBRATION ──
+const cc = document.getElementById('c-celebrate');
+const cx = cc.getContext('2d');
+let parts=[], celebRAF=null;
+resizeC();
+
+function launchCelebration() {
+  cc.style.display='block';
+  parts=[];
+  const cols=['#f5c6e8','#ffd6f0','#c6e8f5','#f5e6c6','#c6f5d6','#e8c6f5','#f9a8d4'];
+  for(let i=0;i<180;i++){
+    const a=Math.random()*Math.PI*2, sp=Math.random()*9+3;
+    parts.push({x:cc.width/2,y:cc.height/2,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-Math.random()*5,s:Math.random()*10+4,col:cols[Math.floor(Math.random()*cols.length)],op:1,g:.14+Math.random()*.1,shape:Math.random()>.5?'c':'r',rot:Math.random()*Math.PI*2,rs:(Math.random()-.5)*.2});
+  }
+  animCelebrate();
+  setTimeout(()=>{ cc.style.display='none'; parts=[]; },3200);
+}
+
+function animCelebrate() {
+  cx.clearRect(0,0,cc.width,cc.height);
+  let alive=false;
+  parts.forEach(p=>{
+    p.x+=p.vx; p.y+=p.vy; p.vy+=p.g; p.op-=.011; p.rot+=p.rs;
+    if(p.op>0){
+      alive=true; cx.save(); cx.globalAlpha=Math.max(0,p.op); cx.fillStyle=p.col;
+      cx.translate(p.x,p.y); cx.rotate(p.rot);
+      if(p.shape==='c'){cx.beginPath();cx.arc(0,0,p.s/2,0,Math.PI*2);cx.fill();}
+      else{cx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);}
+      cx.restore();
+    }
+  });
+  if(alive) celebRAF=requestAnimationFrame(animCelebrate);
+  else{cc.style.display='none';parts=[];}
+}
+</script>
+</body>
+</html>
