@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="My Plan">
+<meta name="theme-color" content="#080808">
+<title>My Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Mono',monospace;background:#080808;color:#f0ede8;min-height:100vh;overscroll-behavior:none}
+.page{display:none;min-height:100vh}
+.page.active{display:block}
+#page-home{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 24px;background:#080808}
+#page-home.active{display:flex}
+.home-title{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#333;margin-bottom:56px;text-align:center}
+.app-icons{display:flex;flex-direction:column;gap:14px;width:100%;max-width:320px}
+.app-icon-btn{display:flex;align-items:center;gap:16px;background:#111;border:1px solid #1e1e1e;border-radius:20px;padding:20px 22px;cursor:pointer;transition:all .15s;width:100%;text-align:left}
+.app-icon-btn:active{transform:scale(.97);background:#161616}
+.icon-circle{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.icon-tt{background:#0a1220}.icon-jn{background:#181400}
+.icon-info{flex:1}
+.icon-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#f0ede8;margin-bottom:4px}
+.icon-desc{font-size:11px;color:#444;line-height:1.5}
+.icon-arrow{font-size:18px;color:#2a2a2a}
+.home-footer{margin-top:56px;font-size:10px;color:#2a2a2a;text-align:center;letter-spacing:.05em}
+.streak-home{margin-top:14px;font-size:12px;color:#444;text-align:center}
+.streak-home span{color:#e8f060;font-weight:500}
+.topbar{background:#080808;border-bottom:1px solid #161616;padding:14px 14px 0;position:sticky;top:0;z-index:100}
+.topbar-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.back-btn{background:#141414;border:1px solid #1e1e1e;border-radius:10px;color:#666;font-size:16px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-family:'DM Mono',monospace}
+.topbar-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;flex:1}
+.tt-color{color:#7aa8e8}.jn-color{color:#e8f060}
+.badge-small{font-size:11px;background:#141414;border:1px solid #1e1e1e;padding:4px 10px;border-radius:20px;color:#444}
+.badge-small span{color:#e8f060}
+.tabs{display:flex;gap:0;border-bottom:1px solid #161616;margin:0 -14px;padding:0 14px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab-btn{font-family:'Syne',sans-serif;font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:10px 13px;border:none;background:transparent;color:#333;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;flex-shrink:0}
+.tab-btn.active{color:#7aa8e8;border-bottom-color:#7aa8e8}
+.content{padding:14px 12px 80px}
+.day-view{display:none}.day-view.active{display:block}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px}
+.stat{background:#0e0e0e;border:1px solid #1a1a1a;border-radius:10px;padding:9px 6px;text-align:center}
+.stat-val{font-size:13px;font-weight:600;color:#f0ede8}
+.stat-lbl{font-size:9px;color:#333;margin-top:3px;text-transform:uppercase;letter-spacing:.04em}
+.slots{border-radius:12px;overflow:hidden;border:1px solid #181818}
+.slot{display:flex;align-items:stretch;border-bottom:1px solid #141414;min-height:54px}
+.slot:last-child{border-bottom:none}
+.slot-time{font-size:10px;color:#3a3a3a;min-width:86px;max-width:86px;padding:10px 8px;display:flex;align-items:center;border-right:1px solid #181818;flex-shrink:0;line-height:1.4;font-family:'Courier New',monospace}
+.slot-bar{width:3px;flex-shrink:0}
+.slot-content{flex:1;padding:10px;display:flex;flex-direction:column;justify-content:center;gap:4px;min-width:0}
+.slot-top{display:flex;align-items:flex-start;justify-content:space-between;gap:6px}
+.slot-label{font-size:12px;font-weight:600;line-height:1.35;flex:1;min-width:0}
+.slot-pill{font-size:9px;padding:3px 7px;border-radius:20px;flex-shrink:0;font-family:monospace;white-space:nowrap;margin-top:1px}
+.slot-note{font-size:11px;line-height:1.5;opacity:.6}
+.t{background:#0c0c0c}.t .slot-bar{background:#3a3a3a}.t .slot-label{color:#555}.t .slot-pill{background:#161616;color:#444;border:1px solid #222}
+.c{background:#060d1a}.c .slot-bar{background:#1d56d8}.c .slot-label{color:#7aa8e8}.c .slot-note{color:#334d78}.c .slot-pill{background:#08152e;color:#4a7fd4;border:1px solid #102244}
+.g{background:#050d05}.g .slot-bar{background:#16a34a}.g .slot-label{color:#5ec87a}.g .slot-note{color:#1a4a22}.g .slot-pill{background:#071407;color:#3dc45f;border:1px solid #0d3814}
+.f{background:#100900}.f .slot-bar{background:#d97706}.f .slot-label{color:#f0b830}.f .slot-note{color:#6a4500}.f .slot-pill{background:#160c00;color:#b87010;border:1px solid #301c00}
+.s{background:#080616}.s .slot-bar{background:#7c3aed}.s .slot-label{color:#a898e8}.s .slot-note{color:#302060}.s .slot-pill{background:#0c0820;color:#7c3aed;border:1px solid #201450}
+.r{background:#040d0b}.r .slot-bar{background:#0f766e}.r .slot-label{color:#40c0b4}.r .slot-note{color:#063a36}.r .slot-pill{background:#050d0c;color:#0f9e94;border:1px solid #082825}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px;padding:10px 12px;background:#0c0c0c;border-radius:10px;border:1px solid #181818}
+.leg{display:flex;align-items:center;gap:5px;font-size:10px;color:#3a3a3a}
+.leg-dot{width:7px;height:7px;border-radius:2px;flex-shrink:0}
+.j-content{padding:16px 14px 80px}
+.date-line{display:flex;align-items:baseline;gap:10px;margin-bottom:20px}
+.date-big{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:#f0ede8;letter-spacing:-1px}
+.date-day{font-size:11px;color:#444;text-transform:uppercase;letter-spacing:.08em}
+.section-label{font-size:10px;color:#444;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;margin-top:20px}
+.habits{display:flex;flex-direction:column;gap:8px}
+.habit-row{display:flex;align-items:center;justify-content:space-between;background:#0e0e0e;border:1px solid #1a1a1a;border-radius:12px;padding:13px 14px;transition:border-color .2s}
+.habit-row.done{border-color:#122a16;background:#060d08}
+.habit-row.failed{border-color:#2a1212;background:#0d0606}
+.habit-left{display:flex;align-items:center;gap:10px}
+.habit-icon{font-size:17px;width:26px;text-align:center}
+.habit-name{font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:#f0ede8}
+.habit-sub{font-size:10px;color:#3a3a3a;margin-top:2px}
+.toggle-group{display:flex;gap:5px}
+.tog{font-size:11px;font-weight:500;padding:6px 11px;border-radius:8px;border:1px solid #1e1e1e;background:#141414;color:#3a3a3a;cursor:pointer;transition:all .15s;font-family:'DM Mono',monospace}
+.tog.yes-active{background:#061508;border-color:#103a14;color:#4ade80}
+.tog.no-active{background:#150606;border-color:#3a1010;color:#f87171}
+.win-box{background:#0e0e0e;border:1px solid #1a1a1a;border-radius:12px;padding:14px 16px}
+.win-input{width:100%;background:transparent;border:none;outline:none;font-family:'DM Mono',monospace;font-size:13px;color:#f0ede8;resize:none;line-height:1.6;min-height:56px}
+.win-input::placeholder{color:#3a3a3a}
+.score-block{background:#0e0e0e;border:1px solid #1a1a1a;border-radius:14px;padding:14px 16px;margin-top:10px;display:flex;align-items:center;gap:14px}
+.score-num{font-family:'Syne',sans-serif;font-size:40px;font-weight:800;line-height:1;min-width:52px}
+.score-label{font-size:10px;color:#3a3a3a;margin-top:4px}
+.score-bar-wrap{flex:1;height:5px;background:#181818;border-radius:3px;overflow:hidden}
+.score-bar-fill{height:100%;border-radius:3px;transition:width .4s ease}
+.save-btn{width:100%;margin-top:18px;padding:15px;background:#e8f060;color:#0d0d0d;border:none;border-radius:12px;font-family:'Syne',sans-serif;font-size:14px;font-weight:800;letter-spacing:.04em;cursor:pointer;transition:transform .1s,opacity .1s}
+.save-btn:active{transform:scale(.98)}
+.save-btn.saved{background:#4ade80}
+.jtabs{display:flex;border-bottom:1px solid #161616;margin:0 -14px;padding:0 14px}
+.jtab{font-family:'Syne',sans-serif;font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:10px 16px;border:none;background:transparent;color:#333;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.jtab.active{color:#e8f060;border-bottom-color:#e8f060}
+.jview{display:none}.jview.active{display:block}
+.week-header{display:flex;align-items:center;justify-content:space-between;margin:16px 0 14px}
+.week-nav{background:#0e0e0e;border:1px solid #1a1a1a;border-radius:8px;color:#555;padding:7px 13px;font-size:15px;cursor:pointer;font-family:'DM Mono',monospace}
+.week-title-txt{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#f0ede8}
+.week-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.wstat{background:#0e0e0e;border:1px solid #1a1a1a;border-radius:10px;padding:11px 8px;text-align:center}
+.wstat-val{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:#e8f060}
+.wstat-lbl{font-size:9px;color:#3a3a3a;text-transform:uppercase;letter-spacing:.05em;margin-top:3px}
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:16px}
+.wdc{background:#0e0e0e;border:1px solid #1a1a1a;border-radius:9px;padding:7px 3px;text-align:center;cursor:pointer}
+.wdc.selected{border-color:#e8f060}
+.wdc-n{font-size:9px;color:#333;text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px}
+.wdc-d{font-size:11px;color:#555;margin-bottom:5px}
+.wdc-s{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:#222}
+.wdc-s.s5{color:#4ade80}.wdc-s.s4{color:#86efac}.wdc-s.s3{color:#e8f060}.wdc-s.s2{color:#fbbf24}.wdc-s.s1{color:#f87171}
+.day-detail{background:#0e0e0e;border:1px solid #1a1a1a;border-radius:14px;padding:14px;margin-bottom:10px}
+.dd-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.dd-date{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:#f0ede8}
+.dd-score{font-family:'Syne',sans-serif;font-size:22px;font-weight:800}
+.dd-habits{display:flex;flex-direction:column;gap:7px;margin-bottom:10px}
+.dd-habit{display:flex;justify-content:space-between;font-size:12px}
+.dd-hn{color:#444}.dd-yes{color:#4ade80;font-weight:500}.dd-no{color:#f87171;font-weight:500}.dd-na{color:#222}
+.dd-win{font-size:12px;color:#555;line-height:1.6;border-top:1px solid #181818;padding-top:10px}
+.dd-wl{font-size:10px;color:#333;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(70px);background:#4ade80;color:#0d0d0d;font-family:'Syne',sans-serif;font-size:12px;font-weight:800;padding:11px 22px;border-radius:30px;z-index:9999;transition:transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+.nt-pill{padding:7px 14px;border:1px solid #1e1e1e;border-radius:20px;background:transparent;color:#444;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;cursor:pointer;transition:all .15s}
+.nt-pill.active{border-color:#b8a878;color:#b8a878;background:rgba(184,168,120,.08)}
+
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="page-home" class="page active">
+
+  <div style="font-family:'DM Mono',monospace;font-size:10px;color:#2a2a2a;text-align:center;line-height:1.9;margin-bottom:48px;letter-spacing:0.04em;max-width:300px">
+    Krishnaya Vasudevaya Hare Paramatmane<br>
+    Pranatay Klesha Nashaya<br>
+    Govindaya Namo Namah
+  </div>
+
+  <div style="text-align:center;margin-bottom:36px;max-width:300px">
+    <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#f0ede8;letter-spacing:-0.5px;margin-bottom:6px">One day or Day one.</div>
+    <div style="font-family:'DM Mono',monospace;font-size:11px;color:#3a3a3a;letter-spacing:0.14em;text-transform:uppercase">Shubho</div>
+  </div>
+
+  <div class="app-icons">
+    <button class="app-icon-btn" onclick="openPage('timetable')">
+      <div class="icon-circle icon-tt">📅</div>
+      <div class="icon-info"><div class="icon-name">Timetable</div><div class="icon-desc">Weekly schedule · meals · gym · travel</div></div>
+      <div class="icon-arrow">›</div>
+    </button>
+    <button class="app-icon-btn" onclick="openPage('journal')">
+      <div class="icon-circle icon-jn">📓</div>
+      <div class="icon-info"><div class="icon-name">Journal</div><div class="icon-desc">Daily habits · discipline · weekly review</div></div>
+      <div class="icon-arrow">›</div>
+    </button>
+    <button class="app-icon-btn" onclick="openPage('nutrition')">
+      <div class="icon-circle icon-nt" style="background:#1a2a1a">🥩</div>
+      <div class="icon-info"><div class="icon-name">Nutrition</div><div class="icon-desc">Calories · protein · food tracker</div></div>
+      <div class="icon-arrow">›</div>
+    </button>
+  </div>
+
+  <div class="streak-home">🔥 streak: <span id="home-streak">0</span> days</div>
+
+  <div id="year-timer" style="margin-top:14px;text-align:center;font-family:'DM Mono',monospace"></div>
+
+  <div style="font-family:'DM Mono',monospace;font-size:10px;color:#2a2a2a;text-align:center;margin-top:20px;line-height:1.8;max-width:280px;letter-spacing:0.03em">
+    All my defeats are mine.<br>All my victories belong to Him.
+  </div>
+
+  <div style="font-family:'DM Mono',monospace;font-size:10px;color:#1e1e1e;text-align:center;margin-top:32px;letter-spacing:0.2em;text-transform:uppercase">
+    built by shubho
+  </div>
+
+</div>
+
+<!-- TIMETABLE -->
+<div id="page-timetable" class="page">
+  <div class="topbar">
+    <div class="topbar-row">
+      <button class="back-btn" onclick="goHome()">←</button>
+      <div class="topbar-title tt-color">Timetable</div>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showDay('mon',this)">Mon</button>
+      <button class="tab-btn" onclick="showDay('tue',this)">Tue</button>
+      <button class="tab-btn" onclick="showDay('wed',this)">Wed</button>
+      <button class="tab-btn" onclick="showDay('thu',this)">Thu</button>
+      <button class="tab-btn" onclick="showDay('fri',this)">Fri</button>
+      <button class="tab-btn" onclick="showDay('sat',this)">Sat</button>
+      <button class="tab-btn" onclick="showDay('sun',this)">Sun</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="legend">
+      <div class="leg"><div class="leg-dot" style="background:#3a3a3a"></div>Travel</div>
+      <div class="leg"><div class="leg-dot" style="background:#1d56d8"></div>College</div>
+      <div class="leg"><div class="leg-dot" style="background:#16a34a"></div>Gym</div>
+      <div class="leg"><div class="leg-dot" style="background:#d97706"></div>Meal</div>
+      <div class="leg"><div class="leg-dot" style="background:#7c3aed"></div>Sleep</div>
+      <div class="leg"><div class="leg-dot" style="background:#0f766e"></div>Rest</div>
+    </div>
+    <div id="day-mon" class="day-view active">
+      <div class="stats-row"><div class="stat"><div class="stat-val">~2810</div><div class="stat-lbl">kcal</div></div><div class="stat"><div class="stat-val">~154g</div><div class="stat-lbl">protein</div></div><div class="stat"><div class="stat-val">Push</div><div class="stat-lbl">split</div></div><div class="stat"><div class="stat-val">₹107</div><div class="stat-lbl">spend</div></div></div>
+      <div class="slots">
+        <div class="slot f"><div class="slot-time">6:00–6:30 AM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 1 — eat immediately</div><span class="slot-pill">800 kcal · 42g</span></div><div class="slot-note">2 cups rice + fish/chicken + 2 boiled eggs</div></div></div>
+        <div class="slot t"><div class="slot-time">6:30–8:30 AM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Travel to college</div><span class="slot-pill">2 hrs</span></div><div class="slot-note">Carry tiffin packed the night before</div></div></div>
+        <div class="slot c"><div class="slot-time">10:40–11:30 AM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Data Structure through C</div><span class="slot-pill">Period 3</span></div><div class="slot-note">[TIU-CC-UCA-T12101] · RM</div></div></div>
+        <div class="slot f"><div class="slot-time">11:30–12:00 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 2 — tiffin</div><span class="slot-pill">690 kcal · 44g</span></div><div class="slot-note">Rice + curry + 50g soya chunks + 2 eggs</div></div></div>
+        <div class="slot c"><div class="slot-time">12:00–3:00 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">DS Lab grp 1 / Web Tech Lab grp 2</div><span class="slot-pill">3 hr lab</span></div><div class="slot-note">[TIU-CC-UCA-L12101] / [TIU-CC-UCA-L12102]</div></div></div>
+        <div class="slot f"><div class="slot-time">1:00 PM (break)</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 3 — canteen</div><span class="slot-pill">600 kcal · 27g</span></div><div class="slot-note">Rice + dal (double) + egg curry if available</div></div></div>
+        <div class="slot c"><div class="slot-time">3:00–3:50 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Basic Mathematics II (MC)</div><span class="slot-pill">Period 6</span></div><div class="slot-note">[TIU-CC-UMA-T12101]</div></div></div>
+        <div class="slot f"><div class="slot-time">3:50–4:20 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Pre-workout snack</div><span class="slot-pill">250 kcal</span></div><div class="slot-note">1 banana + 40g peanuts</div></div></div>
+        <div class="slot g"><div class="slot-time">4:20–6:20 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Gym — Push day</div><span class="slot-pill">2 hrs</span></div><div class="slot-note">Bench 3×8 · OHP 3×10 · Incline DB 3×10 · Lateral raise 3×12 · Tricep pushdown 3×12</div></div></div>
+        <div class="slot t"><div class="slot-time">6:20–8:20 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Travel home</div><span class="slot-pill">2 hrs</span></div></div></div>
+        <div class="slot f"><div class="slot-time">8:20–9:00 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 4 — dinner (most important)</div><span class="slot-pill">760 kcal · 32g</span></div><div class="slot-note">2 cups rice + fish/chicken + sabzi — within 45 min of home</div></div></div>
+        <div class="slot f"><div class="slot-time">10:00–10:30 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 5 + boil eggs for tomorrow</div><span class="slot-pill">360 kcal · 24g</span></div><div class="slot-note">2 eggs + milk — boil 4 eggs now</div></div></div>
+        <div class="slot s"><div class="slot-time">10:30 PM–6:00 AM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Sleep — 7.5 hrs</div><span class="slot-pill">non-negotiable</span></div><div class="slot-note">Muscle is built right now.</div></div></div>
+      </div>
+    </div>
+    <div id="day-tue" class="day-view">
+      <div class="stats-row"><div class="stat"><div class="stat-val">~2810</div><div class="stat-lbl">kcal</div></div><div class="stat"><div class="stat-val">~154g</div><div class="stat-lbl">protein</div></div><div class="stat"><div class="stat-val">Pull</div><div class="stat-lbl">split</div></div><div class="stat"><div class="stat-val">Hardest</div><div class="stat-lbl">day</div></div></div>
+      <div class="slots">
+        <div class="slot f"><div class="slot-time">5:30–6:00 AM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 1 — earlier start</div><span class="slot-pill">800 kcal · 42g</span></div><div class="slot-note">Rice + fish/chicken + 2 eggs — eat fast</div></div></div>
+        <div class="slot t"><div class="slot-time">6:00–8:00 AM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Travel — leave 6 AM sharp</div><span class="slot-pill">2 hrs</span></div><div class="slot-note">9 AM class. Tiffin packed last night.</div></div></div>
+        <div class="slot c"><div class="slot-time">9:00 AM–12:00 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">OOP Java Lab grp 2 / OS Lab grp 1</div><span class="slot-pill">3 hr lab</span></div><div class="slot-note">[TIU-SEC-UCA-L12101] / [TIU-CC-UCA-L12103]</div></div></div>
+        <div class="slot f"><div class="slot-time">10:30 AM (break)</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 2 — tiffin in lab break</div><span class="slot-pill">690 kcal · 44g</span></div><div class="slot-note">Rice + curry + soya chunks + 2 eggs</div></div></div>
+        <div class="slot c"><div class="slot-time">12:00–2:30 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">DS Lab grp 2 / OOP Java Lab grp 1</div><span class="slot-pill">2.5 hr lab</span></div><div class="slot-note">[TIU-CC-UCA-L12101] / [TIU-SEC-UCA-L12101]</div></div></div>
+        <div class="slot f"><div class="slot-time">12:30 PM (break)</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 3 — from tiffin</div><span class="slot-pill">600 kcal · 27g</span></div><div class="slot-note">Rice + dal — no time for canteen today</div></div></div>
+        <div class="slot c"><div class="slot-time">2:30–3:50 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Indian Knowledge System (MS)</div><span class="slot-pill">Period 6</span></div><div class="slot-note">[TIU-VAC-UED-T12101]</div></div></div>
+        <div class="slot f"><div class="slot-time">3:50–4:20 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Pre-workout snack</div><span class="slot-pill">250 kcal</span></div><div class="slot-note">1 banana + 40g peanuts</div></div></div>
+        <div class="slot g"><div class="slot-time">4:20–6:20 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Gym — Pull day</div><span class="slot-pill">2 hrs</span></div><div class="slot-note">Barbell row 3×8 · Lat pulldown 3×10 · Seated row 3×10 · Face pulls 3×15 · Curl 3×10</div></div></div>
+        <div class="slot t"><div class="slot-time">6:20–8:20 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Travel home</div><span class="slot-pill">2 hrs</span></div></div></div>
+        <div class="slot f"><div class="slot-time">8:20–10:30 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 4 + Meal 5</div><span class="slot-pill">1120 kcal · 56g</span></div><div class="slot-note">Dinner: rice + fish/chicken → 2 eggs + milk before sleep</div></div></div>
+        <div class="slot s"><div class="slot-time">10:30 PM–5:30 AM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Sleep — 7 hrs</div><span class="slot-pill">hardest day</span></div><div class="slot-note">Sleep matters more today.</div></div></div>
+      </div>
+    </div>
+    <div id="day-wed" class="day-view">
+      <div class="stats-row"><div class="stat"><div class="stat-val">~2810</div><div class="stat-lbl">kcal</div></div><div class="stat"><div class="stat-val">~154g</div><div class="stat-lbl">protein</div></div><div class="stat"><div class="stat-val">Legs</div><div class="stat-lbl">split</div></div><div class="stat"><div class="stat-val">Go heavy</div><div class="stat-lbl">best day</div></div></div>
+      <div class="slots">
+        <div class="slot f"><div class="slot-time">6:00–6:30 AM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 1</div><span class="slot-pill">800 kcal · 42g</span></div><div class="slot-note">2 cups rice + fish/chicken + 2 eggs</div></div></div>
+        <div class="slot t"><div class="slot-time">7:30–9:30 AM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Travel to college</div><span class="slot-pill">2 hrs</span></div></div></div>
+        <div class="slot c"><div class="slot-time">9:50–11:30 AM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Web Tech Lab grp 1 / OS Lab grp 2</div><span class="slot-pill">Periods 2–3</span></div><div class="slot-note">[TIU-CC-UCA-L12102] / [TIU-CC-UCA-L12103]</div></div></div>
+        <div class="slot f"><div class="slot-time">11:30–12:00 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 2 — tiffin</div><span class="slot-pill">690 kcal · 44g</span></div><div class="slot-note">Rice + curry + soya chunks + 2 eggs</div></div></div>
+        <div class="slot c"><div class="slot-time">12:00–12:50 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Computer Org. & Architecture (SRM)</div><span class="slot-pill">Period 4</span></div><div class="slot-note">[TIU-CC-UCA-T12102]</div></div></div>
+        <div class="slot f"><div class="slot-time">1:00–1:45 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 3 — eat big, leg day fuel</div><span class="slot-pill">600 kcal · 27g</span></div><div class="slot-note">Rice + dal + egg curry — take your time</div></div></div>
+        <div class="slot g"><div class="slot-time">2:00–4:00 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Gym — Leg day (go heaviest)</div><span class="slot-pill">2 hrs</span></div><div class="slot-note">Squats 4×8 · RDL 3×10 · Leg press 3×12 · Leg curl 3×12 · Calf raises 4×15</div></div></div>
+        <div class="slot t"><div class="slot-time">4:00–6:00 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Travel home — earliest this week</div><span class="slot-pill">2 hrs</span></div></div></div>
+        <div class="slot f"><div class="slot-time">6:00–9:00 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 4 + prep Thursday tiffin</div><span class="slot-pill">760 kcal · 32g</span></div><div class="slot-note">Rice + fish/chicken + sabzi — pack tiffin now</div></div></div>
+        <div class="slot f"><div class="slot-time">10:00–10:30 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 5 + boil tomorrow's eggs</div><span class="slot-pill">360 kcal · 24g</span></div><div class="slot-note">2 eggs + milk — boil 4 eggs while you eat</div></div></div>
+        <div class="slot s"><div class="slot-time">10:30 PM–6:00 AM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Sleep — 7.5 hrs</div><span class="slot-pill">7.5 hrs</span></div></div></div>
+      </div>
+    </div>
+    <div id="day-thu" class="day-view">
+      <div class="stats-row"><div class="stat"><div class="stat-val">~2810</div><div class="stat-lbl">kcal</div></div><div class="stat"><div class="stat-val">~154g</div><div class="stat-lbl">protein</div></div><div class="stat"><div class="stat-val">Upper</div><div class="stat-lbl">split</div></div><div class="stat"><div class="stat-val">12 PM</div><div class="stat-lbl">first class</div></div></div>
+      <div class="slots">
+        <div class="slot f"><div class="slot-time">6:00–6:30 AM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 1</div><span class="slot-pill">800 kcal · 42g</span></div><div class="slot-note">2 cups rice + fish/chicken + 2 eggs</div></div></div>
+        <div class="slot t"><div class="slot-time">9:30–11:30 AM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Travel — later start today</div><span class="slot-pill">2 hrs</span></div></div></div>
+        <div class="slot f"><div class="slot-time">11:30–11:55 AM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 2 — tiffin before class</div><span class="slot-pill">690 kcal · 44g</span></div><div class="slot-note">Rice + curry + soya chunks + 2 eggs</div></div></div>
+        <div class="slot c"><div class="slot-time">12:00–1:40 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">OOP Java (AM) + DS through C (RM)</div><span class="slot-pill">Periods 4–5</span></div><div class="slot-note">[TIU-SEC-UCA-T12101] / [TIU-CC-UCA-T12101]</div></div></div>
+        <div class="slot f"><div class="slot-time">1:40–2:00 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 3 — canteen quick</div><span class="slot-pill">600 kcal · 27g</span></div><div class="slot-note">Rice + dal — 20 min window only</div></div></div>
+        <div class="slot c"><div class="slot-time">2:00–3:50 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Operating Systems (SD)</div><span class="slot-pill">Period 6</span></div><div class="slot-note">[TIU-CC-UCA-T12102]</div></div></div>
+        <div class="slot f"><div class="slot-time">3:50–4:20 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Pre-workout snack</div><span class="slot-pill">250 kcal</span></div><div class="slot-note">1 banana + 40g peanuts</div></div></div>
+        <div class="slot g"><div class="slot-time">4:20–6:20 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Gym — Upper body</div><span class="slot-pill">2 hrs</span></div><div class="slot-note">Deadlift 3×5 · DB shoulder press 3×10 · Pull-ups 3×max · Cable fly 3×12 · Hammer curl 3×12</div></div></div>
+        <div class="slot t"><div class="slot-time">6:20–8:20 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Travel home</div><span class="slot-pill">2 hrs</span></div></div></div>
+        <div class="slot f"><div class="slot-time">8:20–10:30 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 4 + Meal 5</div><span class="slot-pill">1120 kcal · 56g</span></div><div class="slot-note">Dinner: rice + fish/chicken → 2 eggs + milk before bed</div></div></div>
+        <div class="slot s"><div class="slot-time">10:30 PM–6:00 AM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Sleep — 7.5 hrs</div><span class="slot-pill">7.5 hrs</span></div></div></div>
+      </div>
+    </div>
+    <div id="day-fri" class="day-view">
+      <div class="stats-row"><div class="stat"><div class="stat-val">~2810</div><div class="stat-lbl">kcal</div></div><div class="stat"><div class="stat-val">~154g</div><div class="stat-lbl">protein</div></div><div class="stat"><div class="stat-val">Full body</div><div class="stat-lbl">split</div></div><div class="stat"><div class="stat-val">Home 9 PM</div><div class="stat-lbl">latest</div></div></div>
+      <div class="slots">
+        <div class="slot f"><div class="slot-time">6:00–6:30 AM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 1</div><span class="slot-pill">800 kcal · 42g</span></div><div class="slot-note">2 cups rice + fish/chicken + 2 eggs</div></div></div>
+        <div class="slot t"><div class="slot-time">7:30–9:30 AM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Travel to college</div><span class="slot-pill">2 hrs</span></div></div></div>
+        <div class="slot c"><div class="slot-time">9:50–11:30 AM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">OOP using Java (AM)</div><span class="slot-pill">Periods 2–3</span></div><div class="slot-note">[TIU-SEC-UCA-T12101]</div></div></div>
+        <div class="slot f"><div class="slot-time">11:30–12:00 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 2 — tiffin</div><span class="slot-pill">690 kcal · 44g</span></div><div class="slot-note">Rice + curry + soya chunks + 2 eggs</div></div></div>
+        <div class="slot c"><div class="slot-time">12:00–1:40 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Operating Systems (SD) + Web Tech (SK)</div><span class="slot-pill">Periods 4–5</span></div><div class="slot-note">[TIU-CC-UCA-T12102]</div></div></div>
+        <div class="slot f"><div class="slot-time">1:40–2:00 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 3 — canteen</div><span class="slot-pill">600 kcal · 27g</span></div><div class="slot-note">Rice + dal + egg if available</div></div></div>
+        <div class="slot c"><div class="slot-time">3:00–4:40 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Basic Mathematics II (AR)</div><span class="slot-pill">Periods 7–8</span></div><div class="slot-note">[TIU-CC-UMA-T12101]</div></div></div>
+        <div class="slot f"><div class="slot-time">4:40–5:00 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Pre-workout snack</div><span class="slot-pill">250 kcal</span></div><div class="slot-note">1 banana + 40g peanuts</div></div></div>
+        <div class="slot g"><div class="slot-time">5:00–7:00 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Gym — Full body (moderate)</div><span class="slot-pill">2 hrs</span></div><div class="slot-note">Squat 3×10 · Bench 3×10 · Row 3×10 · OHP 3×10 · Planks 3×45s</div></div></div>
+        <div class="slot t"><div class="slot-time">7:00–9:00 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Travel home — latest of the week</div><span class="slot-pill">2 hrs</span></div></div></div>
+        <div class="slot f"><div class="slot-time">9:00–10:30 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 4 + Meal 5 — eat fast</div><span class="slot-pill">1120 kcal · 56g</span></div><div class="slot-note">Dinner: rice + fish/chicken → 2 eggs + milk</div></div></div>
+        <div class="slot s"><div class="slot-time">10:30 PM–6:00 AM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Sleep — 7.5 hrs</div><span class="slot-pill">end of week</span></div></div></div>
+      </div>
+    </div>
+    <div id="day-sat" class="day-view">
+      <div class="stats-row"><div class="stat"><div class="stat-val">~2800</div><div class="stat-lbl">kcal</div></div><div class="stat"><div class="stat-val">~150g</div><div class="stat-lbl">protein</div></div><div class="stat"><div class="stat-val">Rest</div><div class="stat-lbl">no gym</div></div><div class="stat"><div class="stat-val">Eat same</div><div class="stat-lbl">full cals</div></div></div>
+      <div class="slots">
+        <div class="slot s"><div class="slot-time">Sleep in</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">No alarm. Sleep naturally.</div><span class="slot-pill">8–9 hrs</span></div><div class="slot-note">Muscle repairs right now.</div></div></div>
+        <div class="slot f"><div class="slot-time">On waking</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 1 — same as gym days</div><span class="slot-pill">800 kcal · 42g</span></div><div class="slot-note">Rice + fish/chicken + 2 eggs — don't cut on rest days</div></div></div>
+        <div class="slot f"><div class="slot-time">Mid-morning</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 2</div><span class="slot-pill">690 kcal · 44g</span></div><div class="slot-note">Rice + curry + soya chunks + 2 eggs</div></div></div>
+        <div class="slot r"><div class="slot-time">Afternoon</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Walk 20–30 min only</div><span class="slot-pill">light walk</span></div><div class="slot-note">No gym. No running. Active recovery only.</div></div></div>
+        <div class="slot f"><div class="slot-time">Lunch</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 3 — home</div><span class="slot-pill">600 kcal · 27g</span></div><div class="slot-note">Rice + dal + sabzi + fish/chicken</div></div></div>
+        <div class="slot f"><div class="slot-time">Evening</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 4 — dinner</div><span class="slot-pill">760 kcal · 32g</span></div><div class="slot-note">Rice + fish/chicken + sabzi</div></div></div>
+        <div class="slot f"><div class="slot-time">Before bed</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 5 + boil Sunday's eggs</div><span class="slot-pill">360 kcal · 24g</span></div><div class="slot-note">2 eggs + milk — boil 4 eggs now</div></div></div>
+        <div class="slot s"><div class="slot-time">10:30 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Sleep — 8 hrs</div><span class="slot-pill">8 hrs</span></div></div></div>
+      </div>
+    </div>
+    <div id="day-sun" class="day-view">
+      <div class="stats-row"><div class="stat"><div class="stat-val">~2800</div><div class="stat-lbl">kcal</div></div><div class="stat"><div class="stat-val">~150g</div><div class="stat-lbl">protein</div></div><div class="stat"><div class="stat-val">Rest</div><div class="stat-lbl">no gym</div></div><div class="stat"><div class="stat-val">Prep day</div><div class="stat-lbl">set up week</div></div></div>
+      <div class="slots">
+        <div class="slot s"><div class="slot-time">Sleep in</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">No alarm. Full recovery.</div><span class="slot-pill">8–9 hrs</span></div></div></div>
+        <div class="slot f"><div class="slot-time">On waking</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 1</div><span class="slot-pill">800 kcal · 42g</span></div><div class="slot-note">Rice + fish/chicken + 2 eggs</div></div></div>
+        <div class="slot f"><div class="slot-time">Mid-morning</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 2</div><span class="slot-pill">690 kcal · 44g</span></div><div class="slot-note">Rice + curry + soya chunks + 2 eggs</div></div></div>
+        <div class="slot r"><div class="slot-time">Afternoon</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Walk 20–30 min</div><span class="slot-pill">light only</span></div></div></div>
+        <div class="slot f"><div class="slot-time">Lunch</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 3</div><span class="slot-pill">600 kcal · 27g</span></div><div class="slot-note">Rice + dal + sabzi</div></div></div>
+        <div class="slot r"><div class="slot-time">Evening</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Week prep — 30 min every Sunday</div><span class="slot-pill">30 min</span></div><div class="slot-note">Pack Monday tiffin · Boil 4 eggs · Buy banana + peanuts · Check soya stock</div></div></div>
+        <div class="slot f"><div class="slot-time">Dinner + bed</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Meal 4 + Meal 5</div><span class="slot-pill">1120 kcal · 56g</span></div><div class="slot-note">Rice + fish/chicken → 2 eggs + milk before bed</div></div></div>
+        <div class="slot s"><div class="slot-time">10:30 PM</div><div class="slot-bar"></div><div class="slot-content"><div class="slot-top"><div class="slot-label">Sleep — Monday starts 6 AM. Ready.</div><span class="slot-pill">7.5 hrs</span></div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JOURNAL -->
+<div id="page-journal" class="page">
+  <div class="topbar">
+    <div class="topbar-row">
+      <button class="back-btn" onclick="goHome()">←</button>
+      <div class="topbar-title jn-color">DISCIPLINE.</div>
+      <div class="badge-small">🔥 <span id="j-streak">0</span>d</div>
+    </div>
+    <div class="jtabs">
+      <button class="jtab active" onclick="switchJTab('today',this)">Today</button>
+      <button class="jtab" onclick="switchJTab('week',this)">This Week</button>
+    </div>
+  </div>
+  <div class="j-content">
+    <div id="jview-today" class="jview active">
+      <div class="date-line"><div class="date-big" id="j-date"></div><div class="date-day" id="j-day"></div></div>
+      <div class="section-label">Habits</div>
+      <div class="habits">
+        <div class="habit-row" id="row-plan"><div class="habit-left"><div class="habit-icon">📋</div><div><div class="habit-name">Followed the plan</div><div class="habit-sub">College · gym · meals · sleep</div></div></div><div class="toggle-group"><button class="tog" onclick="setHabit('plan','yes',this)">YES</button><button class="tog" onclick="setHabit('plan','no',this)">NO</button></div></div>
+        <div class="habit-row" id="row-emotions"><div class="habit-left"><div class="habit-icon">🧠</div><div><div class="habit-name">Controlled emotions</div><div class="habit-sub">Didn't let feelings drive decisions</div></div></div><div class="toggle-group"><button class="tog" onclick="setHabit('emotions','yes',this)">YES</button><button class="tog" onclick="setHabit('emotions','no',this)">NO</button></div></div>
+        <div class="habit-row" id="row-time"><div class="habit-left"><div class="habit-icon">⏱</div><div><div class="habit-name">Didn't waste time</div><div class="habit-sub">No mindless scrolling or dead hours</div></div></div><div class="toggle-group"><button class="tog" onclick="setHabit('time','yes',this)">YES</button><button class="tog" onclick="setHabit('time','no',this)">NO</button></div></div>
+        <div class="habit-row" id="row-gym"><div class="habit-left"><div class="habit-icon">💪</div><div><div class="habit-name">Hit the gym</div><div class="habit-sub">Showed up and gave effort</div></div></div><div class="toggle-group"><button class="tog" onclick="setHabit('gym','yes',this)">YES</button><button class="tog" onclick="setHabit('gym','no',this)">NO</button></div></div>
+        <div class="habit-row" id="row-food"><div class="habit-left"><div class="habit-icon">🍚</div><div><div class="habit-name">Ate right</div><div class="habit-sub">All 5 meals · no junk</div></div></div><div class="toggle-group"><button class="tog" onclick="setHabit('food','yes',this)">YES</button><button class="tog" onclick="setHabit('food','no',this)">NO</button></div></div>
+      </div>
+      <div class="section-label" style="margin-top:20px">One thing I did well today</div>
+      <div class="win-box"><textarea class="win-input" id="win-text" placeholder="Write anything. Even one sentence counts." rows="3"></textarea></div>
+      <div class="section-label">Today's score</div>
+      <div class="score-block">
+        <div><div class="score-num" id="score-num" style="color:#222">0</div><div class="score-label">out of 5</div></div>
+        <div style="flex:1"><div class="score-bar-wrap"><div class="score-bar-fill" id="score-bar" style="width:0%;background:#222"></div></div><div style="font-size:11px;color:#333;margin-top:8px" id="score-msg">answer the habits above</div></div>
+      </div>
+      <button class="save-btn" id="save-btn" onclick="saveToday()">SAVE TODAY</button>
+    </div>
+    <div id="jview-week" class="jview">
+      <div class="week-header">
+        <button class="week-nav" onclick="changeWeek(-1)">←</button>
+        <div class="week-title-txt" id="week-title-txt">This week</div>
+        <button class="week-nav" onclick="changeWeek(1)">→</button>
+      </div>
+      <div class="week-stats">
+        <div class="wstat"><div class="wstat-val" id="ws-days">0</div><div class="wstat-lbl">days logged</div></div>
+        <div class="wstat"><div class="wstat-val" id="ws-score">0%</div><div class="wstat-lbl">avg score</div></div>
+        <div class="wstat"><div class="wstat-val" id="ws-best">—</div><div class="wstat-lbl">best habit</div></div>
+      </div>
+      <div class="week-grid" id="week-grid"></div>
+      <div id="day-detail-area"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Saved ✓</div>
+
+<script>
+const HABITS=['plan','emotions','time','gym','food'];
+const HNAMES={plan:'Followed plan',emotions:'Controlled emotions',time:"Didn't waste time",gym:'Hit the gym',food:'Ate right'};
+const D7=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+let todayData={},weekOffset=0,selectedDay=null;
+function dk(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function loadE(k){try{return JSON.parse(localStorage.getItem('j_'+k)||'null');}catch{return null;}}
+function saveE(k,v){localStorage.setItem('j_'+k,JSON.stringify(v));}
+function openPage(n){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+n).classList.add('active');window.scrollTo(0,0);if(n==='journal')initJournal();}
+function goHome(){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page-home').classList.add('active');window.scrollTo(0,0);document.getElementById('home-streak').textContent=calcStreak();
+
+function updateYearTimer(){
+  const now=new Date();
+  const end=new Date(now.getFullYear(),11,31,23,59,59);
+  const diff=end-now;
+  const days=Math.floor(diff/(1000*60*60*24));
+  const hrs=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+  const mins=Math.floor((diff%(1000*60*60))/(1000*60));
+  const secs=Math.floor((diff%( 1000*60))/1000);
+  const el=document.getElementById('year-timer');
+  if(el){
+    el.innerHTML=`<div style="font-size:10px;color:#2a2a2a;letter-spacing:0.06em;margin-bottom:5px">days left in ${now.getFullYear()}</div><div style="font-size:20px;font-weight:800;color:#333;font-family:'Syne',sans-serif;letter-spacing:-0.5px">${days}<span style="font-size:11px;color:#2a2a2a;font-family:'DM Mono',monospace;font-weight:400;margin-left:4px">${String(hrs).padStart(2,'0')}:${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}</span></div>`;
+  }
+}
+updateYearTimer();
+setInterval(updateYearTimer,1000);}
+function showDay(day,btn){document.querySelectorAll('.day-view').forEach(d=>d.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById('day-'+day).classList.add('active');btn.classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
+function initJournal(){
+  const now=new Date(),key=dk(now);
+  document.getElementById('j-date').textContent=`${now.getDate()} ${MO[now.getMonth()]}`;
+  document.getElementById('j-day').textContent=D7[now.getDay()];
+  const saved=loadE(key);
+  todayData=saved||{habits:{},win:''};
+  HABITS.forEach(h=>{
+    const v=todayData.habits[h];if(!v)return;
+    const row=document.getElementById('row-'+h),btns=row.querySelectorAll('.tog');
+    row.classList.remove('done','failed');btns.forEach(b=>b.classList.remove('yes-active','no-active'));
+    if(v==='yes'){btns[0].classList.add('yes-active');row.classList.add('done');}
+    if(v==='no'){btns[1].classList.add('no-active');row.classList.add('failed');}
+  });
+  if(todayData.win)document.getElementById('win-text').value=todayData.win;
+  updateScore();document.getElementById('j-streak').textContent=calcStreak();
+}
+function setHabit(h,v,btn){
+  const row=document.getElementById('row-'+h),btns=row.querySelectorAll('.tog');
+  btns.forEach(b=>b.classList.remove('yes-active','no-active'));row.classList.remove('done','failed');
+  if(v==='yes'){btn.classList.add('yes-active');row.classList.add('done');}else{btn.classList.add('no-active');row.classList.add('failed');}
+  todayData.habits[h]=v;updateScore();
+}
+function updateScore(){
+  const yes=HABITS.filter(h=>todayData.habits[h]==='yes').length;
+  const answered=HABITS.filter(h=>todayData.habits[h]).length;
+  document.getElementById('score-num').textContent=yes;
+  const bar=document.getElementById('score-bar');bar.style.width=Math.round(yes/5*100)+'%';
+  const c=['#222','#555','#fbbf24','#e8f060','#86efac','#4ade80'];
+  const m=['answer the habits above','keep going.','getting there.','solid day.','strong day.','locked in 🔒'];
+  document.getElementById('score-num').style.color=c[yes];bar.style.background=c[yes];
+  document.getElementById('score-msg').textContent=answered===0?'answer the habits above':m[yes]||'';
+}
+function saveToday(){
+  const now=new Date(),key=dk(now);
+  todayData.win=document.getElementById('win-text').value.trim();
+  todayData.date=key;todayData.score=HABITS.filter(h=>todayData.habits[h]==='yes').length;
+  saveE(key,todayData);
+  const btn=document.getElementById('save-btn');btn.textContent='SAVED ✓';btn.classList.add('saved');
+  setTimeout(()=>{btn.textContent='SAVE TODAY';btn.classList.remove('saved');},2000);
+  showToast('Day saved ✓');
+  const s=calcStreak();document.getElementById('j-streak').textContent=s;document.getElementById('home-streak').textContent=s;
+}
+function calcStreak(){let s=0;const d=new Date();for(let i=0;i<365;i++){const e=loadE(dk(d));if(e&&e.score>=1){s++;d.setDate(d.getDate()-1);}else break;}return s;}
+function switchJTab(t,btn){document.querySelectorAll('.jtab').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.jview').forEach(v=>v.classList.remove('active'));btn.classList.add('active');document.getElementById('jview-'+t).classList.add('active');if(t==='week')renderWeek();}
+function getWeekDays(offset){const now=new Date(),dow=now.getDay(),mon=new Date(now);mon.setDate(now.getDate()-dow+1+offset*7);const days=[];for(let i=0;i<7;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);days.push(d);}return days;}
+function changeWeek(dir){weekOffset+=dir;selectedDay=null;renderWeek();}
+function renderWeek(){
+  const days=getWeekDays(weekOffset);
+  document.getElementById('week-title-txt').textContent=`${days[0].getDate()} ${MO[days[0].getMonth()]} – ${days[6].getDate()} ${MO[days[6].getMonth()]}`;
+  let total=0,logged=0;const hc={};HABITS.forEach(h=>hc[h]=0);
+  const grid=document.getElementById('week-grid');grid.innerHTML='';
+  days.forEach((d,i)=>{
+    const key=dk(d),e=loadE(key),cell=document.createElement('div');
+    cell.className='wdc'+(selectedDay===key?' selected':'');
+    const sc=e?e.score:null,scC=sc===5?'s5':sc===4?'s4':sc===3?'s3':sc===2?'s2':sc===1?'s1':'';
+    cell.innerHTML=`<div class="wdc-n">${D7[(i+1)%7]}</div><div class="wdc-d">${d.getDate()}</div><div class="wdc-s ${scC}">${sc!==null?sc:'·'}</div>`;
+    cell.onclick=()=>selectDay(key,d);grid.appendChild(cell);
+    if(e){logged++;total+=e.score||0;HABITS.forEach(h=>{if(e.habits&&e.habits[h]==='yes')hc[h]++;});}
+  });
+  document.getElementById('ws-days').textContent=logged;
+  document.getElementById('ws-score').textContent=logged>0?Math.round(total/(logged*5)*100)+'%':'0%';
+  let best='—';if(logged>0){const top=Object.entries(hc).sort((a,b)=>b[1]-a[1])[0];if(top&&top[1]>0){const sh={plan:'Plan',emotions:'Mind',time:'Time',gym:'Gym',food:'Food'};best=sh[top[0]]||top[0];}}
+  document.getElementById('ws-best').textContent=best;
+  if(selectedDay){const sd=days.find(d=>dk(d)===selectedDay);if(sd)renderDetail(selectedDay,sd);else document.getElementById('day-detail-area').innerHTML='';}else document.getElementById('day-detail-area').innerHTML='';
+}
+function selectDay(key,d){if(selectedDay===key){selectedDay=null;document.getElementById('day-detail-area').innerHTML='';renderWeek();return;}selectedDay=key;renderWeek();renderDetail(key,d);}
+function renderDetail(key,d){
+  const e=loadE(key),area=document.getElementById('day-detail-area');
+  if(!e){area.innerHTML=`<div class="day-detail"><div class="dd-top"><div class="dd-date">${D7[d.getDay()]} ${d.getDate()} ${MO[d.getMonth()]}</div></div><div style="font-size:12px;color:#333">Nothing logged.</div></div>`;return;}
+  const sc=e.score||0,cols=['#222','#555','#fbbf24','#e8f060','#86efac','#4ade80'];
+  const hh=HABITS.map(h=>{const v=e.habits?e.habits[h]:null;return`<div class="dd-habit"><span class="dd-hn">${HNAMES[h]}</span>${v==='yes'?'<span class="dd-yes">YES</span>':v==='no'?'<span class="dd-no">NO</span>':'<span class="dd-na">—</span>'}</div>`;}).join('');
+  area.innerHTML=`<div class="day-detail"><div class="dd-top"><div class="dd-date">${D7[d.getDay()]} · ${d.getDate()} ${MO[d.getMonth()]}</div><div class="dd-score" style="color:${cols[sc]}">${sc}/5</div></div><div class="dd-habits">${hh}</div>${e.win?`<div class="dd-win"><div class="dd-wl">One win</div>${e.win}</div>`:''}</div>`;
+}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+document.getElementById('home-streak').textContent=calcStreak();
+
+function updateYearTimer(){
+  const now=new Date();
+  const end=new Date(now.getFullYear(),11,31,23,59,59);
+  const diff=end-now;
+  const days=Math.floor(diff/(1000*60*60*24));
+  const hrs=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+  const mins=Math.floor((diff%(1000*60*60))/(1000*60));
+  const secs=Math.floor((diff%( 1000*60))/1000);
+  const el=document.getElementById('year-timer');
+  if(el){
+    el.innerHTML=`<div style="font-size:10px;color:#2a2a2a;letter-spacing:0.06em;margin-bottom:5px">days left in ${now.getFullYear()}</div><div style="font-size:20px;font-weight:800;color:#333;font-family:'Syne',sans-serif;letter-spacing:-0.5px">${days}<span style="font-size:11px;color:#2a2a2a;font-family:'DM Mono',monospace;font-weight:400;margin-left:4px">${String(hrs).padStart(2,'0')}:${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}</span></div>`;
+  }
+}
+updateYearTimer();
+setInterval(updateYearTimer,1000);
+
+// ── NUTRITION ──
+var NT_ACT = null, NT_GOAL = null, NT_CAL_TARGET = 0, NT_PRO_TARGET = 0;
+var NT_LOG = [];
+
+var NT_FOODS = {
+  "rice cooked":{cal:130,pro:2.7,carb:28,fat:0.3,base:100},
+  "rice raw":{cal:350,pro:7,carb:77,fat:0.6,base:100},
+  "roti":{cal:120,pro:3.5,carb:22,fat:2.5,base:40},
+  "oats":{cal:380,pro:13,carb:68,fat:7,base:100},
+  "soya chunks":{cal:345,pro:52,carb:26,fat:0.5,base:100},
+  "chicken breast":{cal:165,pro:31,carb:0,fat:3.6,base:100},
+  "chicken":{cal:180,pro:27,carb:0,fat:7,base:100},
+  "egg boiled":{cal:78,pro:6.3,carb:0.6,fat:5.3,base:50},
+  "egg whole":{cal:155,pro:13,carb:1.1,fat:11,base:100},
+  "paneer":{cal:265,pro:18,carb:3.5,fat:20,base:100},
+  "dal cooked":{cal:116,pro:9,carb:20,fat:0.4,base:100},
+  "dal raw":{cal:340,pro:25,carb:60,fat:1,base:100},
+  "rajma cooked":{cal:127,pro:8.7,carb:22,fat:0.5,base:100},
+  "chana cooked":{cal:164,pro:8.9,carb:27,fat:2.6,base:100},
+  "milk full fat":{cal:61,pro:3.2,carb:4.8,fat:3.3,base:100},
+  "milk toned":{cal:44,pro:3.1,carb:4.6,fat:1.5,base:100},
+  "curd":{cal:60,pro:3.1,carb:4.7,fat:3.4,base:100},
+  "peanut butter":{cal:588,pro:25,carb:20,fat:50,base:100},
+  "peanuts":{cal:567,pro:26,carb:16,fat:49,base:100},
+  "banana":{cal:89,pro:1.1,carb:23,fat:0.3,base:100},
+  "potato":{cal:77,pro:2,carb:17,fat:0.1,base:100},
+  "fish":{cal:150,pro:25,carb:0,fat:5,base:100},
+  "tuna":{cal:116,pro:25,carb:0,fat:1,base:100},
+  "whey protein":{cal:120,pro:24,carb:3,fat:2,base:30},
+  "almonds":{cal:579,pro:21,carb:22,fat:50,base:100},
+  "bread":{cal:265,pro:9,carb:49,fat:3.2,base:100},
+  "poha":{cal:350,pro:7,carb:76,fat:1.5,base:100},
+  "tofu":{cal:76,pro:8,carb:1.9,fat:4.8,base:100},
+  "sweet potato":{cal:86,pro:1.6,carb:20,fat:0.1,base:100},
+  "idli":{cal:58,pro:2,carb:11,fat:0.4,base:50},
+  "dosa":{cal:168,pro:3.8,carb:32,fat:2.5,base:80}
+};
+
+function ntTab(t){
+  document.getElementById('nt-calc').style.display = t==='calc'?'block':'none';
+  document.getElementById('nt-track').style.display = t==='track'?'block':'none';
+  document.getElementById('nt-tab-calc').style.borderColor = t==='calc'?'#b8a878':'#1e1e1e';
+  document.getElementById('nt-tab-calc').style.color = t==='calc'?'#b8a878':'#444';
+  document.getElementById('nt-tab-calc').style.background = t==='calc'?'rgba(184,168,120,.1)':'transparent';
+  document.getElementById('nt-tab-track').style.borderColor = t==='track'?'#b8a878':'#1e1e1e';
+  document.getElementById('nt-tab-track').style.color = t==='track'?'#b8a878':'#444';
+  document.getElementById('nt-tab-track').style.background = t==='track'?'rgba(184,168,120,.1)':'transparent';
+}
+
+function ntPill(el, group){
+  var container = group==='act' ? 'nt-act-pills' : 'nt-goal-pills';
+  document.getElementById(container).querySelectorAll('.nt-pill').forEach(function(p){p.classList.remove('active');});
+  el.classList.add('active');
+  if(group==='act') NT_ACT = parseFloat(el.dataset.val);
+  if(group==='goal') NT_GOAL = el.dataset.val;
+}
+
+function ntCalc(){
+  var age = parseInt(document.getElementById('nt-age').value);
+  var wt  = parseFloat(document.getElementById('nt-weight').value);
+  var ht  = parseFloat(document.getElementById('nt-height').value);
+  var gen = document.getElementById('nt-gender').value;
+  if(!age||!wt||!ht||!gen||!NT_ACT||!NT_GOAL){alert('Fill in all fields first.');return;}
+  var bmr = gen==='male' ? 10*wt+6.25*ht-5*age+5 : 10*wt+6.25*ht-5*age-161;
+  var tdee = Math.round(bmr * NT_ACT);
+  var cal = NT_GOAL==='bulk' ? tdee+300 : NT_GOAL==='cut' ? tdee-400 : tdee;
+  var pro = Math.round(wt * (NT_GOAL==='bulk'?2.2:NT_GOAL==='cut'?2.4:1.8));
+  NT_CAL_TARGET = cal;
+  NT_PRO_TARGET = pro;
+  document.getElementById('nt-r-cal').textContent = cal;
+  document.getElementById('nt-r-pro').textContent = pro+'g';
+  var note = 'TDEE: '+tdee+' kcal. ';
+  note += NT_GOAL==='bulk' ? 'Eat '+cal+' kcal every day. Target +0.5kg/2 weeks.' : NT_GOAL==='cut' ? 'Stay in deficit. High protein protects muscle.' : 'Hit these numbers daily.';
+  document.getElementById('nt-r-note').textContent = note;
+  document.getElementById('nt-results').style.display = 'block';
+  ntRenderLog();
+}
+
+function ntSuggest(){
+  var inp = document.getElementById('nt-food-inp').value.toLowerCase().trim();
+  var box = document.getElementById('nt-sugg');
+  if(!inp){box.style.display='none';return;}
+  var keys = Object.keys(NT_FOODS).filter(function(k){return k.indexOf(inp)!==-1;}).slice(0,6);
+  if(!keys.length){box.style.display='none';return;}
+  box.innerHTML='';
+  keys.forEach(function(k){
+    var d=document.createElement('div');
+    d.style.cssText='padding:10px 12px;font-size:12px;color:#f0ede8;cursor:pointer;border-bottom:1px solid #1a1a1a;font-family:DM Mono,monospace';
+    d.textContent=k+' (per '+NT_FOODS[k].base+'g)';
+    d.onclick=function(){document.getElementById('nt-food-inp').value=k;box.style.display='none';document.getElementById('nt-qty-inp').focus();};
+    d.onmouseover=function(){this.style.background='#1a1a1a';};
+    d.onmouseout=function(){this.style.background='';};
+    box.appendChild(d);
+  });
+  box.style.display='block';
+}
+
+function ntAdd(){
+  var raw=document.getElementById('nt-food-inp').value.toLowerCase().trim();
+  var qty=parseFloat(document.getElementById('nt-qty-inp').value);
+  if(!raw||!qty||qty<=0)return;
+  var food=NT_FOODS[raw],name=raw;
+  if(!food){var keys=Object.keys(NT_FOODS);for(var i=0;i<keys.length;i++){if(keys[i].indexOf(raw)!==-1){food=NT_FOODS[keys[i]];name=keys[i];break;}}}
+  if(!food){alert('Not found. Try: soya chunks, rice cooked, chicken, egg boiled, dal cooked, paneer, banana...');return;}
+  var r=qty/food.base;
+  NT_LOG.push({name:name,qty:qty,cal:Math.round(food.cal*r*10)/10,pro:Math.round(food.pro*r*10)/10,carb:Math.round(food.carb*r*10)/10,fat:Math.round(food.fat*r*10)/10});
+  document.getElementById('nt-food-inp').value='';
+  document.getElementById('nt-qty-inp').value='';
+  ntRenderLog();
+}
+
+function ntRemove(i){NT_LOG.splice(i,1);ntRenderLog();}
+
+function ntRenderLog(){
+  var log=document.getElementById('nt-log');
+  log.innerHTML='';
+  if(!NT_LOG.length){
+    var e=document.createElement('div');
+    e.style.cssText='font-size:12px;color:#333;padding:12px 0;font-family:DM Mono,monospace';
+    e.textContent='No foods added yet.';
+    log.appendChild(e);
+    document.getElementById('nt-totals').style.display='none';
+    return;
+  }
+  var totCal=0,totPro=0,totCarb=0,totFat=0;
+  NT_LOG.forEach(function(item,i){
+    totCal+=item.cal;totPro+=item.pro;totCarb+=item.carb;totFat+=item.fat;
+    var row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #151515;gap:8px';
+    var left=document.createElement('div');
+    var n=document.createElement('div');
+    n.style.cssText='font-size:12px;color:#f0ede8;font-family:DM Mono,monospace;text-transform:capitalize';
+    n.textContent=item.name;
+    var q=document.createElement('div');
+    q.style.cssText='font-size:10px;color:#444;margin-top:2px;font-family:DM Mono,monospace';
+    q.textContent=item.qty+'g · '+item.cal+' kcal · '+item.pro+'g pro';
+    left.appendChild(n);left.appendChild(q);
+    var btn=document.createElement('button');
+    btn.textContent='×';
+    btn.style.cssText='background:none;border:none;color:#333;font-size:16px;cursor:pointer;padding:4px 8px;flex-shrink:0';
+    btn.onmouseover=function(){this.style.color='#c06060';};
+    btn.onmouseout=function(){this.style.color='#333';};
+    (function(idx){btn.onclick=function(){ntRemove(idx);};})(i);
+    row.appendChild(left);row.appendChild(btn);
+    log.appendChild(row);
+  });
+  totCal=Math.round(totCal);totPro=Math.round(totPro*10)/10;totCarb=Math.round(totCarb*10)/10;totFat=Math.round(totFat*10)/10;
+  document.getElementById('nt-t-cal').textContent=totCal;
+  document.getElementById('nt-t-pro').textContent=totPro;
+  document.getElementById('nt-t-carb').textContent=totCarb;
+  document.getElementById('nt-t-fat').textContent=totFat;
+  document.getElementById('nt-totals').style.display='block';
+  var rem=document.getElementById('nt-remaining');
+  if(NT_CAL_TARGET&&NT_PRO_TARGET){
+    var calLeft=NT_CAL_TARGET-totCal;
+    var proLeft=Math.round((NT_PRO_TARGET-totPro)*10)/10;
+    rem.innerHTML='Target: <span style="color:#b8a878">'+NT_CAL_TARGET+' kcal · '+NT_PRO_TARGET+'g protein</span><br>Remaining: <span style="color:'+(calLeft<0?'#c06060':'#70a880')+'">'+calLeft+' kcal</span> · <span style="color:'+(proLeft<0?'#c06060':'#70a880')+'">'+proLeft+'g protein</span>';
+  } else {
+    rem.textContent='Calculate your targets in the Calculator tab first.';
+  }
+}
+
+</script>
+
+<!-- NUTRITION PAGE -->
+<div id="page-nutrition" class="page">
+  <div style="display:flex;align-items:center;gap:14px;margin-bottom:28px;padding-bottom:16px;border-bottom:1px solid #1a1a1a">
+    <button onclick="goHome()" style="background:none;border:none;color:#555;font-size:20px;cursor:pointer;padding:0;line-height:1">‹</button>
+    <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:#f0ede8">Nutrition</div>
+  </div>
+
+  <!-- TABS -->
+  <div style="display:flex;gap:8px;margin-bottom:24px">
+    <button onclick="ntTab('calc')" id="nt-tab-calc" style="flex:1;padding:10px;border-radius:10px;border:1px solid #b8a878;background:rgba(184,168,120,.1);color:#b8a878;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;cursor:pointer">Calculator</button>
+    <button onclick="ntTab('track')" id="nt-tab-track" style="flex:1;padding:10px;border-radius:10px;border:1px solid #1e1e1e;background:transparent;color:#444;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;cursor:pointer">Today's Log</button>
+  </div>
+
+  <!-- CALCULATOR TAB -->
+  <div id="nt-calc">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+      <div><div style="font-size:10px;color:#444;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Age</div>
+      <input id="nt-age" type="number" placeholder="18" style="width:100%;background:#111;border:1px solid #1e1e1e;border-radius:10px;padding:12px;color:#f0ede8;font-family:'DM Mono',monospace;font-size:13px;outline:none"></div>
+
+      <div><div style="font-size:10px;color:#444;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Weight (kg)</div>
+      <input id="nt-weight" type="number" placeholder="57" style="width:100%;background:#111;border:1px solid #1e1e1e;border-radius:10px;padding:12px;color:#f0ede8;font-family:'DM Mono',monospace;font-size:13px;outline:none"></div>
+
+      <div><div style="font-size:10px;color:#444;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Height (cm)</div>
+      <input id="nt-height" type="number" placeholder="175" style="width:100%;background:#111;border:1px solid #1e1e1e;border-radius:10px;padding:12px;color:#f0ede8;font-family:'DM Mono',monospace;font-size:13px;outline:none"></div>
+
+      <div><div style="font-size:10px;color:#444;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Gender</div>
+      <select id="nt-gender" style="width:100%;background:#111;border:1px solid #1e1e1e;border-radius:10px;padding:12px;color:#f0ede8;font-family:'DM Mono',monospace;font-size:13px;outline:none;appearance:none">
+        <option value="">Select</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select></div>
+    </div>
+
+    <div style="margin-bottom:14px"><div style="font-size:10px;color:#444;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Activity</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px" id="nt-act-pills">
+      <button class="nt-pill" data-val="1.2" onclick="ntPill(this,'act')">Sedentary</button>
+      <button class="nt-pill" data-val="1.375" onclick="ntPill(this,'act')">Light</button>
+      <button class="nt-pill" data-val="1.55" onclick="ntPill(this,'act')">Moderate</button>
+      <button class="nt-pill" data-val="1.725" onclick="ntPill(this,'act')">Active</button>
+      <button class="nt-pill" data-val="1.9" onclick="ntPill(this,'act')">Very Active</button>
+    </div></div>
+
+    <div style="margin-bottom:20px"><div style="font-size:10px;color:#444;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Goal</div>
+    <div style="display:flex;gap:6px" id="nt-goal-pills">
+      <button class="nt-pill" data-val="cut" onclick="ntPill(this,'goal')">Cut</button>
+      <button class="nt-pill" data-val="maintain" onclick="ntPill(this,'goal')">Maintain</button>
+      <button class="nt-pill" data-val="bulk" onclick="ntPill(this,'goal')">Bulk</button>
+    </div></div>
+
+    <button onclick="ntCalc()" style="width:100%;padding:14px;background:#b8a878;color:#0a0a0a;border:none;border-radius:12px;font-family:'DM Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.1em;cursor:pointer;text-transform:uppercase">Calculate</button>
+
+    <div id="nt-results" style="display:none;margin-top:24px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+        <div style="background:#111;border:1px solid #1e1e1e;border-radius:14px;padding:20px;text-align:center">
+          <div style="font-size:10px;color:#444;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Calories</div>
+          <div id="nt-r-cal" style="font-size:32px;font-weight:700;color:#b8a878;font-family:'Syne',sans-serif">—</div>
+          <div style="font-size:10px;color:#333;margin-top:4px">kcal/day</div>
+        </div>
+        <div style="background:#111;border:1px solid #1e1e1e;border-radius:14px;padding:20px;text-align:center">
+          <div style="font-size:10px;color:#444;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Protein</div>
+          <div id="nt-r-pro" style="font-size:32px;font-weight:700;color:#b8a878;font-family:'Syne',sans-serif">—</div>
+          <div style="font-size:10px;color:#333;margin-top:4px">grams/day</div>
+        </div>
+      </div>
+      <div style="background:#111;border:1px solid #1e1e1e;border-radius:14px;padding:16px;font-size:12px;color:#555;line-height:1.8" id="nt-r-note"></div>
+    </div>
+  </div>
+
+  <!-- TRACKER TAB -->
+  <div id="nt-track" style="display:none">
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+      <div style="flex:2;position:relative">
+        <input id="nt-food-inp" type="text" placeholder="Food (e.g. soya chunks)" autocomplete="off"
+          style="width:100%;background:#111;border:1px solid #1e1e1e;border-radius:10px;padding:12px;color:#f0ede8;font-family:'DM Mono',monospace;font-size:12px;outline:none"
+          oninput="ntSuggest()" onkeydown="if(event.key==='Enter')ntAdd()"/>
+        <div id="nt-sugg" style="position:absolute;top:100%;left:0;right:0;background:#111;border:1px solid #1e1e1e;border-top:none;border-radius:0 0 10px 10px;z-index:100;display:none;max-height:180px;overflow-y:auto"></div>
+      </div>
+      <input id="nt-qty-inp" type="number" placeholder="g" min="1"
+        style="flex:1;background:#111;border:1px solid #1e1e1e;border-radius:10px;padding:12px;color:#f0ede8;font-family:'DM Mono',monospace;font-size:12px;outline:none"
+        onkeydown="if(event.key==='Enter')ntAdd()"/>
+      <button onclick="ntAdd()" style="background:#b8a878;color:#0a0a0a;border:none;border-radius:10px;padding:12px 16px;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;cursor:pointer">ADD</button>
+    </div>
+
+    <div id="nt-log"></div>
+
+    <div id="nt-totals" style="display:none;margin-top:16px">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px">
+        <div style="background:#111;border:1px solid #1e1e1e;border-radius:12px;padding:14px 8px;text-align:center">
+          <div style="font-size:10px;color:#444;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Cal</div>
+          <div id="nt-t-cal" style="font-size:22px;font-weight:700;color:#b8a878;font-family:'Syne',sans-serif">0</div>
+        </div>
+        <div style="background:#111;border:1px solid #1e1e1e;border-radius:12px;padding:14px 8px;text-align:center">
+          <div style="font-size:10px;color:#444;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Pro</div>
+          <div id="nt-t-pro" style="font-size:22px;font-weight:700;color:#b8a878;font-family:'Syne',sans-serif">0</div>
+        </div>
+        <div style="background:#111;border:1px solid #1e1e1e;border-radius:12px;padding:14px 8px;text-align:center">
+          <div style="font-size:10px;color:#444;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Carb</div>
+          <div id="nt-t-carb" style="font-size:22px;font-weight:700;color:#b8a878;font-family:'Syne',sans-serif">0</div>
+        </div>
+        <div style="background:#111;border:1px solid #1e1e1e;border-radius:12px;padding:14px 8px;text-align:center">
+          <div style="font-size:10px;color:#444;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Fat</div>
+          <div id="nt-t-fat" style="font-size:22px;font-weight:700;color:#b8a878;font-family:'Syne',sans-serif">0</div>
+        </div>
+      </div>
+      <div id="nt-remaining" style="background:#111;border:1px solid #1e1e1e;border-radius:12px;padding:14px;font-size:12px;color:#555;line-height:1.8;text-align:center"></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
