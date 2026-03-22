@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C++ DSA Path</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0c;
+  --panel:#0f0f12;
+  --border:#1a1a20;
+  --border2:#252530;
+  --text:#e8e4dc;
+  --muted:#4a4855;
+  --muted2:#6a6878;
+  --accent:#7c6fff;
+  --accent2:#5a4fff;
+  --green:#4ade80;
+  --red:#f87171;
+  --yellow:#fbbf24;
+  --gold:#b8a878;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospace;overflow:hidden}
+
+/* ── LAYOUT ── */
+#app{display:grid;grid-template-columns:260px 1fr;grid-template-rows:48px 1fr;height:100vh}
+#topbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid var(--border);background:var(--panel)}
+#sidebar{border-right:1px solid var(--border);overflow-y:auto;background:var(--panel)}
+#main{display:grid;grid-template-rows:1fr 200px;overflow:hidden}
+#editor-wrap{position:relative;overflow:hidden;border-bottom:1px solid var(--border)}
+#terminal-wrap{display:flex;flex-direction:column;background:#07070a}
+
+/* ── TOPBAR ── */
+.tb-logo{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text);letter-spacing:-.3px}
+.tb-logo span{color:var(--accent)}
+.tb-right{display:flex;align-items:center;gap:12px}
+.tb-topic{font-size:11px;color:var(--muted2);letter-spacing:.04em}
+#run-btn{display:flex;align-items:center;gap:8px;background:var(--accent);color:#fff;border:none;padding:8px 18px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;letter-spacing:.04em}
+#run-btn:hover{background:var(--accent2);transform:translateY(-1px)}
+#run-btn:active{transform:translateY(0)}
+#run-btn.running{background:#333;cursor:not-allowed}
+.run-dot{width:6px;height:6px;border-radius:50%;background:#4ade80;animation:pulse 1s ease infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+
+/* ── SIDEBAR ── */
+.sb-section{padding:12px 0;border-bottom:1px solid var(--border)}
+.sb-section-title{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);padding:0 16px;margin-bottom:8px}
+.topic-btn{display:flex;align-items:center;gap:10px;width:100%;padding:8px 16px;background:none;border:none;color:var(--muted2);font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer;transition:all .15s;text-align:left}
+.topic-btn:hover{background:rgba(124,111,255,.06);color:var(--text)}
+.topic-btn.active{background:rgba(124,111,255,.1);color:var(--accent);border-right:2px solid var(--accent)}
+.topic-icon{width:20px;text-align:center;font-size:12px;flex-shrink:0}
+.topic-meta{display:flex;flex-direction:column;gap:1px;flex:1}
+.topic-name{font-size:11px}
+.topic-count{font-size:9px;color:var(--muted)}
+.topic-badge{font-size:9px;padding:2px 6px;border-radius:3px;flex-shrink:0}
+.badge-easy{background:rgba(74,222,128,.1);color:var(--green)}
+.badge-med{background:rgba(251,191,36,.1);color:var(--yellow)}
+
+.prob-btn{display:flex;align-items:center;gap:10px;width:100%;padding:7px 16px 7px 28px;background:none;border:none;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer;transition:all .15s;text-align:left}
+.prob-btn:hover{color:var(--text);background:rgba(255,255,255,.02)}
+.prob-btn.active{color:var(--text);background:rgba(124,111,255,.06)}
+.prob-btn.solved{color:var(--green)}
+.prob-btn.solved::before{content:'✓ ';color:var(--green)}
+.prob-num{color:var(--muted);margin-right:4px}
+
+/* ── EDITOR ── */
+#editor-header{display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:36px;border-bottom:1px solid var(--border);background:var(--panel);flex-shrink:0}
+.eh-file{font-size:11px;color:var(--muted2);display:flex;align-items:center;gap:8px}
+.eh-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);opacity:.6}
+.eh-actions{display:flex;gap:8px}
+.eh-btn{font-size:10px;padding:4px 10px;border-radius:4px;border:1px solid var(--border2);background:none;color:var(--muted2);cursor:pointer;font-family:'JetBrains Mono',monospace;transition:all .15s}
+.eh-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+#problem-panel{padding:16px;border-bottom:1px solid var(--border);background:#0c0c10;max-height:180px;overflow-y:auto;flex-shrink:0}
+.pp-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:10px}
+.pp-diff{font-size:9px;padding:2px 7px;border-radius:3px}
+.diff-easy{background:rgba(74,222,128,.12);color:var(--green)}
+.diff-medium{background:rgba(251,191,36,.12);color:var(--yellow)}
+.diff-hard{background:rgba(248,113,113,.12);color:var(--red)}
+.pp-desc{font-size:11px;color:var(--muted2);line-height:1.7;margin-bottom:8px}
+.pp-example{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:4px;padding:8px 12px;font-size:10px;color:var(--muted2);line-height:1.8}
+.pp-example strong{color:var(--text)}
+.pp-hint{font-size:10px;color:var(--accent);margin-top:8px;cursor:pointer;opacity:.7}
+.pp-hint:hover{opacity:1}
+#hint-text{display:none;font-size:10px;color:var(--gold);margin-top:6px;line-height:1.7;background:rgba(184,168,120,.05);border:1px solid rgba(184,168,120,.15);border-radius:4px;padding:8px}
+
+#code-editor-outer{flex:1;overflow:hidden;position:relative}
+#code-editor{width:100%;height:100%;background:#0a0a0d;border:none;outline:none;resize:none;font-family:'JetBrains Mono',monospace;font-size:13px;color:#e8e4dc;padding:16px;line-height:1.7;tab-size:2;caret-color:var(--accent);overflow-y:auto}
+#code-editor::selection{background:rgba(124,111,255,.25)}
+
+/* ── TERMINAL ── */
+#term-header{display:flex;align-items:center;justify-content:space-between;padding:0 14px;height:32px;border-bottom:1px solid var(--border);flex-shrink:0}
+.term-title{font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+#term-status{font-size:9px;padding:2px 8px;border-radius:3px}
+.status-ok{background:rgba(74,222,128,.1);color:var(--green)}
+.status-err{background:rgba(248,113,113,.1);color:var(--red)}
+.status-run{background:rgba(124,111,255,.1);color:var(--accent)}
+#term-clear{font-size:9px;color:var(--muted);background:none;border:none;cursor:pointer;font-family:'JetBrains Mono',monospace;letter-spacing:.06em}
+#term-clear:hover{color:var(--text)}
+#terminal{flex:1;overflow-y:auto;padding:12px 16px;font-size:12px;line-height:1.7;color:#7a7890}
+#terminal .t-prompt{color:var(--accent);margin-right:6px}
+#terminal .t-out{color:#c8c4d8;white-space:pre-wrap}
+#terminal .t-err{color:var(--red);white-space:pre-wrap}
+#terminal .t-info{color:var(--muted2);font-style:italic}
+#terminal .t-ok{color:var(--green)}
+#terminal .t-line{margin-bottom:2px}
+
+/* ── MOBILE ── */
+#mobile-warn{display:none;position:fixed;inset:0;background:#0a0a0c;align-items:center;justify-content:center;text-align:center;padding:32px;z-index:999}
+@media(max-width:700px){#app{display:none}#mobile-warn{display:flex;flex-direction:column;gap:16px}}
+.mw-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--text)}
+.mw-sub{font-size:12px;color:var(--muted2);line-height:1.8;max-width:280px}
+
+/* scrollbars */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+
+<div id="mobile-warn">
+  <div class="mw-title">Open on PC</div>
+  <div class="mw-sub">This C++ practice environment needs a keyboard and larger screen. Open it on your laptop or desktop.</div>
+</div>
+
+<div id="app">
+
+  <!-- TOPBAR -->
+  <div id="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="tb-logo" style="cursor:pointer" onclick="freeMode()" title="Free coding mode">cpp<span>path</span></div>
+      <span style="color:var(--muted);font-weight:300;font-size:11px">// by shubho</span>
+    </div>
+    <div class="tb-right">
+      <span class="tb-topic" id="tb-topic-label">Select a problem</span>
+      <button id="run-btn" onclick="runCode()">
+        <span>▶ Run</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <div style="padding:12px 16px 8px;border-bottom:1px solid var(--border)">
+      <div style="font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:4px">Progress</div>
+      <div style="height:3px;background:var(--border);border-radius:2px;overflow:hidden">
+        <div id="prog-bar" style="height:100%;background:var(--accent);border-radius:2px;width:0%;transition:width .4s ease"></div>
+      </div>
+      <div style="font-size:10px;color:var(--muted2);margin-top:4px"><span id="prog-done">0</span> / <span id="prog-total">0</span> solved</div>
+    </div>
+    <div id="topic-list"></div>
+  </div>
+
+  <!-- MAIN -->
+  <div id="main">
+    <div id="editor-wrap" style="display:flex;flex-direction:column">
+      <div id="editor-header">
+        <div class="eh-file"><div class="eh-dot"></div><span id="file-name">solution.cpp</span></div>
+        <div class="eh-actions">
+          <button class="eh-btn" onclick="resetCode()">Reset</button>
+          <button class="eh-btn" onclick="loadSolution()">Show Solution</button>
+        </div>
+      </div>
+      <div id="problem-panel">
+        <div class="pp-title" id="pp-title">Welcome to C++ Path</div>
+        <div class="pp-desc" id="pp-desc">Select a topic and problem from the sidebar to get started. Problems are ordered from easiest to hardest within each topic — work through them in order.</div>
+        <div id="pp-example"></div>
+        <div class="pp-hint" id="pp-hint-btn" onclick="toggleHint()" style="display:none">💡 Show hint</div>
+        <div id="hint-text"></div>
+      </div>
+      <div id="code-editor-outer">
+        <textarea id="code-editor" spellcheck="false" placeholder="// Select a problem to start..."></textarea>
+      </div>
+    </div>
+
+    <div id="terminal-wrap">
+      <div id="term-header">
+        <div class="term-title">
+          ⬤ Terminal
+          <span id="term-status"></span>
+        </div>
+        <button id="term-clear" onclick="clearTerminal()">clear</button>
+      </div>
+      <div id="terminal">
+        <div class="t-line"><span class="t-info">// C++ execution powered by Judge0</span></div>
+        <div class="t-line"><span class="t-info">// Press ▶ Run or Ctrl+Enter to execute your code</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// DATA — PROBLEMS
+// ══════════════════════════════════════════
+const TOPICS = [
+  {
+    id:'arrays', icon:'▦', name:'Arrays', color:'#7c6fff',
+    problems:[
+      {
+        id:'a1', title:'Find Maximum', diff:'easy',
+        desc:'Given an array of integers, find and return the maximum element.',
+        example:'Input: [3, 1, 7, 2, 5]\nOutput: 7',
+        hint:'Loop through all elements, keep track of the largest one seen so far.',
+        starter:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nint findMax(vector<int>& arr) {\n    // Your code here\n    \n}\n\nint main() {\n    vector<int> arr = {3, 1, 7, 2, 5};\n    cout << findMax(arr) << endl; // Expected: 7\n    \n    vector<int> arr2 = {-5, -1, -8, -3};\n    cout << findMax(arr2) << endl; // Expected: -1\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nint findMax(vector<int>& arr) {\n    int maxVal = arr[0];\n    for (int i = 1; i < arr.size(); i++) {\n        if (arr[i] > maxVal) maxVal = arr[i];\n    }\n    return maxVal;\n}\n\nint main() {\n    vector<int> arr = {3, 1, 7, 2, 5};\n    cout << findMax(arr) << endl;\n    vector<int> arr2 = {-5, -1, -8, -3};\n    cout << findMax(arr2) << endl;\n    return 0;\n}'
+      },
+      {
+        id:'a2', title:'Reverse Array', diff:'easy',
+        desc:'Reverse an array in-place without using extra space.',
+        example:'Input: [1, 2, 3, 4, 5]\nOutput: [5, 4, 3, 2, 1]',
+        hint:'Use two pointers — one at start, one at end. Swap and move them toward each other.',
+        starter:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nvoid reverseArray(vector<int>& arr) {\n    // Your code here — in-place, no extra array\n    \n}\n\nint main() {\n    vector<int> arr = {1, 2, 3, 4, 5};\n    reverseArray(arr);\n    for (int x : arr) cout << x << " ";\n    cout << endl; // Expected: 5 4 3 2 1\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nvoid reverseArray(vector<int>& arr) {\n    int left = 0, right = arr.size() - 1;\n    while (left < right) {\n        swap(arr[left], arr[right]);\n        left++; right--;\n    }\n}\n\nint main() {\n    vector<int> arr = {1, 2, 3, 4, 5};\n    reverseArray(arr);\n    for (int x : arr) cout << x << " ";\n    cout << endl;\n    return 0;\n}'
+      },
+      {
+        id:'a3', title:'Two Sum', diff:'easy',
+        desc:'Given an array and a target, return indices of two numbers that add up to target.',
+        example:'Input: arr=[2,7,11,15], target=9\nOutput: 0 1  (because arr[0]+arr[1]=9)',
+        hint:'Use a nested loop — for each element, check if target minus that element exists further in the array.',
+        starter:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nvector<int> twoSum(vector<int>& arr, int target) {\n    // Your code here\n    \n}\n\nint main() {\n    vector<int> arr = {2, 7, 11, 15};\n    vector<int> res = twoSum(arr, 9);\n    cout << res[0] << " " << res[1] << endl; // Expected: 0 1\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <vector>\n#include <unordered_map>\nusing namespace std;\n\nvector<int> twoSum(vector<int>& arr, int target) {\n    unordered_map<int,int> seen;\n    for (int i = 0; i < arr.size(); i++) {\n        int need = target - arr[i];\n        if (seen.count(need)) return {seen[need], i};\n        seen[arr[i]] = i;\n    }\n    return {};\n}\n\nint main() {\n    vector<int> arr = {2, 7, 11, 15};\n    vector<int> res = twoSum(arr, 9);\n    cout << res[0] << " " << res[1] << endl;\n    return 0;\n}'
+      },
+      {
+        id:'a4', title:'Move Zeros', diff:'easy',
+        desc:'Move all zeros to the end of the array while maintaining the relative order of non-zero elements. Do it in-place.',
+        example:'Input: [0, 1, 0, 3, 12]\nOutput: [1, 3, 12, 0, 0]',
+        hint:'Keep a pointer for the next position to place a non-zero element. Two-pass approach works.',
+        starter:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nvoid moveZeros(vector<int>& arr) {\n    // Your code here\n    \n}\n\nint main() {\n    vector<int> arr = {0, 1, 0, 3, 12};\n    moveZeros(arr);\n    for (int x : arr) cout << x << " ";\n    cout << endl; // Expected: 1 3 12 0 0\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nvoid moveZeros(vector<int>& arr) {\n    int pos = 0;\n    for (int i = 0; i < arr.size(); i++)\n        if (arr[i] != 0) arr[pos++] = arr[i];\n    while (pos < arr.size()) arr[pos++] = 0;\n}\n\nint main() {\n    vector<int> arr = {0, 1, 0, 3, 12};\n    moveZeros(arr);\n    for (int x : arr) cout << x << " ";\n    cout << endl;\n    return 0;\n}'
+      },
+      {
+        id:'a5', title:'Max Subarray Sum', diff:'medium',
+        desc:'Find the contiguous subarray with the largest sum (Kadane\'s Algorithm).',
+        example:'Input: [-2, 1, -3, 4, -1, 2, 1, -5, 4]\nOutput: 6  (subarray [4,-1,2,1])',
+        hint:'At each element, decide: extend the current subarray or start fresh. current = max(arr[i], current + arr[i]).',
+        starter:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nint maxSubarray(vector<int>& arr) {\n    // Kadane\'s algorithm\n    \n}\n\nint main() {\n    vector<int> arr = {-2, 1, -3, 4, -1, 2, 1, -5, 4};\n    cout << maxSubarray(arr) << endl; // Expected: 6\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nint maxSubarray(vector<int>& arr) {\n    int maxSum = arr[0], cur = arr[0];\n    for (int i = 1; i < arr.size(); i++) {\n        cur = max(arr[i], cur + arr[i]);\n        maxSum = max(maxSum, cur);\n    }\n    return maxSum;\n}\n\nint main() {\n    vector<int> arr = {-2, 1, -3, 4, -1, 2, 1, -5, 4};\n    cout << maxSubarray(arr) << endl;\n    return 0;\n}'
+      }
+    ]
+  },
+  {
+    id:'strings', icon:'≡', name:'Strings', color:'#22d3ee',
+    problems:[
+      {
+        id:'s1', title:'Reverse a String', diff:'easy',
+        desc:'Reverse a string in-place using a character array.',
+        example:'Input: "hello"\nOutput: "olleh"',
+        hint:'Two pointer swap — same as reversing an array.',
+        starter:'#include <iostream>\n#include <string>\nusing namespace std;\n\nvoid reverseString(string& s) {\n    // Your code here\n    \n}\n\nint main() {\n    string s = "hello";\n    reverseString(s);\n    cout << s << endl; // Expected: olleh\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <string>\nusing namespace std;\n\nvoid reverseString(string& s) {\n    int l = 0, r = s.size() - 1;\n    while (l < r) { swap(s[l++], s[r--]); }\n}\n\nint main() {\n    string s = "hello";\n    reverseString(s);\n    cout << s << endl;\n    return 0;\n}'
+      },
+      {
+        id:'s2', title:'Check Palindrome', diff:'easy',
+        desc:'Check if a string reads the same forwards and backwards.',
+        example:'Input: "racecar" → true\nInput: "hello" → false',
+        hint:'Two pointers from both ends. If any pair doesn\'t match, it\'s not a palindrome.',
+        starter:'#include <iostream>\n#include <string>\nusing namespace std;\n\nbool isPalindrome(string s) {\n    // Your code here\n    \n}\n\nint main() {\n    cout << isPalindrome("racecar") << endl; // 1\n    cout << isPalindrome("hello") << endl;   // 0\n    cout << isPalindrome("abba") << endl;    // 1\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <string>\nusing namespace std;\n\nbool isPalindrome(string s) {\n    int l = 0, r = s.size() - 1;\n    while (l < r) {\n        if (s[l++] != s[r--]) return false;\n    }\n    return true;\n}\n\nint main() {\n    cout << isPalindrome("racecar") << endl;\n    cout << isPalindrome("hello") << endl;\n    cout << isPalindrome("abba") << endl;\n    return 0;\n}'
+      },
+      {
+        id:'s3', title:'Count Vowels', diff:'easy',
+        desc:'Count the number of vowels (a,e,i,o,u) in a string, case-insensitive.',
+        example:'Input: "Hello World"\nOutput: 3',
+        hint:'Loop through each character, convert to lowercase, check if it\'s in "aeiou".',
+        starter:'#include <iostream>\n#include <string>\nusing namespace std;\n\nint countVowels(string s) {\n    // Your code here\n    \n}\n\nint main() {\n    cout << countVowels("Hello World") << endl; // 3\n    cout << countVowels("AEIOU") << endl;        // 5\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <string>\nusing namespace std;\n\nint countVowels(string s) {\n    int count = 0;\n    string vowels = "aeiou";\n    for (char c : s) {\n        if (vowels.find(tolower(c)) != string::npos) count++;\n    }\n    return count;\n}\n\nint main() {\n    cout << countVowels("Hello World") << endl;\n    cout << countVowels("AEIOU") << endl;\n    return 0;\n}'
+      },
+      {
+        id:'s4', title:'Anagram Check', diff:'medium',
+        desc:'Check if two strings are anagrams of each other (same characters, different order).',
+        example:'Input: "listen", "silent" → true\nInput: "hello", "world" → false',
+        hint:'Sort both strings and compare. Or count character frequencies.',
+        starter:'#include <iostream>\n#include <string>\nusing namespace std;\n\nbool isAnagram(string s, string t) {\n    // Your code here\n    \n}\n\nint main() {\n    cout << isAnagram("listen", "silent") << endl; // 1\n    cout << isAnagram("hello", "world") << endl;   // 0\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <string>\n#include <algorithm>\nusing namespace std;\n\nbool isAnagram(string s, string t) {\n    if (s.size() != t.size()) return false;\n    sort(s.begin(), s.end());\n    sort(t.begin(), t.end());\n    return s == t;\n}\n\nint main() {\n    cout << isAnagram("listen", "silent") << endl;\n    cout << isAnagram("hello", "world") << endl;\n    return 0;\n}'
+      }
+    ]
+  },
+  {
+    id:'stack', icon:'⊟', name:'Stack', color:'#f59e0b',
+    problems:[
+      {
+        id:'st1', title:'Valid Parentheses', diff:'easy',
+        desc:'Given a string with only ( ) [ ] { }, check if all brackets are properly closed and nested.',
+        example:'Input: "()[]{}" → true\nInput: "([)]" → false\nInput: "{[]}" → true',
+        hint:'Use a stack. Push opening brackets. When you see a closing bracket, check if it matches the top of the stack.',
+        starter:'#include <iostream>\n#include <string>\n#include <stack>\nusing namespace std;\n\nbool isValid(string s) {\n    stack<char> st;\n    // Your code here\n    \n}\n\nint main() {\n    cout << isValid("()[]{}") << endl;  // 1\n    cout << isValid("([)]") << endl;    // 0\n    cout << isValid("{[]}") << endl;    // 1\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <string>\n#include <stack>\nusing namespace std;\n\nbool isValid(string s) {\n    stack<char> st;\n    for (char c : s) {\n        if (c==\'(\' || c==\'[\' || c==\'{\') { st.push(c); continue; }\n        if (st.empty()) return false;\n        if (c==\')\' && st.top()!=\'(\') return false;\n        if (c==\']\' && st.top()!=\'[\') return false;\n        if (c==\'}\' && st.top()!=\'{\') return false;\n        st.pop();\n    }\n    return st.empty();\n}\n\nint main() {\n    cout << isValid("()[]{}") << endl;\n    cout << isValid("([)]") << endl;\n    cout << isValid("{[]}") << endl;\n    return 0;\n}'
+      },
+      {
+        id:'st2', title:'Min Stack', diff:'medium',
+        desc:'Design a stack that supports push, pop, top, and getMin in O(1) time.',
+        example:'push(5), push(3), push(7), getMin()→3, pop(), getMin()→3, pop(), getMin()→5',
+        hint:'Use two stacks — one normal, one that only stores the current minimum at each state.',
+        starter:'#include <iostream>\n#include <stack>\nusing namespace std;\n\nclass MinStack {\npublic:\n    // Your code here\n    \n    void push(int val) {}\n    void pop() {}\n    int top() { return 0; }\n    int getMin() { return 0; }\n};\n\nint main() {\n    MinStack ms;\n    ms.push(5); ms.push(3); ms.push(7);\n    cout << ms.getMin() << endl; // 3\n    ms.pop();\n    cout << ms.getMin() << endl; // 3\n    ms.pop();\n    cout << ms.getMin() << endl; // 5\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <stack>\nusing namespace std;\n\nclass MinStack {\n    stack<int> s, minS;\npublic:\n    void push(int val) {\n        s.push(val);\n        if (minS.empty() || val <= minS.top()) minS.push(val);\n        else minS.push(minS.top());\n    }\n    void pop() { s.pop(); minS.pop(); }\n    int top() { return s.top(); }\n    int getMin() { return minS.top(); }\n};\n\nint main() {\n    MinStack ms;\n    ms.push(5); ms.push(3); ms.push(7);\n    cout << ms.getMin() << endl;\n    ms.pop(); cout << ms.getMin() << endl;\n    ms.pop(); cout << ms.getMin() << endl;\n    return 0;\n}'
+      },
+      {
+        id:'st3', title:'Next Greater Element', diff:'medium',
+        desc:'For each element in the array, find the next greater element to its right. If none, output -1.',
+        example:'Input: [4, 5, 2, 10, 8]\nOutput: [5, 10, 10, -1, -1]',
+        hint:'Use a monotonic stack. Traverse right to left, maintain a stack of elements waiting for their next greater.',
+        starter:'#include <iostream>\n#include <vector>\n#include <stack>\nusing namespace std;\n\nvector<int> nextGreater(vector<int>& arr) {\n    // Your code here\n    \n}\n\nint main() {\n    vector<int> arr = {4, 5, 2, 10, 8};\n    vector<int> res = nextGreater(arr);\n    for (int x : res) cout << x << " ";\n    cout << endl; // Expected: 5 10 10 -1 -1\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <vector>\n#include <stack>\nusing namespace std;\n\nvector<int> nextGreater(vector<int>& arr) {\n    int n = arr.size();\n    vector<int> res(n, -1);\n    stack<int> st;\n    for (int i = n-1; i >= 0; i--) {\n        while (!st.empty() && st.top() <= arr[i]) st.pop();\n        if (!st.empty()) res[i] = st.top();\n        st.push(arr[i]);\n    }\n    return res;\n}\n\nint main() {\n    vector<int> arr = {4, 5, 2, 10, 8};\n    vector<int> res = nextGreater(arr);\n    for (int x : res) cout << x << " ";\n    cout << endl;\n    return 0;\n}'
+      }
+    ]
+  },
+  {
+    id:'hashmap', icon:'⊞', name:'HashMap', color:'#ec4899',
+    problems:[
+      {
+        id:'h1', title:'Frequency Count', diff:'easy',
+        desc:'Count the frequency of each element in an array and print each element with its count.',
+        example:'Input: [1, 2, 2, 3, 1, 1]\nOutput: 1→3, 2→2, 3→1',
+        hint:'Use unordered_map<int,int>. Loop through array, increment map[element].',
+        starter:'#include <iostream>\n#include <vector>\n#include <unordered_map>\nusing namespace std;\n\nvoid frequency(vector<int>& arr) {\n    // Your code here\n    \n}\n\nint main() {\n    vector<int> arr = {1, 2, 2, 3, 1, 1};\n    frequency(arr);\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <vector>\n#include <unordered_map>\nusing namespace std;\n\nvoid frequency(vector<int>& arr) {\n    unordered_map<int,int> freq;\n    for (int x : arr) freq[x]++;\n    for (auto& p : freq) cout << p.first << " -> " << p.second << endl;\n}\n\nint main() {\n    vector<int> arr = {1, 2, 2, 3, 1, 1};\n    frequency(arr);\n    return 0;\n}'
+      },
+      {
+        id:'h2', title:'First Non-Repeating', diff:'easy',
+        desc:'Find the first character in a string that does not repeat.',
+        example:'Input: "leetcode"\nOutput: l\nInput: "aabb"\nOutput: No unique character',
+        hint:'Two passes — first count frequencies, then find the first with count 1.',
+        starter:'#include <iostream>\n#include <string>\n#include <unordered_map>\nusing namespace std;\n\nchar firstUnique(string s) {\n    // Return \'\\\\0\' if none found\n    \n}\n\nint main() {\n    cout << firstUnique("leetcode") << endl;  // l\n    cout << firstUnique("loveleetcode") << endl; // v\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <string>\n#include <unordered_map>\nusing namespace std;\n\nchar firstUnique(string s) {\n    unordered_map<char,int> freq;\n    for (char c : s) freq[c]++;\n    for (char c : s) if (freq[c] == 1) return c;\n    return \'\\0\';\n}\n\nint main() {\n    cout << firstUnique("leetcode") << endl;\n    cout << firstUnique("loveleetcode") << endl;\n    return 0;\n}'
+      },
+      {
+        id:'h3', title:'Group Anagrams', diff:'medium',
+        desc:'Group strings that are anagrams of each other together.',
+        example:'Input: ["eat","tea","tan","ate","nat","bat"]\nOutput: [["eat","tea","ate"],["tan","nat"],["bat"]]',
+        hint:'Sort each string to get a key. Use a map from sorted string to list of originals.',
+        starter:'#include <iostream>\n#include <vector>\n#include <string>\n#include <unordered_map>\n#include <algorithm>\nusing namespace std;\n\nvector<vector<string>> groupAnagrams(vector<string>& strs) {\n    // Your code here\n    \n}\n\nint main() {\n    vector<string> strs = {"eat","tea","tan","ate","nat","bat"};\n    auto groups = groupAnagrams(strs);\n    for (auto& g : groups) {\n        for (auto& s : g) cout << s << " ";\n        cout << endl;\n    }\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <vector>\n#include <string>\n#include <unordered_map>\n#include <algorithm>\nusing namespace std;\n\nvector<vector<string>> groupAnagrams(vector<string>& strs) {\n    unordered_map<string, vector<string>> m;\n    for (string s : strs) {\n        string key = s;\n        sort(key.begin(), key.end());\n        m[key].push_back(s);\n    }\n    vector<vector<string>> res;\n    for (auto& p : m) res.push_back(p.second);\n    return res;\n}\n\nint main() {\n    vector<string> strs = {"eat","tea","tan","ate","nat","bat"};\n    auto groups = groupAnagrams(strs);\n    for (auto& g : groups) {\n        for (auto& s : g) cout << s << " ";\n        cout << endl;\n    }\n    return 0;\n}'
+      }
+    ]
+  },
+  {
+    id:'twoptr', icon:'⇌', name:'Two Pointers', color:'#34d399',
+    problems:[
+      {
+        id:'tp1', title:'Sorted Two Sum', diff:'easy',
+        desc:'Given a SORTED array, find two numbers that add up to target. Return their 1-indexed positions.',
+        example:'Input: [2, 7, 11, 15], target=9\nOutput: 1 2',
+        hint:'Left pointer at start, right at end. If sum too big move right left. If too small move left right.',
+        starter:'#include <iostream>\n#include <vector>\nusing namespace std;\n\npair<int,int> sortedTwoSum(vector<int>& arr, int target) {\n    // Two pointer approach — O(n) time\n    \n}\n\nint main() {\n    vector<int> arr = {2, 7, 11, 15};\n    auto [a, b] = sortedTwoSum(arr, 9);\n    cout << a << " " << b << endl; // 1 2\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <vector>\nusing namespace std;\n\npair<int,int> sortedTwoSum(vector<int>& arr, int target) {\n    int l = 0, r = arr.size() - 1;\n    while (l < r) {\n        int sum = arr[l] + arr[r];\n        if (sum == target) return {l+1, r+1};\n        else if (sum < target) l++;\n        else r--;\n    }\n    return {-1,-1};\n}\n\nint main() {\n    vector<int> arr = {2, 7, 11, 15};\n    auto [a, b] = sortedTwoSum(arr, 9);\n    cout << a << " " << b << endl;\n    return 0;\n}'
+      },
+      {
+        id:'tp2', title:'Remove Duplicates', diff:'easy',
+        desc:'Remove duplicates from a sorted array in-place. Return the length of the unique part.',
+        example:'Input: [1,1,2,3,3]\nOutput: 3  (array becomes [1,2,3,...])',
+        hint:'Slow pointer tracks where to place next unique. Fast pointer scans ahead.',
+        starter:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nint removeDuplicates(vector<int>& arr) {\n    // Your code here\n    \n}\n\nint main() {\n    vector<int> arr = {1,1,2,3,3};\n    int len = removeDuplicates(arr);\n    cout << len << endl; // 3\n    for (int i=0;i<len;i++) cout << arr[i] << " ";\n    cout << endl; // 1 2 3\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nint removeDuplicates(vector<int>& arr) {\n    if (arr.empty()) return 0;\n    int slow = 0;\n    for (int fast = 1; fast < arr.size(); fast++)\n        if (arr[fast] != arr[slow]) arr[++slow] = arr[fast];\n    return slow + 1;\n}\n\nint main() {\n    vector<int> arr = {1,1,2,3,3};\n    int len = removeDuplicates(arr);\n    cout << len << endl;\n    for (int i=0;i<len;i++) cout << arr[i] << " ";\n    cout << endl;\n    return 0;\n}'
+      },
+      {
+        id:'tp3', title:'Container With Most Water', diff:'medium',
+        desc:'Given heights of vertical lines, find two lines that form a container holding the most water.',
+        example:'Input: [1,8,6,2,5,4,8,3,7]\nOutput: 49',
+        hint:'Two pointers. Area = min(height[l], height[r]) * (r-l). Move the pointer with smaller height.',
+        starter:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nint maxWater(vector<int>& h) {\n    // Your code here\n    \n}\n\nint main() {\n    vector<int> h = {1,8,6,2,5,4,8,3,7};\n    cout << maxWater(h) << endl; // 49\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nint maxWater(vector<int>& h) {\n    int l = 0, r = h.size()-1, res = 0;\n    while (l < r) {\n        res = max(res, min(h[l],h[r]) * (r-l));\n        if (h[l] < h[r]) l++; else r--;\n    }\n    return res;\n}\n\nint main() {\n    vector<int> h = {1,8,6,2,5,4,8,3,7};\n    cout << maxWater(h) << endl;\n    return 0;\n}'
+      }
+    ]
+  },
+  {
+    id:'recursion', icon:'↺', name:'Recursion', color:'#a78bfa',
+    problems:[
+      {
+        id:'r1', title:'Factorial', diff:'easy',
+        desc:'Calculate n! (factorial) using recursion.',
+        example:'Input: 5\nOutput: 120  (5*4*3*2*1)',
+        hint:'Base case: factorial(0) = 1. Recursive case: n * factorial(n-1).',
+        starter:'#include <iostream>\nusing namespace std;\n\nint factorial(int n) {\n    // Your code here\n    \n}\n\nint main() {\n    cout << factorial(5) << endl;  // 120\n    cout << factorial(0) << endl;  // 1\n    cout << factorial(7) << endl;  // 5040\n    return 0;\n}',
+        solution:'#include <iostream>\nusing namespace std;\n\nint factorial(int n) {\n    if (n <= 1) return 1;\n    return n * factorial(n-1);\n}\n\nint main() {\n    cout << factorial(5) << endl;\n    cout << factorial(0) << endl;\n    cout << factorial(7) << endl;\n    return 0;\n}'
+      },
+      {
+        id:'r2', title:'Fibonacci', diff:'easy',
+        desc:'Return the nth Fibonacci number. F(0)=0, F(1)=1, F(n)=F(n-1)+F(n-2).',
+        example:'Input: 6\nOutput: 8  (0,1,1,2,3,5,8)',
+        hint:'Base cases: fib(0)=0, fib(1)=1. Then fib(n) = fib(n-1) + fib(n-2).',
+        starter:'#include <iostream>\nusing namespace std;\n\nint fib(int n) {\n    // Your code here\n    \n}\n\nint main() {\n    cout << fib(6) << endl;  // 8\n    cout << fib(10) << endl; // 55\n    return 0;\n}',
+        solution:'#include <iostream>\nusing namespace std;\n\nint fib(int n) {\n    if (n <= 1) return n;\n    return fib(n-1) + fib(n-2);\n}\n\nint main() {\n    cout << fib(6) << endl;\n    cout << fib(10) << endl;\n    return 0;\n}'
+      },
+      {
+        id:'r3', title:'Binary Search Recursive', diff:'medium',
+        desc:'Implement binary search recursively. Return index of target, or -1 if not found.',
+        example:'Input: arr=[1,3,5,7,9,11], target=7\nOutput: 3',
+        hint:'Base: if left > right return -1. Find mid. If arr[mid]==target return mid. Else recurse left or right half.',
+        starter:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nint binarySearch(vector<int>& arr, int target, int left, int right) {\n    // Your code here\n    \n}\n\nint main() {\n    vector<int> arr = {1,3,5,7,9,11};\n    cout << binarySearch(arr, 7, 0, arr.size()-1) << endl;  // 3\n    cout << binarySearch(arr, 4, 0, arr.size()-1) << endl;  // -1\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nint binarySearch(vector<int>& arr, int target, int left, int right) {\n    if (left > right) return -1;\n    int mid = left + (right-left)/2;\n    if (arr[mid] == target) return mid;\n    if (arr[mid] < target) return binarySearch(arr, target, mid+1, right);\n    return binarySearch(arr, target, left, mid-1);\n}\n\nint main() {\n    vector<int> arr = {1,3,5,7,9,11};\n    cout << binarySearch(arr, 7, 0, arr.size()-1) << endl;\n    cout << binarySearch(arr, 4, 0, arr.size()-1) << endl;\n    return 0;\n}'
+      }
+    ]
+  },
+  {
+    id:'sliding', icon:'⊃', name:'Sliding Window', color:'#06b6d4',
+    problems:[
+      {
+        id:'sw1', title:'Max Sum Subarray of Size K', diff:'easy',
+        desc:'Find the maximum sum of any contiguous subarray of size k.',
+        example:'Input: arr=[2,1,5,1,3,2], k=3\nOutput: 9  (subarray [5,1,3])',
+        hint:'Add first k elements. Then slide: add next element, remove first. Track max.',
+        starter:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nint maxSumK(vector<int>& arr, int k) {\n    // Sliding window O(n)\n    \n}\n\nint main() {\n    vector<int> arr = {2,1,5,1,3,2};\n    cout << maxSumK(arr, 3) << endl; // 9\n    vector<int> arr2 = {1,4,2,10,2,3,1,0,20};\n    cout << maxSumK(arr2, 4) << endl; // 24\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nint maxSumK(vector<int>& arr, int k) {\n    int sum = 0, maxSum = 0;\n    for (int i = 0; i < k; i++) sum += arr[i];\n    maxSum = sum;\n    for (int i = k; i < (int)arr.size(); i++) {\n        sum += arr[i] - arr[i-k];\n        maxSum = max(maxSum, sum);\n    }\n    return maxSum;\n}\n\nint main() {\n    vector<int> arr = {2,1,5,1,3,2};\n    cout << maxSumK(arr, 3) << endl;\n    vector<int> arr2 = {1,4,2,10,2,3,1,0,20};\n    cout << maxSumK(arr2, 4) << endl;\n    return 0;\n}'
+      },
+      {
+        id:'sw2', title:'Longest Substring No Repeat', diff:'medium',
+        desc:'Find the length of the longest substring without repeating characters.',
+        example:'Input: "abcabcbb"\nOutput: 3  (abc)',
+        hint:'Use a set and two pointers. Expand right, shrink left when duplicate found.',
+        starter:'#include <iostream>\n#include <string>\n#include <unordered_set>\nusing namespace std;\n\nint lengthOfLongest(string s) {\n    \n}\n\nint main() {\n    cout << lengthOfLongest("abcabcbb") << endl; // 3\n    cout << lengthOfLongest("pwwkew") << endl;    // 3\n    cout << lengthOfLongest("bbbbb") << endl;     // 1\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <string>\n#include <unordered_set>\nusing namespace std;\n\nint lengthOfLongest(string s) {\n    unordered_set<char> seen;\n    int left = 0, res = 0;\n    for (int right = 0; right < (int)s.size(); right++) {\n        while (seen.count(s[right])) seen.erase(s[left++]);\n        seen.insert(s[right]);\n        res = max(res, right - left + 1);\n    }\n    return res;\n}\n\nint main() {\n    cout << lengthOfLongest("abcabcbb") << endl;\n    cout << lengthOfLongest("pwwkew") << endl;\n    cout << lengthOfLongest("bbbbb") << endl;\n    return 0;\n}'
+      },
+      {
+        id:'sw3', title:'Fruits Into Baskets', diff:'medium',
+        desc:'Find the longest subarray with at most 2 distinct values.',
+        example:'Input: [1,2,1,2,3]\nOutput: 4',
+        hint:'Sliding window with a map. Shrink left when distinct types exceed 2.',
+        starter:'#include <iostream>\n#include <vector>\n#include <unordered_map>\nusing namespace std;\n\nint fruitsInBaskets(vector<int>& arr) {\n    \n}\n\nint main() {\n    vector<int> a = {1,2,1,2,3};\n    cout << fruitsInBaskets(a) << endl; // 4\n    vector<int> b = {3,3,3,1,2,1,1,2,3,3,4};\n    cout << fruitsInBaskets(b) << endl; // 5\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <vector>\n#include <unordered_map>\nusing namespace std;\n\nint fruitsInBaskets(vector<int>& arr) {\n    unordered_map<int,int> cnt;\n    int left = 0, res = 0;\n    for (int right = 0; right < (int)arr.size(); right++) {\n        cnt[arr[right]]++;\n        while (cnt.size() > 2) {\n            cnt[arr[left]]--;\n            if (cnt[arr[left]] == 0) cnt.erase(arr[left]);\n            left++;\n        }\n        res = max(res, right - left + 1);\n    }\n    return res;\n}\n\nint main() {\n    vector<int> a = {1,2,1,2,3};\n    cout << fruitsInBaskets(a) << endl;\n    vector<int> b = {3,3,3,1,2,1,1,2,3,3,4};\n    cout << fruitsInBaskets(b) << endl;\n    return 0;\n}'
+      }
+    ]
+  },
+  {
+    id:'linkedlist', icon:'⟶', name:'Linked List', color:'#f97316',
+    problems:[
+      {
+        id:'ll1', title:'Reverse Linked List', diff:'easy',
+        desc:'Reverse a singly linked list iteratively.',
+        example:'Input: 1->2->3->4->5\nOutput: 5->4->3->2->1',
+        hint:'Three pointers: prev=null, curr, next. At each step: save next, point curr->prev, advance.',
+        starter:'#include <iostream>\nusing namespace std;\nstruct Node { int val; Node* next; Node(int v):val(v),next(nullptr){} };\n\nNode* reverse(Node* head) {\n    \n}\n\nvoid print(Node* h){while(h){cout<<h->val;if(h->next)cout<<"->";h=h->next;}cout<<endl;}\n\nint main() {\n    Node* h=new Node(1); h->next=new Node(2); h->next->next=new Node(3);\n    h->next->next->next=new Node(4); h->next->next->next->next=new Node(5);\n    print(reverse(h)); // 5->4->3->2->1\n    return 0;\n}',
+        solution:'#include <iostream>\nusing namespace std;\nstruct Node { int val; Node* next; Node(int v):val(v),next(nullptr){} };\n\nNode* reverse(Node* head) {\n    Node* prev=nullptr, *curr=head;\n    while(curr){ Node* nxt=curr->next; curr->next=prev; prev=curr; curr=nxt; }\n    return prev;\n}\n\nvoid print(Node* h){while(h){cout<<h->val;if(h->next)cout<<"->";h=h->next;}cout<<endl;}\n\nint main() {\n    Node* h=new Node(1); h->next=new Node(2); h->next->next=new Node(3);\n    h->next->next->next=new Node(4); h->next->next->next->next=new Node(5);\n    print(reverse(h));\n    return 0;\n}'
+      },
+      {
+        id:'ll2', title:'Find Middle', diff:'easy',
+        desc:'Find the middle node of a linked list using fast/slow pointers.',
+        example:'1->2->3->4->5 -> middle is 3\n1->2->3->4 -> middle is 3',
+        hint:'Fast moves 2 steps, slow moves 1. When fast reaches end, slow is at middle.',
+        starter:'#include <iostream>\nusing namespace std;\nstruct Node { int val; Node* next; Node(int v):val(v),next(nullptr){} };\n\nint findMiddle(Node* head) {\n    \n}\n\nint main() {\n    Node* h1=new Node(1); h1->next=new Node(2); h1->next->next=new Node(3);\n    h1->next->next->next=new Node(4); h1->next->next->next->next=new Node(5);\n    cout << findMiddle(h1) << endl; // 3\n    Node* h2=new Node(1); h2->next=new Node(2); h2->next->next=new Node(3); h2->next->next->next=new Node(4);\n    cout << findMiddle(h2) << endl; // 3\n    return 0;\n}',
+        solution:'#include <iostream>\nusing namespace std;\nstruct Node { int val; Node* next; Node(int v):val(v),next(nullptr){} };\n\nint findMiddle(Node* head) {\n    Node* slow=head, *fast=head;\n    while(fast&&fast->next){ slow=slow->next; fast=fast->next->next; }\n    return slow->val;\n}\n\nint main() {\n    Node* h1=new Node(1); h1->next=new Node(2); h1->next->next=new Node(3);\n    h1->next->next->next=new Node(4); h1->next->next->next->next=new Node(5);\n    cout << findMiddle(h1) << endl;\n    Node* h2=new Node(1); h2->next=new Node(2); h2->next->next=new Node(3); h2->next->next->next=new Node(4);\n    cout << findMiddle(h2) << endl;\n    return 0;\n}'
+      },
+      {
+        id:'ll3', title:'Detect Cycle', diff:'medium',
+        desc:'Detect if a linked list has a cycle using Floyd\'s algorithm.',
+        example:'1->2->3->4->2 (cycle) -> true\n1->2->3 -> false',
+        hint:'Fast moves 2 steps, slow moves 1. If they ever meet, there is a cycle.',
+        starter:'#include <iostream>\nusing namespace std;\nstruct Node { int val; Node* next; Node(int v):val(v),next(nullptr){} };\n\nbool hasCycle(Node* head) {\n    \n}\n\nint main() {\n    Node* h=new Node(1); h->next=new Node(2); h->next->next=new Node(3); h->next->next->next=new Node(4);\n    h->next->next->next->next=h->next; // cycle\n    cout << hasCycle(h) << endl; // 1\n    Node* h2=new Node(1); h2->next=new Node(2); h2->next->next=new Node(3);\n    cout << hasCycle(h2) << endl; // 0\n    return 0;\n}',
+        solution:'#include <iostream>\nusing namespace std;\nstruct Node { int val; Node* next; Node(int v):val(v),next(nullptr){} };\n\nbool hasCycle(Node* head) {\n    Node* slow=head, *fast=head;\n    while(fast&&fast->next){ slow=slow->next; fast=fast->next->next; if(slow==fast)return true; }\n    return false;\n}\n\nint main() {\n    Node* h=new Node(1); h->next=new Node(2); h->next->next=new Node(3); h->next->next->next=new Node(4);\n    h->next->next->next->next=h->next;\n    cout << hasCycle(h) << endl;\n    Node* h2=new Node(1); h2->next=new Node(2); h2->next->next=new Node(3);\n    cout << hasCycle(h2) << endl;\n    return 0;\n}'
+      },
+      {
+        id:'ll4', title:'Merge Two Sorted Lists', diff:'medium',
+        desc:'Merge two sorted linked lists into one sorted list.',
+        example:'1->2->4 and 1->3->4 -> 1->1->2->3->4->4',
+        hint:'Dummy head node. Compare fronts of both lists, attach smaller, advance.',
+        starter:'#include <iostream>\nusing namespace std;\nstruct Node { int val; Node* next; Node(int v):val(v),next(nullptr){} };\n\nNode* mergeSorted(Node* l1, Node* l2) {\n    \n}\n\nvoid print(Node* h){while(h){cout<<h->val;if(h->next)cout<<"->";h=h->next;}cout<<endl;}\n\nint main() {\n    Node* l1=new Node(1); l1->next=new Node(2); l1->next->next=new Node(4);\n    Node* l2=new Node(1); l2->next=new Node(3); l2->next->next=new Node(4);\n    print(mergeSorted(l1,l2)); // 1->1->2->3->4->4\n    return 0;\n}',
+        solution:'#include <iostream>\nusing namespace std;\nstruct Node { int val; Node* next; Node(int v):val(v),next(nullptr){} };\n\nNode* mergeSorted(Node* l1, Node* l2) {\n    Node dummy(0); Node* cur=&dummy;\n    while(l1&&l2){ if(l1->val<=l2->val){cur->next=l1;l1=l1->next;}else{cur->next=l2;l2=l2->next;} cur=cur->next; }\n    cur->next=l1?l1:l2;\n    return dummy.next;\n}\n\nvoid print(Node* h){while(h){cout<<h->val;if(h->next)cout<<"->";h=h->next;}cout<<endl;}\n\nint main() {\n    Node* l1=new Node(1); l1->next=new Node(2); l1->next->next=new Node(4);\n    Node* l2=new Node(1); l2->next=new Node(3); l2->next->next=new Node(4);\n    print(mergeSorted(l1,l2));\n    return 0;\n}'
+      }
+    ]
+  },
+  {
+    id:'binsearch', icon:'⌖', name:'Binary Search', color:'#10b981',
+    problems:[
+      {
+        id:'bs1', title:'Classic Binary Search', diff:'easy',
+        desc:'Search for a target in a sorted array. Return index or -1.',
+        example:'arr=[1,3,5,7,9,11], target=7 -> 3',
+        hint:'left=0, right=n-1. mid=left+(right-left)/2. Narrow halves based on comparison.',
+        starter:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nint binarySearch(vector<int>& arr, int target) {\n    \n}\n\nint main() {\n    vector<int> arr = {1,3,5,7,9,11};\n    cout << binarySearch(arr, 7) << endl;  // 3\n    cout << binarySearch(arr, 6) << endl;  // -1\n    cout << binarySearch(arr, 1) << endl;  // 0\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nint binarySearch(vector<int>& arr, int target) {\n    int l=0, r=arr.size()-1;\n    while(l<=r){ int mid=l+(r-l)/2; if(arr[mid]==target)return mid; else if(arr[mid]<target)l=mid+1; else r=mid-1; }\n    return -1;\n}\n\nint main() {\n    vector<int> arr = {1,3,5,7,9,11};\n    cout << binarySearch(arr, 7) << endl;\n    cout << binarySearch(arr, 6) << endl;\n    cout << binarySearch(arr, 1) << endl;\n    return 0;\n}'
+      },
+      {
+        id:'bs2', title:'Search in Rotated Array', diff:'medium',
+        desc:'A sorted array was rotated. Find the target.',
+        example:'arr=[4,5,6,7,0,1,2], target=0 -> 4',
+        hint:'One half is always sorted. Check which half, then if target falls in sorted half.',
+        starter:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nint searchRotated(vector<int>& arr, int target) {\n    \n}\n\nint main() {\n    vector<int> arr = {4,5,6,7,0,1,2};\n    cout << searchRotated(arr, 0) << endl; // 4\n    cout << searchRotated(arr, 3) << endl; // -1\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nint searchRotated(vector<int>& arr, int target) {\n    int l=0,r=arr.size()-1;\n    while(l<=r){ int mid=l+(r-l)/2; if(arr[mid]==target)return mid;\n        if(arr[l]<=arr[mid]){ if(arr[l]<=target&&target<arr[mid])r=mid-1; else l=mid+1; }\n        else{ if(arr[mid]<target&&target<=arr[r])l=mid+1; else r=mid-1; }\n    } return -1;\n}\n\nint main() {\n    vector<int> arr = {4,5,6,7,0,1,2};\n    cout << searchRotated(arr, 0) << endl;\n    cout << searchRotated(arr, 3) << endl;\n    return 0;\n}'
+      },
+      {
+        id:'bs3', title:'Find Peak Element', diff:'medium',
+        desc:'Find any peak element (greater than neighbors). O(log n).',
+        example:'[1,2,3,1] -> index 2',
+        hint:'If arr[mid] < arr[mid+1], peak must be on the right half.',
+        starter:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nint findPeak(vector<int>& arr) {\n    \n}\n\nint main() {\n    vector<int> a = {1,2,3,1};\n    cout << findPeak(a) << endl; // 2\n    vector<int> b = {1,2,1,3,5,6,4};\n    cout << findPeak(b) << endl; // 5\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nint findPeak(vector<int>& arr) {\n    int l=0,r=arr.size()-1;\n    while(l<r){ int mid=l+(r-l)/2; if(arr[mid]<arr[mid+1])l=mid+1; else r=mid; }\n    return l;\n}\n\nint main() {\n    vector<int> a = {1,2,3,1};\n    cout << findPeak(a) << endl;\n    vector<int> b = {1,2,1,3,5,6,4};\n    cout << findPeak(b) << endl;\n    return 0;\n}'
+      }
+    ]
+  },
+  {
+    id:'dp', icon:'◈', name:'Dynamic Programming', color:'#e879f9',
+    problems:[
+      {
+        id:'dp1', title:'Climbing Stairs', diff:'easy',
+        desc:'You can climb 1 or 2 steps. How many distinct ways to reach step n?',
+        example:'n=4 -> 5',
+        hint:'dp[i] = dp[i-1] + dp[i-2]. Same as Fibonacci.',
+        starter:'#include <iostream>\nusing namespace std;\n\nint climbStairs(int n) {\n    \n}\n\nint main() {\n    cout << climbStairs(2) << endl; // 2\n    cout << climbStairs(3) << endl; // 3\n    cout << climbStairs(5) << endl; // 8\n    return 0;\n}',
+        solution:'#include <iostream>\nusing namespace std;\n\nint climbStairs(int n) {\n    if(n<=2)return n;\n    int a=1,b=2;\n    for(int i=3;i<=n;i++){int c=a+b;a=b;b=c;}\n    return b;\n}\n\nint main() {\n    cout << climbStairs(2) << endl;\n    cout << climbStairs(3) << endl;\n    cout << climbStairs(5) << endl;\n    return 0;\n}'
+      },
+      {
+        id:'dp2', title:'House Robber', diff:'medium',
+        desc:'Rob houses in a row. Cannot rob two adjacent. Maximize total.',
+        example:'[2,7,9,3,1] -> 12',
+        hint:'dp[i] = max(dp[i-1], dp[i-2] + arr[i]).',
+        starter:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nint rob(vector<int>& nums) {\n    \n}\n\nint main() {\n    vector<int> a = {2,7,9,3,1};\n    cout << rob(a) << endl; // 12\n    vector<int> b = {1,2,3,1};\n    cout << rob(b) << endl; // 4\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nint rob(vector<int>& nums) {\n    int p2=0,p1=0;\n    for(int x:nums){int cur=max(p1,p2+x);p2=p1;p1=cur;}\n    return p1;\n}\n\nint main() {\n    vector<int> a = {2,7,9,3,1};\n    cout << rob(a) << endl;\n    vector<int> b = {1,2,3,1};\n    cout << rob(b) << endl;\n    return 0;\n}'
+      },
+      {
+        id:'dp3', title:'Coin Change', diff:'medium',
+        desc:'Minimum coins to make amount. Return -1 if impossible.',
+        example:'coins=[1,5,6,9], amount=11 -> 2  (5+6)',
+        hint:'dp[i] = min coins for amount i. For each coin: dp[i] = min(dp[i], dp[i-coin]+1).',
+        starter:'#include <iostream>\n#include <vector>\n#include <climits>\nusing namespace std;\n\nint coinChange(vector<int>& coins, int amount) {\n    \n}\n\nint main() {\n    vector<int> c1 = {1,5,6,9};\n    cout << coinChange(c1, 11) << endl; // 2\n    vector<int> c2 = {1,2,5};\n    cout << coinChange(c2, 11) << endl; // 3\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <vector>\n#include <climits>\nusing namespace std;\n\nint coinChange(vector<int>& coins, int amount) {\n    vector<int> dp(amount+1,INT_MAX); dp[0]=0;\n    for(int i=1;i<=amount;i++) for(int c:coins) if(c<=i&&dp[i-c]!=INT_MAX) dp[i]=min(dp[i],dp[i-c]+1);\n    return dp[amount]==INT_MAX?-1:dp[amount];\n}\n\nint main() {\n    vector<int> c1 = {1,5,6,9};\n    cout << coinChange(c1, 11) << endl;\n    vector<int> c2 = {1,2,5};\n    cout << coinChange(c2, 11) << endl;\n    return 0;\n}'
+      },
+      {
+        id:'dp4', title:'Longest Common Subsequence', diff:'medium',
+        desc:'Length of longest common subsequence of two strings.',
+        example:'"abcde","ace" -> 3',
+        hint:'2D DP. If chars match: dp[i][j]=dp[i-1][j-1]+1. Else: max of two neighbors.',
+        starter:'#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nint lcs(string s1, string s2) {\n    \n}\n\nint main() {\n    cout << lcs("abcde","ace") << endl;   // 3\n    cout << lcs("abc","abc") << endl;     // 3\n    cout << lcs("abc","def") << endl;     // 0\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nint lcs(string s1, string s2) {\n    int m=s1.size(),n=s2.size();\n    vector<vector<int>> dp(m+1,vector<int>(n+1,0));\n    for(int i=1;i<=m;i++) for(int j=1;j<=n;j++) dp[i][j]=s1[i-1]==s2[j-1]?dp[i-1][j-1]+1:max(dp[i-1][j],dp[i][j-1]);\n    return dp[m][n];\n}\n\nint main() {\n    cout << lcs("abcde","ace") << endl;\n    cout << lcs("abc","abc") << endl;\n    cout << lcs("abc","def") << endl;\n    return 0;\n}'
+      },
+      {
+        id:'dp5', title:'0/1 Knapsack', diff:'hard',
+        desc:'Max value in a knapsack of capacity W. Each item used at most once.',
+        example:'w=[1,3,4,5], v=[1,4,5,7], W=7 -> 9',
+        hint:'dp[i][w] = max value using first i items with weight limit w.',
+        starter:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nint knapsack(vector<int>& w, vector<int>& v, int W) {\n    \n}\n\nint main() {\n    vector<int> w={1,3,4,5}, v={1,4,5,7};\n    cout << knapsack(w,v,7) << endl; // 9\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nint knapsack(vector<int>& w, vector<int>& v, int W) {\n    int n=w.size();\n    vector<vector<int>> dp(n+1,vector<int>(W+1,0));\n    for(int i=1;i<=n;i++) for(int j=0;j<=W;j++){ dp[i][j]=dp[i-1][j]; if(w[i-1]<=j) dp[i][j]=max(dp[i][j],dp[i-1][j-w[i-1]]+v[i-1]); }\n    return dp[n][W];\n}\n\nint main() {\n    vector<int> w={1,3,4,5}, v={1,4,5,7};\n    cout << knapsack(w,v,7) << endl;\n    return 0;\n}'
+      }
+    ]
+  },
+  {
+    id:'trees', icon:'⑂', name:'Trees', color:'#84cc16',
+    problems:[
+      {
+        id:'tr1', title:'Tree Traversals', diff:'easy',
+        desc:'Print inorder, preorder, and postorder traversals.',
+        example:'Inorder: left-root-right\nPreorder: root-left-right\nPostorder: left-right-root',
+        hint:'Three separate recursive functions, each visiting nodes in different order.',
+        starter:'#include <iostream>\nusing namespace std;\nstruct TreeNode { int val; TreeNode *left,*right; TreeNode(int v):val(v),left(nullptr),right(nullptr){} };\n\nvoid inorder(TreeNode* r){ }\nvoid preorder(TreeNode* r){ }\nvoid postorder(TreeNode* r){ }\n\nint main() {\n    TreeNode* root=new TreeNode(1);\n    root->left=new TreeNode(2); root->right=new TreeNode(3);\n    root->left->left=new TreeNode(4); root->left->right=new TreeNode(5);\n    cout<<"Inorder: "; inorder(root); cout<<endl;\n    cout<<"Preorder: "; preorder(root); cout<<endl;\n    cout<<"Postorder: "; postorder(root); cout<<endl;\n    return 0;\n}',
+        solution:'#include <iostream>\nusing namespace std;\nstruct TreeNode { int val; TreeNode *left,*right; TreeNode(int v):val(v),left(nullptr),right(nullptr){} };\n\nvoid inorder(TreeNode* r){if(!r)return;inorder(r->left);cout<<r->val<<" ";inorder(r->right);}\nvoid preorder(TreeNode* r){if(!r)return;cout<<r->val<<" ";preorder(r->left);preorder(r->right);}\nvoid postorder(TreeNode* r){if(!r)return;postorder(r->left);postorder(r->right);cout<<r->val<<" ";}\n\nint main() {\n    TreeNode* root=new TreeNode(1);\n    root->left=new TreeNode(2); root->right=new TreeNode(3);\n    root->left->left=new TreeNode(4); root->left->right=new TreeNode(5);\n    cout<<"Inorder: "; inorder(root); cout<<endl;\n    cout<<"Preorder: "; preorder(root); cout<<endl;\n    cout<<"Postorder: "; postorder(root); cout<<endl;\n    return 0;\n}'
+      },
+      {
+        id:'tr2', title:'Height of Tree', diff:'easy',
+        desc:'Find the maximum depth of a binary tree.',
+        example:'Tree with 3 levels -> height 3',
+        hint:'height = 1 + max(height(left), height(right)). Base: null = 0.',
+        starter:'#include <iostream>\nusing namespace std;\nstruct TreeNode { int val; TreeNode *left,*right; TreeNode(int v):val(v),left(nullptr),right(nullptr){} };\n\nint height(TreeNode* root) {\n    \n}\n\nint main() {\n    TreeNode* root=new TreeNode(1);\n    root->left=new TreeNode(2); root->right=new TreeNode(3);\n    root->left->left=new TreeNode(4);\n    cout << height(root) << endl; // 3\n    return 0;\n}',
+        solution:'#include <iostream>\nusing namespace std;\nstruct TreeNode { int val; TreeNode *left,*right; TreeNode(int v):val(v),left(nullptr),right(nullptr){} };\n\nint height(TreeNode* root) {\n    if(!root)return 0;\n    return 1+max(height(root->left),height(root->right));\n}\n\nint main() {\n    TreeNode* root=new TreeNode(1);\n    root->left=new TreeNode(2); root->right=new TreeNode(3);\n    root->left->left=new TreeNode(4);\n    cout << height(root) << endl;\n    return 0;\n}'
+      },
+      {
+        id:'tr3', title:'Level Order Traversal', diff:'medium',
+        desc:'Print nodes level by level using BFS.',
+        example:'Output each level on a new line.',
+        hint:'Use a queue. Process all nodes at current level, enqueue their children.',
+        starter:'#include <iostream>\n#include <queue>\nusing namespace std;\nstruct TreeNode { int val; TreeNode *left,*right; TreeNode(int v):val(v),left(nullptr),right(nullptr){} };\n\nvoid levelOrder(TreeNode* root) {\n    \n}\n\nint main() {\n    TreeNode* root=new TreeNode(1);\n    root->left=new TreeNode(2); root->right=new TreeNode(3);\n    root->right->left=new TreeNode(4); root->right->right=new TreeNode(5);\n    levelOrder(root);\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <queue>\nusing namespace std;\nstruct TreeNode { int val; TreeNode *left,*right; TreeNode(int v):val(v),left(nullptr),right(nullptr){} };\n\nvoid levelOrder(TreeNode* root) {\n    if(!root)return;\n    queue<TreeNode*> q; q.push(root);\n    while(!q.empty()){ int sz=q.size(); for(int i=0;i<sz;i++){ auto node=q.front();q.pop(); cout<<node->val<<" "; if(node->left)q.push(node->left); if(node->right)q.push(node->right); } cout<<endl; }\n}\n\nint main() {\n    TreeNode* root=new TreeNode(1);\n    root->left=new TreeNode(2); root->right=new TreeNode(3);\n    root->right->left=new TreeNode(4); root->right->right=new TreeNode(5);\n    levelOrder(root);\n    return 0;\n}'
+      },
+      {
+        id:'tr4', title:'Validate BST', diff:'medium',
+        desc:'Check if a binary tree is a valid BST.',
+        example:'left < root < right for every node and subtree.',
+        hint:'Pass min and max bounds. Each node must be within (min, max).',
+        starter:'#include <iostream>\n#include <climits>\nusing namespace std;\nstruct TreeNode { int val; TreeNode *left,*right; TreeNode(int v):val(v),left(nullptr),right(nullptr){} };\n\nbool isValidBST(TreeNode* root, long mn=LONG_MIN, long mx=LONG_MAX) {\n    \n}\n\nint main() {\n    TreeNode* t1=new TreeNode(2); t1->left=new TreeNode(1); t1->right=new TreeNode(3);\n    cout << isValidBST(t1) << endl; // 1\n    TreeNode* t2=new TreeNode(5); t2->left=new TreeNode(1); t2->right=new TreeNode(4);\n    t2->right->left=new TreeNode(3); t2->right->right=new TreeNode(6);\n    cout << isValidBST(t2) << endl; // 0\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <climits>\nusing namespace std;\nstruct TreeNode { int val; TreeNode *left,*right; TreeNode(int v):val(v),left(nullptr),right(nullptr){} };\n\nbool isValidBST(TreeNode* root, long mn=LONG_MIN, long mx=LONG_MAX) {\n    if(!root)return true;\n    if(root->val<=mn||root->val>=mx)return false;\n    return isValidBST(root->left,mn,root->val)&&isValidBST(root->right,root->val,mx);\n}\n\nint main() {\n    TreeNode* t1=new TreeNode(2); t1->left=new TreeNode(1); t1->right=new TreeNode(3);\n    cout << isValidBST(t1) << endl;\n    TreeNode* t2=new TreeNode(5); t2->left=new TreeNode(1); t2->right=new TreeNode(4);\n    t2->right->left=new TreeNode(3); t2->right->right=new TreeNode(6);\n    cout << isValidBST(t2) << endl;\n    return 0;\n}'
+      }
+    ]
+  },
+  {
+    id:'graphs', icon:'◉', name:'Graphs', color:'#f43f5e',
+    problems:[
+      {
+        id:'g1', title:'BFS Traversal', diff:'easy',
+        desc:'Breadth-first search from node 0. Print visited order.',
+        example:'0 connected to 1,2. 1 to 3. 2 to 4. -> 0 1 2 3 4',
+        hint:'Queue + visited array. Enqueue start, then process: visit, enqueue unvisited neighbors.',
+        starter:'#include <iostream>\n#include <vector>\n#include <queue>\nusing namespace std;\n\nvoid bfs(vector<vector<int>>& adj, int start, int n) {\n    \n}\n\nint main() {\n    int n=5; vector<vector<int>> adj(n);\n    adj[0]={1,2}; adj[1]={0,3}; adj[2]={0,4}; adj[3]={1}; adj[4]={2};\n    bfs(adj,0,n); // 0 1 2 3 4\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <vector>\n#include <queue>\nusing namespace std;\n\nvoid bfs(vector<vector<int>>& adj, int start, int n) {\n    vector<bool> vis(n,false); queue<int> q;\n    q.push(start); vis[start]=true;\n    while(!q.empty()){ int node=q.front();q.pop(); cout<<node<<" "; for(int nb:adj[node]) if(!vis[nb]){vis[nb]=true;q.push(nb);} }\n    cout<<endl;\n}\n\nint main() {\n    int n=5; vector<vector<int>> adj(n);\n    adj[0]={1,2}; adj[1]={0,3}; adj[2]={0,4}; adj[3]={1}; adj[4]={2};\n    bfs(adj,0,n);\n    return 0;\n}'
+      },
+      {
+        id:'g2', title:'DFS Traversal', diff:'easy',
+        desc:'Depth-first search from node 0. Print visited order.',
+        example:'0 connected to 1,2. 1 to 3. 2 to 4. -> 0 1 3 2 4',
+        hint:'Recursive. Mark visited, print, recurse into unvisited neighbors.',
+        starter:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nvoid dfs(vector<vector<int>>& adj, vector<bool>& vis, int node) {\n    \n}\n\nint main() {\n    int n=5; vector<vector<int>> adj(n); vector<bool> vis(n,false);\n    adj[0]={1,2}; adj[1]={0,3}; adj[2]={0,4}; adj[3]={1}; adj[4]={2};\n    dfs(adj,vis,0); cout<<endl; // 0 1 3 2 4\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nvoid dfs(vector<vector<int>>& adj, vector<bool>& vis, int node) {\n    vis[node]=true; cout<<node<<" ";\n    for(int nb:adj[node]) if(!vis[nb]) dfs(adj,vis,nb);\n}\n\nint main() {\n    int n=5; vector<vector<int>> adj(n); vector<bool> vis(n,false);\n    adj[0]={1,2}; adj[1]={0,3}; adj[2]={0,4}; adj[3]={1}; adj[4]={2};\n    dfs(adj,vis,0); cout<<endl;\n    return 0;\n}'
+      },
+      {
+        id:'g3', title:'Number of Islands', diff:'medium',
+        desc:'Count islands in a grid of 1s (land) and 0s (water).',
+        example:'[[1,1,0],[1,0,0],[0,0,1]] -> 2',
+        hint:'DFS/flood fill from each unvisited land cell. Count how many flood fills you do.',
+        starter:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nvoid dfs(vector<vector<char>>& g, int i, int j) {\n    \n}\n\nint numIslands(vector<vector<char>>& grid) {\n    \n}\n\nint main() {\n    vector<vector<char>> g={{\'1\',\'1\',\'0\'},{\'1\',\'0\',\'0\'},{\'0\',\'0\',\'1\'}};\n    cout << numIslands(g) << endl; // 2\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nvoid dfs(vector<vector<char>>& g, int i, int j) {\n    if(i<0||i>=(int)g.size()||j<0||j>=(int)g[0].size()||g[i][j]!=\'1\')return;\n    g[i][j]=\'0\'; dfs(g,i+1,j);dfs(g,i-1,j);dfs(g,i,j+1);dfs(g,i,j-1);\n}\n\nint numIslands(vector<vector<char>>& g) {\n    int count=0;\n    for(int i=0;i<(int)g.size();i++) for(int j=0;j<(int)g[0].size();j++) if(g[i][j]==\'1\'){dfs(g,i,j);count++;}\n    return count;\n}\n\nint main() {\n    vector<vector<char>> g={{\'1\',\'1\',\'0\'},{\'1\',\'0\',\'0\'},{\'0\',\'0\',\'1\'}};\n    cout << numIslands(g) << endl;\n    return 0;\n}'
+      }
+    ]
+  },
+  {
+    id:'sorting', icon:'↕', name:'Sorting', color:'#64748b',
+    problems:[
+      {
+        id:'so1', title:'Bubble Sort', diff:'easy',
+        desc:'Implement bubble sort from scratch.',
+        example:'[64,34,25,12] -> [12,25,34,64]',
+        hint:'Two nested loops. Swap adjacent if wrong order. After each pass, largest is at end.',
+        starter:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nvoid bubbleSort(vector<int>& arr) {\n    \n}\n\nint main() {\n    vector<int> arr={64,34,25,12,22,11,90};\n    bubbleSort(arr);\n    for(int x:arr) cout<<x<<" "; cout<<endl;\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nvoid bubbleSort(vector<int>& arr) {\n    int n=arr.size();\n    for(int i=0;i<n-1;i++) for(int j=0;j<n-i-1;j++) if(arr[j]>arr[j+1])swap(arr[j],arr[j+1]);\n}\n\nint main() {\n    vector<int> arr={64,34,25,12,22,11,90};\n    bubbleSort(arr);\n    for(int x:arr) cout<<x<<" "; cout<<endl;\n    return 0;\n}'
+      },
+      {
+        id:'so2', title:'Merge Sort', diff:'medium',
+        desc:'Implement merge sort — divide, sort, merge.',
+        example:'[38,27,43,3,9] -> [3,9,27,38,43]',
+        hint:'Divide at mid. Sort each half recursively. Merge two sorted halves.',
+        starter:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nvoid merge(vector<int>& arr, int l, int m, int r) {\n    \n}\n\nvoid mergeSort(vector<int>& arr, int l, int r) {\n    \n}\n\nint main() {\n    vector<int> arr={38,27,43,3,9,82,10};\n    mergeSort(arr,0,arr.size()-1);\n    for(int x:arr) cout<<x<<" "; cout<<endl;\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nvoid merge(vector<int>& arr, int l, int m, int r) {\n    vector<int> L(arr.begin()+l,arr.begin()+m+1), R(arr.begin()+m+1,arr.begin()+r+1);\n    int i=0,j=0,k=l;\n    while(i<(int)L.size()&&j<(int)R.size()) arr[k++]=(L[i]<=R[j])?L[i++]:R[j++];\n    while(i<(int)L.size())arr[k++]=L[i++]; while(j<(int)R.size())arr[k++]=R[j++];\n}\n\nvoid mergeSort(vector<int>& arr, int l, int r) {\n    if(l>=r)return; int m=l+(r-l)/2; mergeSort(arr,l,m); mergeSort(arr,m+1,r); merge(arr,l,m,r);\n}\n\nint main() {\n    vector<int> arr={38,27,43,3,9,82,10};\n    mergeSort(arr,0,arr.size()-1);\n    for(int x:arr) cout<<x<<" "; cout<<endl;\n    return 0;\n}'
+      },
+      {
+        id:'so3', title:'Quick Sort', diff:'medium',
+        desc:'Implement quicksort with last element as pivot.',
+        example:'[10,7,8,9,1,5] -> [1,5,7,8,9,10]',
+        hint:'Partition: move elements smaller than pivot to left. Recurse on both sides.',
+        starter:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nint partition(vector<int>& arr, int low, int high) {\n    \n}\n\nvoid quickSort(vector<int>& arr, int low, int high) {\n    \n}\n\nint main() {\n    vector<int> arr={10,7,8,9,1,5};\n    quickSort(arr,0,arr.size()-1);\n    for(int x:arr) cout<<x<<" "; cout<<endl;\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nint partition(vector<int>& arr, int low, int high) {\n    int pivot=arr[high],i=low-1;\n    for(int j=low;j<high;j++) if(arr[j]<=pivot)swap(arr[++i],arr[j]);\n    swap(arr[i+1],arr[high]); return i+1;\n}\n\nvoid quickSort(vector<int>& arr, int low, int high) {\n    if(low<high){ int pi=partition(arr,low,high); quickSort(arr,low,pi-1); quickSort(arr,pi+1,high); }\n}\n\nint main() {\n    vector<int> arr={10,7,8,9,1,5};\n    quickSort(arr,0,arr.size()-1);\n    for(int x:arr) cout<<x<<" "; cout<<endl;\n    return 0;\n}'
+      }
+    ]
+  },
+  {
+    id:'bits', icon:'⊕', name:'Bit Manipulation', color:'#94a3b8',
+    problems:[
+      {
+        id:'bit1', title:'Single Number', diff:'easy',
+        desc:'Every element appears twice except one. Find it. O(n) time O(1) space.',
+        example:'[4,1,2,1,2] -> 4',
+        hint:'XOR. a^a=0, a^0=a. XOR all numbers, duplicates cancel, single remains.',
+        starter:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nint singleNumber(vector<int>& arr) {\n    \n}\n\nint main() {\n    vector<int> a={4,1,2,1,2}; cout<<singleNumber(a)<<endl; // 4\n    vector<int> b={2,2,1}; cout<<singleNumber(b)<<endl; // 1\n    return 0;\n}',
+        solution:'#include <iostream>\n#include <vector>\nusing namespace std;\n\nint singleNumber(vector<int>& arr) {\n    int res=0; for(int x:arr) res^=x; return res;\n}\n\nint main() {\n    vector<int> a={4,1,2,1,2}; cout<<singleNumber(a)<<endl;\n    vector<int> b={2,2,1}; cout<<singleNumber(b)<<endl;\n    return 0;\n}'
+      },
+      {
+        id:'bit2', title:'Count Set Bits', diff:'easy',
+        desc:'Count number of 1s in binary representation (Hamming Weight).',
+        example:'11 = 1011 -> 3',
+        hint:'n & (n-1) clears the lowest set bit. Count iterations until n is 0.',
+        starter:'#include <iostream>\nusing namespace std;\n\nint countBits(int n) {\n    \n}\n\nint main() {\n    cout<<countBits(11)<<endl;  // 3\n    cout<<countBits(128)<<endl; // 1\n    cout<<countBits(255)<<endl; // 8\n    return 0;\n}',
+        solution:'#include <iostream>\nusing namespace std;\n\nint countBits(int n) {\n    int c=0; while(n){n&=n-1;c++;} return c;\n}\n\nint main() {\n    cout<<countBits(11)<<endl;\n    cout<<countBits(128)<<endl;\n    cout<<countBits(255)<<endl;\n    return 0;\n}'
+      },
+      {
+        id:'bit3', title:'Power of Two', diff:'easy',
+        desc:'Check if n is a power of 2 using bit manipulation.',
+        example:'16 -> true, 18 -> false',
+        hint:'Powers of 2 have exactly one set bit. n & (n-1) == 0.',
+        starter:'#include <iostream>\nusing namespace std;\n\nbool isPowerOfTwo(int n) {\n    \n}\n\nint main() {\n    cout<<isPowerOfTwo(16)<<endl; // 1\n    cout<<isPowerOfTwo(18)<<endl; // 0\n    cout<<isPowerOfTwo(1)<<endl;  // 1\n    cout<<isPowerOfTwo(0)<<endl;  // 0\n    return 0;\n}',
+        solution:'#include <iostream>\nusing namespace std;\n\nbool isPowerOfTwo(int n) {\n    return n>0&&(n&(n-1))==0;\n}\n\nint main() {\n    cout<<isPowerOfTwo(16)<<endl;\n    cout<<isPowerOfTwo(18)<<endl;\n    cout<<isPowerOfTwo(1)<<endl;\n    cout<<isPowerOfTwo(0)<<endl;\n    return 0;\n}'
+      }
+    ]
+  }
+];
+
+// ══════════════════════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let currentProblem = null;
+let solved = JSON.parse(localStorage.getItem('cpp_solved') || '{}');
+
+// ══════════════════════════════════════════
+// BUILD SIDEBAR
+// ══════════════════════════════════════════
+function freeMode() {
+  // Clear to blank free coding mode
+  document.querySelectorAll('.prob-btn').forEach(b => b.classList.remove('active'));
+  currentProblem = null;
+  document.getElementById('pp-title').textContent = 'Free Mode';
+  document.getElementById('pp-desc').textContent = 'Write any C++ code below and run it. Use this to experiment freely.';
+  document.getElementById('pp-example').innerHTML = '';
+  document.getElementById('pp-hint-btn').style.display = 'none';
+  document.getElementById('hint-text').style.display = 'none';
+  document.getElementById('file-name').textContent = 'main.cpp';
+  document.getElementById('tb-topic-label').textContent = 'Free coding';
+  document.getElementById('code-editor').value = `#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello, World!" << endl;\n    return 0;\n}`;
+  clearTerminal();
+  termWrite('info', '// Free mode — write any C++ code and run it');
+}
+
+function buildSidebar() {
+  const list = document.getElementById('topic-list');
+  let totalProblems = 0;
+  let totalSolved = 0;
+
+  TOPICS.forEach(topic => {
+    const sec = document.createElement('div');
+    sec.className = 'sb-section';
+
+    const topicBtn = document.createElement('button');
+    topicBtn.className = 'topic-btn';
+    topicBtn.id = 'topic-' + topic.id;
+    const solvedCount = topic.problems.filter(p => solved[p.id]).length;
+    topicBtn.innerHTML = `<span class="topic-icon">${topic.icon}</span><div class="topic-meta"><span class="topic-name">${topic.name}</span><span class="topic-count">${solvedCount}/${topic.problems.length} solved</span></div>`;
+    topicBtn.style.setProperty('--topic-color', topic.color);
+    topicBtn.onclick = () => toggleTopic(topic.id);
+    sec.appendChild(topicBtn);
+
+    const probList = document.createElement('div');
+    probList.id = 'probs-' + topic.id;
+    probList.style.display = 'none';
+
+    topic.problems.forEach((prob, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'prob-btn' + (solved[prob.id] ? ' solved' : '');
+      btn.id = 'prob-btn-' + prob.id;
+      const diffColors = {easy:'var(--green)', medium:'var(--yellow)', hard:'var(--red)'};
+      btn.innerHTML = `<span class="prob-num">${i+1}.</span>${prob.title} <span style="margin-left:auto;font-size:9px;color:${diffColors[prob.diff]}">${prob.diff}</span>`;
+      btn.onclick = () => loadProblem(topic.id, prob.id);
+      probList.appendChild(btn);
+      totalProblems++;
+      if (solved[prob.id]) totalSolved++;
+    });
+
+    sec.appendChild(probList);
+    list.appendChild(sec);
+  });
+
+  document.getElementById('prog-total').textContent = totalProblems;
+  document.getElementById('prog-done').textContent = totalSolved;
+  document.getElementById('prog-bar').style.width = (totalSolved/totalProblems*100) + '%';
+}
+
+function toggleTopic(id) {
+  const el = document.getElementById('probs-' + id);
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function loadProblem(topicId, probId) {
+  const topic = TOPICS.find(t => t.id === topicId);
+  const prob = topic.problems.find(p => p.id === probId);
+  currentProblem = prob;
+
+  // Update active state
+  document.querySelectorAll('.prob-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('prob-btn-' + probId).classList.add('active');
+
+  // Update problem panel
+  const diffClass = {easy:'diff-easy', medium:'diff-medium', hard:'diff-hard'};
+  document.getElementById('pp-title').innerHTML = `${prob.title} <span class="pp-diff ${diffClass[prob.diff]}">${prob.diff}</span>`;
+  document.getElementById('pp-desc').textContent = prob.desc;
+  document.getElementById('pp-example').innerHTML = `<strong>Example:</strong>\n${prob.example}`;
+  document.getElementById('hint-text').style.display = 'none';
+  document.getElementById('hint-text').textContent = prob.hint;
+  document.getElementById('pp-hint-btn').style.display = 'block';
+  document.getElementById('pp-hint-btn').textContent = '💡 Show hint';
+
+  // Load saved code or starter
+  const saved = localStorage.getItem('cpp_code_' + probId);
+  document.getElementById('code-editor').value = saved || prob.starter;
+  document.getElementById('file-name').textContent = probId + '.cpp';
+  document.getElementById('tb-topic-label').textContent = topic.name + ' / ' + prob.title;
+
+  clearTerminal();
+  termWrite('info', '// Loaded: ' + prob.title);
+  termWrite('info', '// Press Ctrl+Enter or ▶ Run to execute');
+}
+
+function toggleHint() {
+  const ht = document.getElementById('hint-text');
+  const btn = document.getElementById('pp-hint-btn');
+  if (ht.style.display === 'none') {
+    ht.style.display = 'block';
+    btn.textContent = '💡 Hide hint';
+  } else {
+    ht.style.display = 'none';
+    btn.textContent = '💡 Show hint';
+  }
+}
+
+function resetCode() {
+  if (!currentProblem) return;
+  document.getElementById('code-editor').value = currentProblem.starter;
+  localStorage.removeItem('cpp_code_' + currentProblem.id);
+  clearTerminal();
+  termWrite('info', '// Code reset to starter template');
+}
+
+function loadSolution() {
+  if (!currentProblem) return;
+  document.getElementById('code-editor').value = currentProblem.solution;
+  clearTerminal();
+  termWrite('info', '// Solution loaded — study it, then try to write it yourself');
+}
+
+// Auto-save
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('code-editor').addEventListener('input', () => {
+    if (currentProblem) {
+      localStorage.setItem('cpp_code_' + currentProblem.id, document.getElementById('code-editor').value);
+    }
+  });
+
+  // Ctrl+Enter to run
+  document.getElementById('code-editor').addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.key === 'Enter') { e.preventDefault(); runCode(); }
+    // Tab support
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const ta = e.target;
+      const start = ta.selectionStart, end = ta.selectionEnd;
+      ta.value = ta.value.substring(0, start) + '  ' + ta.value.substring(end);
+      ta.selectionStart = ta.selectionEnd = start + 2;
+    }
+  });
+
+  buildSidebar();
+});
+
+// ══════════════════════════════════════════
+// TERMINAL
+// ══════════════════════════════════════════
+function termWrite(type, text) {
+  const term = document.getElementById('terminal');
+  const line = document.createElement('div');
+  line.className = 't-line';
+  const span = document.createElement('span');
+  span.className = 't-' + type;
+  span.textContent = text;
+  line.appendChild(span);
+  term.appendChild(line);
+  term.scrollTop = term.scrollHeight;
+}
+
+function clearTerminal() {
+  document.getElementById('terminal').innerHTML = '';
+  document.getElementById('term-status').textContent = '';
+  document.getElementById('term-status').className = '';
+}
+
+function setStatus(type, text) {
+  const el = document.getElementById('term-status');
+  el.textContent = text;
+  el.className = 'status-' + type;
+}
+
+// ══════════════════════════════════════════
+// RUN CODE — Judge0
+// ══════════════════════════════════════════
+async function runCode() {
+  const code = document.getElementById('code-editor').value.trim();
+  if (!code) { termWrite('err', 'No code to run.'); return; }
+
+  const btn = document.getElementById('run-btn');
+  btn.classList.add('running');
+  btn.innerHTML = '<div class="run-dot"></div><span>Running...</span>';
+  setStatus('run', 'compiling');
+  clearTerminal();
+  termWrite('info', '$ g++ solution.cpp -o solution && ./solution');
+
+  try {
+    // Judge0 CE public instance
+    const res = await fetch('https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=false&wait=true', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-RapidAPI-Key': 'demo',
+        'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
+      },
+      body: JSON.stringify({ source_code: code, language_id: 54, stdin: '' })
+    });
+    if (res.ok) {
+      const d = await res.json();
+      handleResult(d);
+      btn.classList.remove('running');
+      btn.innerHTML = '<span>▶ Run</span>';
+      return;
+    }
+  } catch(e) {}
+
+  try {
+    // Piston API
+    const res = await fetch('https://emkc.org/api/v2/piston/execute', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        language: 'c++', version: '10.2.0',
+        files: [{name: 'solution.cpp', content: code}]
+      })
+    });
+    if (res.ok) {
+      const d = await res.json();
+      const compileErr = d.compile && d.compile.stderr && d.compile.stderr.trim();
+      if (compileErr) {
+        compileErr.split('\n').forEach(l => { if(l.trim()) termWrite('err', l); });
+        setStatus('err', 'compile error');
+      } else {
+        const out = (d.run && d.run.stdout) || '';
+        const err = (d.run && d.run.stderr) || '';
+        if (out) { out.trim().split('\n').forEach(l => termWrite('out', l)); setStatus('ok', 'exit 0'); markSolved(); }
+        if (err) { err.trim().split('\n').forEach(l => { if(l.trim()) termWrite('err', l); }); setStatus('err', 'runtime error'); }
+        if (!out && !err) { termWrite('ok', '// Program ran with no output'); setStatus('ok', 'exit 0'); markSolved(); }
+      }
+      btn.classList.remove('running');
+      btn.innerHTML = '<span>▶ Run</span>';
+      return;
+    }
+  } catch(e) {}
+
+  try {
+    // Codex API fallback
+    const form = new URLSearchParams({ code, language: 'cpp', input: '' });
+    const res = await fetch('https://api.codex.jaagrav.in', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: form
+    });
+    if (res.ok) {
+      const d = await res.json();
+      if (d.error && d.error.trim()) {
+        d.error.trim().split('\n').forEach(l => { if(l.trim()) termWrite('err', l); });
+        setStatus('err', 'compile error');
+      } else if (d.output) {
+        d.output.trim().split('\n').forEach(l => termWrite('out', l));
+        setStatus('ok', 'exit 0'); markSolved();
+      } else {
+        termWrite('ok', '// No output'); setStatus('ok', 'exit 0'); markSolved();
+      }
+      btn.classList.remove('running');
+      btn.innerHTML = '<span>▶ Run</span>';
+      return;
+    }
+  } catch(e) {}
+
+  termWrite('err', 'All execution servers unreachable.');
+  termWrite('info', '// This is a network/CORS issue. Try:');
+  termWrite('info', '// 1. Open the file from a local server (not file://)');
+  termWrite('info', '// 2. Upload to GitHub Pages then open from there');
+  termWrite('info', '// 3. Use VS Code Live Server extension');
+  setStatus('err', 'connection error');
+  btn.classList.remove('running');
+  btn.innerHTML = '<span>▶ Run</span>';
+}
+
+function handleResult(result) {
+  if (result.compile_output) {
+    termWrite('err', result.compile_output);
+    setStatus('err', 'compile error');
+    return;
+  }
+  if (result.stdout) {
+    result.stdout.trim().split('\n').forEach(line => termWrite('out', line));
+    setStatus('ok', 'exit 0');
+    markSolved();
+  }
+  if (result.stderr) {
+    result.stderr.trim().split('\n').forEach(line => termWrite('err', line));
+    setStatus('err', 'runtime error');
+  }
+  if (result.status && result.status.id > 3) {
+    termWrite('err', result.status.description || 'Error');
+    setStatus('err', result.status.description);
+  }
+}
+
+function markSolved() {
+  if (!currentProblem || solved[currentProblem.id]) return;
+  solved[currentProblem.id] = true;
+  localStorage.setItem('cpp_solved', JSON.stringify(solved));
+  document.getElementById('prob-btn-' + currentProblem.id).classList.add('solved');
+  termWrite('ok', '✓ Problem solved! Marked as complete.');
+
+  // Update progress
+  const topicId = TOPICS.find(t => t.problems.some(p => p.id === currentProblem.id))?.id;
+  if (topicId) {
+    const topic = TOPICS.find(t => t.id === topicId);
+    const sc = topic.problems.filter(p => solved[p.id]).length;
+    document.querySelector('#topic-' + topicId + ' .topic-count').textContent = sc + '/' + topic.problems.length + ' solved';
+  }
+  const total = Object.keys(solved).length;
+  const allTotal = TOPICS.reduce((s,t) => s + t.problems.length, 0);
+  document.getElementById('prog-done').textContent = total;
+  document.getElementById('prog-bar').style.width = (total/allTotal*100) + '%';
+}
+</script>
+</body>
+</html>
