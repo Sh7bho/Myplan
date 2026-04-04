@@ -13,7 +13,7 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{height:100%;background:#060606}
 body{font-family:'DM Mono',monospace;color:#f0ede8;background:#060606;height:100%;overflow:hidden;-webkit-font-smoothing:antialiased}
-
+ 
 /* SPLASH */
 #splash{position:fixed;inset:0;background:#060606;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;transition:opacity .5s,transform .5s}
 #splash.out{opacity:0;transform:scale(1.02);pointer-events:none}
@@ -23,7 +23,7 @@ body{font-family:'DM Mono',monospace;color:#f0ede8;background:#060606;height:100
 .sp-fill{height:100%;background:#e8f060;width:0;animation:lbar 1.2s .7s forwards}
 @keyframes fup{to{opacity:1;transform:none}}
 @keyframes lbar{to{width:100%}}
-
+ 
 /* MODAL */
 .mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:1000;align-items:flex-start;justify-content:center;padding:20px 16px;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .mbg.show{display:flex}
@@ -39,11 +39,11 @@ body{font-family:'DM Mono',monospace;color:#f0ede8;background:#060606;height:100
 .mbtn:active{opacity:.85}
 .mnote{font-size:10px;color:#1a1a1a;text-align:center;margin-top:12px;line-height:2}
 .mnote a{color:#252525;text-decoration:none}
-
+ 
 /* APP SHELL */
 #app{display:flex;flex-direction:column;position:fixed;inset:0;opacity:0;transition:opacity .4s}
 #app.on{opacity:1}
-
+ 
 /* TOPBAR */
 .topbar{height:52px;background:#080808;border-bottom:1px solid #111;padding:0 14px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;padding-top:env(safe-area-inset-top)}
 .tb-l{display:flex;flex-direction:column;justify-content:center}
@@ -52,10 +52,10 @@ body{font-family:'DM Mono',monospace;color:#f0ede8;background:#060606;height:100
 .tb-r{display:flex;gap:5px;align-items:center}
 .tbtn{background:transparent;border:1px solid #141414;border-radius:8px;color:#252525;font-size:10px;padding:7px 10px;cursor:pointer;font-family:'DM Mono',monospace;white-space:nowrap;-webkit-appearance:none}
 .tbtn:active{background:#0e0e0e;transform:scale(.95)}
-
+ 
 /* BODY */
 .body{display:flex;flex:1;overflow:hidden;position:relative}
-
+ 
 /* SIDEBAR */
 .sidebar{width:200px;background:#080808;border-right:1px solid #111;display:flex;flex-direction:column;flex-shrink:0}
 @media(max-width:640px){
@@ -81,10 +81,10 @@ body{font-family:'DM Mono',monospace;color:#f0ede8;background:#060606;height:100
 .sb-empty{padding:20px 10px;text-align:center;font-size:10px;color:#181818;line-height:2.5}
 .sb-footer{padding:10px 8px;border-top:1px solid #0d0d0d;display:flex;gap:5px}
 .sb-footer .tbtn{flex:1;text-align:center;font-size:10px}
-
+ 
 /* CHAT MAIN */
 .chat-main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:#060606;min-width:0}
-
+ 
 /* WELCOME */
 #welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px;text-align:center;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .wc-time{font-size:10px;color:#1a1a1a;letter-spacing:.15em;text-transform:uppercase;margin-bottom:16px}
@@ -98,18 +98,18 @@ body{font-family:'DM Mono',monospace;color:#f0ede8;background:#060606;height:100
 .wl-lbl{font-size:9px;color:#1e1e1e;text-transform:uppercase;letter-spacing:.12em;margin-bottom:6px}
 .wl-date{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:#444;margin-bottom:3px}
 .wl-prev{font-size:11px;color:#1e1e1e;line-height:1.6}
-
+ 
 /* CHAT VIEW */
 #chat-view{flex:1;display:none;flex-direction:column;overflow:hidden;min-height:0}
 #chat-view.active{display:flex}
 .cv-bar{padding:8px 14px;border-bottom:1px solid #0d0d0d;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;min-height:34px}
 .cv-date{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;color:#222}
 .cv-count{font-size:9px;color:#181818}
-
+ 
 .msgs{flex:1;overflow-y:auto;padding:14px 12px 8px;display:flex;flex-direction:column;gap:11px;-webkit-overflow-scrolling:touch;min-height:0}
 .msgs::-webkit-scrollbar{width:2px}
 .msgs::-webkit-scrollbar-thumb{background:#141414}
-
+ 
 .msg{display:flex;flex-direction:column;max-width:82%;animation:mi .2s ease}
 @keyframes mi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .msg.user{align-self:flex-end;align-items:flex-end}
@@ -124,14 +124,14 @@ body{font-family:'DM Mono',monospace;color:#f0ede8;background:#060606;height:100
 .spk-btn:active{border-color:#e8f060;color:#e8f060}
 .spk-btn.playing{border-color:#e8f060;color:#e8f060;animation:spk-pulse .8s infinite}
 @keyframes spk-pulse{0%,100%{opacity:1}50%{opacity:.5}}
-
+ 
 /* TYPING */
 .tw-wrap{display:flex;gap:3px;align-items:center;padding:3px 0}
 .tw{width:3px;background:#222;border-radius:2px;animation:wv .85s infinite}
 .tw:nth-child(1){height:10px}.tw:nth-child(2){height:17px;animation-delay:.12s}.tw:nth-child(3){height:8px;animation-delay:.24s}.tw:nth-child(4){height:14px;animation-delay:.36s}.tw:nth-child(5){height:6px;animation-delay:.48s}
 @keyframes wv{0%,100%{transform:scaleY(1);opacity:.2}50%{transform:scaleY(1.35);opacity:.9}}
 .chat-empty{flex:1;display:flex;align-items:center;justify-content:center;font-size:11px;color:#181818;letter-spacing:.06em}
-
+ 
 /* INPUT — this is the key: always pinned above keyboard */
 .input-zone{flex-shrink:0;padding:10px 12px;padding-bottom:calc(10px + env(safe-area-inset-bottom));border-top:1px solid #0d0d0d;background:#060606}
 .vs{font-size:9px;text-align:center;height:13px;margin-bottom:7px;color:#1e1e1e;letter-spacing:.05em;transition:color .2s}
@@ -151,13 +151,13 @@ body{font-family:'DM Mono',monospace;color:#f0ede8;background:#060606;height:100
 </style>
 </head>
 <body>
-
+ 
 <div id="splash">
   <div class="sp-logo">SAVXY</div>
   <div class="sp-sub">your personal ai</div>
   <div class="sp-bar"><div class="sp-fill"></div></div>
 </div>
-
+ 
 <div class="mbg" id="modal">
   <div class="modal">
     <div class="m-logo">SAVXY</div>
@@ -175,7 +175,7 @@ body{font-family:'DM Mono',monospace;color:#f0ede8;background:#060606;height:100
     <div class="mnote">Groq free at <a href="https://console.groq.com" target="_blank">console.groq.com</a><br>ElevenLabs at <a href="https://elevenlabs.io" target="_blank">elevenlabs.io</a></div>
   </div>
 </div>
-
+ 
 <div id="app">
   <div class="topbar">
     <div class="tb-l">
@@ -189,7 +189,7 @@ body{font-family:'DM Mono',monospace;color:#f0ede8;background:#060606;height:100
       <button class="tbtn" onclick="openSettings()">⚙</button>
     </div>
   </div>
-
+ 
   <div class="body">
     <div class="mob-ov" id="mob-ov" onclick="closeSB()"></div>
     <div class="sidebar" id="sidebar">
@@ -201,7 +201,7 @@ body{font-family:'DM Mono',monospace;color:#f0ede8;background:#060606;height:100
         <button class="tbtn" onclick="clearAll()" style="color:#2a1414">clear</button>
       </div>
     </div>
-
+ 
     <div class="chat-main">
       <div id="welcome">
         <div class="wc-time" id="wc-time"></div>
@@ -214,7 +214,7 @@ body{font-family:'DM Mono',monospace;color:#f0ede8;background:#060606;height:100
           <div class="wl-prev" id="wl-prev"></div>
         </div>
       </div>
-
+ 
       <div id="chat-view">
         <div class="cv-bar">
           <div class="cv-date" id="cv-date"></div>
@@ -233,20 +233,20 @@ body{font-family:'DM Mono',monospace;color:#f0ede8;background:#060606;height:100
     </div>
   </div>
 </div>
-
+ 
 <script>
 const SK='sx5',HK='sx5h',AK='sx5k',ELK='sx5elk',ELV='sx5elv';
 let sessions=[],hist=[],activeId=null,loading=false;
 let apiKey='',elKey='',elVoiceId='';
 let recog=null,isListening=false,curAudio=null;
-
+ 
 // detect mobile
 const isMob=()=>window.innerWidth<=640;
 function setupMob(){
   document.getElementById('mob-menu-btn').style.display=isMob()?'flex':'none';
 }
 window.addEventListener('resize',setupMob);
-
+ 
 // SPLASH
 window.addEventListener('load',()=>{
   setTimeout(()=>{
@@ -258,7 +258,7 @@ window.addEventListener('load',()=>{
     },500);
   },2000);
 });
-
+ 
 function init(){
   try{sessions=JSON.parse(localStorage.getItem(SK)||'[]')}catch{sessions=[]}
   try{hist=JSON.parse(localStorage.getItem(HK)||'[]')}catch{hist=[]}
@@ -268,9 +268,9 @@ function init(){
   if(!apiKey){document.getElementById('modal').classList.add('show');return;}
   updateWelcome();renderSB();showWelcome();
 }
-
+ 
 function sd(){localStorage.setItem(SK,JSON.stringify(sessions));localStorage.setItem(HK,JSON.stringify(hist));}
-
+ 
 function saveKey(){
   const k=document.getElementById('ak').value.trim();
   if(!k){alert('Groq API key daalo');return;}
@@ -282,14 +282,14 @@ function saveKey(){
   document.getElementById('modal').classList.remove('show');
   updateWelcome();renderSB();showWelcome();
 }
-
+ 
 function openSettings(){
   document.getElementById('ak').value=apiKey||'';
   document.getElementById('ek').value=elKey||'';
   document.getElementById('ev').value=elVoiceId||'';
   document.getElementById('modal').classList.add('show');
 }
-
+ 
 function updateWelcome(){
   const h=new Date().getHours();
   document.getElementById('wc-time').textContent=h<12?'good morning':h<17?'good afternoon':'good evening';
@@ -299,7 +299,7 @@ function updateWelcome(){
   document.getElementById('wl-prev').textContent=(l.messages.find(m=>m.role==='user')?.content?.slice(0,50)||'...')+'...';
   document.getElementById('wc-last').style.display='block';
 }
-
+ 
 function showWelcome(){
   document.getElementById('welcome').style.display='flex';
   document.getElementById('chat-view').classList.remove('active');
@@ -308,13 +308,13 @@ function showWelcome(){
 }
 function loadLast(){if(sessions.length)setActive(sessions[0].id);}
 function getSess(id){return sessions.find(s=>s.id===id)}
-
+ 
 function newSession(){
   const id=Date.now().toString();
   sessions.unshift({id,date:new Date().toISOString(),messages:[]});
   sd();renderSB();setActive(id);closeSB();
 }
-
+ 
 function setActive(id){
   activeId=id;
   document.getElementById('welcome').style.display='none';
@@ -322,7 +322,7 @@ function setActive(id){
   renderSB();renderChat();
   setTimeout(()=>document.getElementById('inp').focus(),300);
 }
-
+ 
 function renderSB(){
   const el=document.getElementById('sb-list');
   if(!sessions.length){el.innerHTML='<div class="sb-empty">koi session nahi<br>abhi tak</div>';return;}
@@ -334,7 +334,7 @@ function renderSB(){
     </div>`;
   }).join('');
 }
-
+ 
 function renderChat(){
   const c=document.getElementById('msgs');
   const s=getSess(activeId);if(!s)return;
@@ -347,7 +347,7 @@ function renderChat(){
   s.messages.forEach(m=>c.appendChild(mkBubble(m.role,m.content,m.time,m.id)));
   scrollD();
 }
-
+ 
 function mkBubble(role,text,time,mid){
   const d=document.createElement('div');
   d.className=`msg ${role==='user'?'user':'ai'}`;
@@ -370,7 +370,7 @@ function mkBubble(role,text,time,mid){
   }
   return d;
 }
-
+ 
 function showTyping(){
   const c=document.getElementById('msgs');
   const d=document.createElement('div');d.className='msg ai';d.id='typing';
@@ -379,7 +379,7 @@ function showTyping(){
 }
 function hideTyping(){const e=document.getElementById('typing');if(e)e.remove();}
 function scrollD(){setTimeout(()=>{const c=document.getElementById('msgs');c.scrollTop=c.scrollHeight;},50);}
-
+ 
 // SYSTEM PROMPT
 const SYS=()=>`You are Savxy — a personal AI built and owned by Shubho. He is your developer and boss. You are NOT Claude, NOT Anthropic. You are Savxy. If asked who made you, say Shubho did.
 Purpose: Shubho's private companion — he vents, reflects, plans, chills.
@@ -387,7 +387,7 @@ Personality: Direct, zero fluff, no therapy-speak, no filler phrases. Sharp like
 Language: ALWAYS reply in Hinglish — Hindi words in English script. Like "kal kya hua", "sab theek hai", "bata yaar". NEVER use Devanagari script. NEVER stiff English. Natural Hinglish only.
 Memory: You remember everything across all sessions.
 Today: ${new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}.`;
-
+ 
 async function send(){
   const inp=document.getElementById('inp');
   const text=inp.value.trim();
@@ -401,7 +401,7 @@ async function send(){
   sd();inp.value='';inp.style.height='auto';
   document.getElementById('sbtn').disabled=true;
   loading=true;renderChat();showTyping();
-
+ 
   try{
     const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
       method:'POST',
@@ -425,14 +425,14 @@ async function send(){
   loading=false;
   document.getElementById('sbtn').disabled=false;
 }
-
+ 
 function hkey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}}
 function otype(el){
   el.style.height='auto';
   el.style.height=Math.min(el.scrollHeight,110)+'px';
   document.getElementById('sbtn').disabled=!el.value.trim();
 }
-
+ 
 // MIC INPUT
 function initRecog(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -462,7 +462,7 @@ function stopMic(){
   setTimeout(()=>setVS(''),1200);
 }
 function setVS(m,a=false){const el=document.getElementById('vs');el.textContent=m;el.className='vs'+(a?' on':'');}
-
+ 
 // ELEVENLABS VOICE OUTPUT
 // speakMsg is always called from a direct user tap — safe on iOS/Android
 async function speakMsg(btn,text){
@@ -495,7 +495,7 @@ async function speakMsg(btn,text){
     alert('Voice error: '+err.message+'\n\nCheck your ElevenLabs key and Voice ID in ⚙ settings.');
   }
 }
-
+ 
 function exportAll(){
   if(!sessions.length){alert('kuch nahi hai abhi.');return;}
   let o=`SAVXY — JOURNAL EXPORT\n${new Date().toLocaleString('en-IN')}\n${'='.repeat(46)}\n\n`;
@@ -506,16 +506,17 @@ function exportAll(){
   });
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([o],{type:'text/plain'}));a.download=`savxy_${new Date().toISOString().slice(0,10)}.txt`;a.click();
 }
-
+ 
 function clearAll(){
   if(!confirm('sab delete kar doon? wapas nahi aayega.'))return;
   sessions=[];hist=[];activeId=null;sd();renderSB();showWelcome();updateWelcome();
 }
-
+ 
 function openSB(){document.getElementById('sidebar').classList.add('open');document.getElementById('mob-ov').classList.add('show');}
 function closeSB(){document.getElementById('sidebar').classList.remove('open');document.getElementById('mob-ov').classList.remove('show');}
-
+ 
 function xe(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/\n/g,'<br>');}
 </script>
 </body>
 </html>
+ 
