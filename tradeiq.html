@@ -6,6 +6,7 @@
 <title>TradeIQ — AI Trade Analyser for Indian Traders</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -1231,8 +1232,25 @@ function showPaywall(plan) {
   }
 }
 function hidePaywall() { document.getElementById('paywall-overlay').style.display = 'none'; }
-function handlePayment() { alert('Razorpay integration coming soon! Add your Razorpay Key ID to enable payments.'); }
-
+function handlePayment() {
+  const price = document.getElementById('pw-price').textContent;
+  const isLifetime = price === '₹499';
+  var options = {
+    key: 'rzp_live_SbMDVHgkRpAXR1', // ← key 
+    amount: isLifetime ? 49900 : 9900,
+    currency: 'INR',
+    name: 'TradeIQ',
+    description: isLifetime ? 'Lifetime Plan' : 'Pro Plan',
+    handler: function(response) {
+      hidePaywall();
+      localStorage.setItem('tiq_paid', 'true');
+      localStorage.setItem('tiq_plan', isLifetime ? 'lifetime' : 'pro');
+      alert('Payment successful! Unlimited analyses unlocked.');
+    },
+    theme: { color: '#c8f04a' }
+  };
+  new Razorpay(options).open();
+}
 document.getElementById('paywall-overlay').addEventListener('click', function(e) {
   if(e.target === this) hidePaywall();
 });
