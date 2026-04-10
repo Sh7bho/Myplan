@@ -1265,12 +1265,30 @@ async function handlePayment() {
     description: isLifetime ? 'Lifetime Plan' : 'Pro Plan',
     order_id: order.id,
 
-    handler: function(response) {
-      hidePaywall();
-      localStorage.setItem('tiq_paid', 'true');
-      localStorage.setItem('tiq_plan', isLifetime ? 'lifetime' : 'pro');
-      alert('Payment successful! Unlimited analyses unlocked.');
+    handler: async function(response) {
+
+  // 🔥 Send payment to backend for verification
+  const verify = await fetch('https://tradeiq-backend-fnz2.onrender.com', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
     },
+    body: JSON.stringify({
+      razorpay_order_id: response.razorpay_order_id,
+      razorpay_payment_id: response.razorpay_payment_id,
+      razorpay_signature: response.razorpay_signature
+    })
+  });
+
+  const data = await verify.json();
+
+  if (data.success) {
+    hidePaywall();
+    alert("Payment successful ✅");
+  } else {
+    alert("Payment verification failed ❌");
+  }
+},
 
     theme: { color: '#c8f04a' }
   };
