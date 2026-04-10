@@ -360,8 +360,25 @@ footer a:hover{color:var(--text2)}
     <a onclick="showLanding();setTimeout(()=>document.getElementById('reviews').scrollIntoView({behavior:'smooth'}),100)">Reviews</a>
     <a onclick="openApp('history')">My Trades</a>
   </div>
-  <button class="nav-cta" onclick="openApp('analyse')">Analyse a Trade →</button>
+  <div style="display:flex;align-items:center;gap:.75rem">
+    <button id="nav-login-btn" onclick="showLoginModal()" style="background:transparent;border:1px solid var(--line2);color:var(--text2);padding:.5rem 1rem;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;font-family:var(--body)">Already paid?</button>
+    <button id="nav-logout-btn" onclick="logoutUser()" style="display:none;background:transparent;border:1px solid var(--line2);color:var(--text3);padding:.5rem 1rem;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;font-family:var(--body)">Logout</button>
+    <button class="nav-cta" onclick="openApp('analyse')">Analyse a Trade →</button>
+  </div>
 </nav>
+
+<!-- LOGIN MODAL -->
+<div id="login-modal" style="display:none;position:fixed;inset:0;background:rgba(8,11,18,.95);backdrop-filter:blur(20px);z-index:300;align-items:center;justify-content:center;padding:1rem">
+  <div style="background:var(--bg2);border:1px solid var(--line2);border-radius:20px;padding:2.5rem;max-width:400px;width:100%;text-align:center;position:relative">
+    <button onclick="hideLoginModal()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--text3);font-size:1.5rem;cursor:pointer">x</button>
+    <div style="font-size:2rem;margin-bottom:1rem">&#128273;</div>
+    <h3 style="font-family:var(--font);font-size:1.3rem;font-weight:800;margin-bottom:.5rem">Welcome back</h3>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1.5rem;font-weight:300">Enter the email you used to purchase</p>
+    <input type="email" id="login-email" placeholder="your@email.com" style="width:100%;background:var(--bg3);border:1px solid var(--line2);border-radius:8px;padding:.75rem 1rem;color:var(--text);font-family:var(--body);font-size:14px;outline:none;margin-bottom:.75rem;box-sizing:border-box;transition:all .25s" onfocus="this.style.borderColor='rgba(200,240,74,.4)'" onblur="this.style.borderColor='var(--line2)'">
+    <p id="login-err" style="font-size:12px;color:var(--red);margin-bottom:.75rem;display:none">No paid account found for this email.</p>
+    <button onclick="handleLogin()" id="login-submit-btn" style="width:100%;background:var(--accent);color:#080b12;padding:.85rem;border-radius:8px;font-size:14px;font-weight:700;font-family:var(--font);border:none;cursor:pointer;transition:all .25s">Restore Access</button>
+  </div>
+</div>
 
 <!-- LANDING PAGE -->
 <div id="landing-page">
@@ -764,6 +781,7 @@ async function checkAccess() {
   if (data.paid) {
     localStorage.setItem('user_plan', data.plan || 'pro');
     hidePaywall();
+    updateNavForLoggedIn(email);
   }
 }
 
@@ -817,6 +835,79 @@ function updateFreeCountUI(remaining) {
       if(btn) btn.disabled = false;
     }
   }
+}
+
+// ── LOGIN MODAL ──
+function showLoginModal() {
+  const modal = document.getElementById('login-modal');
+  modal.style.display = 'flex';
+  document.getElementById('login-err').style.display = 'none';
+  document.getElementById('login-email').value = '';
+}
+
+function hideLoginModal() {
+  document.getElementById('login-modal').style.display = 'none';
+}
+
+async function handleLogin() {
+  const btn = document.getElementById('login-submit-btn');
+  const err = document.getElementById('login-err');
+  const email = document.getElementById('login-email').value.trim();
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    err.textContent = 'Please enter a valid email.';
+    err.style.display = 'block';
+    return;
+  }
+
+  btn.textContent = 'Checking...';
+  btn.disabled = true;
+  err.style.display = 'none';
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/check-user`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+
+    if (data.paid) {
+      localStorage.setItem('user_email', email);
+      localStorage.setItem('user_plan', data.plan || 'pro');
+      hideLoginModal();
+      updateNavForLoggedIn(email);
+      hidePaywall();
+    } else {
+      err.textContent = 'No paid account found for this email.';
+      err.style.display = 'block';
+    }
+  } catch(e) {
+    err.textContent = 'Connection error. Try again.';
+    err.style.display = 'block';
+  }
+
+  btn.textContent = 'Restore Access';
+  btn.disabled = false;
+}
+
+function updateNavForLoggedIn(email) {
+  const loginBtn = document.getElementById('nav-login-btn');
+  const logoutBtn = document.getElementById('nav-logout-btn');
+  if (loginBtn) loginBtn.style.display = 'none';
+  if (logoutBtn) {
+    logoutBtn.style.display = 'inline-block';
+    logoutBtn.title = email;
+  }
+}
+
+function logoutUser() {
+  localStorage.removeItem('user_email');
+  localStorage.removeItem('user_plan');
+  const loginBtn = document.getElementById('nav-login-btn');
+  const logoutBtn = document.getElementById('nav-logout-btn');
+  if (loginBtn) loginBtn.style.display = 'inline-block';
+  if (logoutBtn) logoutBtn.style.display = 'none';
 }
 
 // ── NAVIGATION ──
