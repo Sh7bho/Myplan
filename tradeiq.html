@@ -1244,7 +1244,7 @@ async function handlePayment() {
 
   const amount = isLifetime ? 49900 : 9900;
 
-  const res = await fetch('https://tradeiq-backend-fnz2.onrender.com', {
+  const res = await fetch('https://tradeiq-backend-fnz2.onrender.com/create-order', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ amount })
@@ -1268,7 +1268,7 @@ async function handlePayment() {
     handler: async function(response) {
 
   // 🔥 Send payment to backend for verification
-  const verify = await fetch('https://tradeiq-backend-fnz2.onrender.com', {
+  const verify = await fetch('https://tradeiq-backend-fnz2.onrender.com/verify-payment', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
