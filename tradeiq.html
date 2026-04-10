@@ -1242,7 +1242,7 @@ async function handlePayment() {
   const price = document.getElementById('pw-price').textContent;
   const isLifetime = price === '₹499';
 
-  const amount = isLifetime ? 49900 : 9900;
+  const amount = isLifetime ? 49900 : 100;
 
   const res = await fetch('https://tradeiq-backend-fnz2.onrender.com/create-order', {
     method: 'POST',
