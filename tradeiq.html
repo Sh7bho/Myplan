@@ -1238,24 +1238,45 @@ function showPaywall(plan) {
   }
 }
 function hidePaywall() { document.getElementById('paywall-overlay').style.display = 'none'; }
-function handlePayment() {
+async function handlePayment() {
   const price = document.getElementById('pw-price').textContent;
   const isLifetime = price === '₹499';
+
+  const amount = isLifetime ? 49900 : 9900;
+
+  const res = await fetch('https://tradeiq-backend-fnz2.onrender.com', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ amount })
+  });
+
+  const order = await res.json();
+
+  if (!order.id) {
+    alert("Payment failed. Try again.");
+    return;
+  }
+
   var options = {
-    key: 'rzp_live_SbMDVHgkRpAXR1', // ← key 
-    amount: isLifetime ? 49900 : 9900,
+    key: 'rzp_live_SbMDVHgkRpAXR1',
+    amount: amount,
     currency: 'INR',
     name: 'TradeIQ',
     description: isLifetime ? 'Lifetime Plan' : 'Pro Plan',
+    order_id: order.id,
+
     handler: function(response) {
       hidePaywall();
       localStorage.setItem('tiq_paid', 'true');
       localStorage.setItem('tiq_plan', isLifetime ? 'lifetime' : 'pro');
       alert('Payment successful! Unlimited analyses unlocked.');
     },
+
     theme: { color: '#c8f04a' }
   };
-  new Razorpay(options).open();
+
+  const rzp = new Razorpay(options);
+  rzp.open();
 }
 document.getElementById('paywall-overlay').addEventListener('click', function(e) {
   if(e.target === this) hidePaywall();
