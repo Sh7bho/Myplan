@@ -253,8 +253,8 @@ footer a:hover{color:var(--text2)}
 .action-btn-accent:hover{background:var(--accent2)}
 
 /* PAYWALL */
-#paywall-overlay{display:none;position:fixed;inset:0;background:rgba(8,11,18,.95);backdrop-filter:blur(20px);z-index:200;align-items:center;justify-content:center;padding:2rem}
-.paywall-card{background:var(--bg2);border:1px solid rgba(200,240,74,.2);border-radius:24px;padding:3rem;max-width:480px;width:100%;text-align:center}
+#paywall-overlay{display:none;position:fixed;inset:0;background:rgba(8,11,18,.95);backdrop-filter:blur(20px);z-index:200;align-items:center;justify-content:center;padding:1rem;overflow-y:auto}
+.paywall-card{background:var(--bg2);border:1px solid rgba(200,240,74,.2);border-radius:24px;padding:3rem;max-width:480px;width:100%;text-align:center;max-height:90vh;overflow-y:auto;margin:auto}
 .paywall-icon{font-size:2.5rem;margin-bottom:1.5rem}
 .paywall-title{font-family:var(--font);font-size:1.75rem;font-weight:800;letter-spacing:-0.5px;margin-bottom:.75rem}
 .paywall-sub{font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:2rem;font-weight:300}
@@ -345,6 +345,7 @@ footer a:hover{color:var(--text2)}
   .step-connector{width:30px}
   .pattern-grid{grid-template-columns:1fr}
   .pattern-card-full{grid-column:auto}
+  .paywall-card{padding:1.75rem;border-radius:16px}
 }
 </style>
 </head>
@@ -548,7 +549,7 @@ footer a:hover{color:var(--text2)}
     <a href="privacy.html">Privacy</a>
     <a href="refund.html">Refund</a>
     <a href="cancellation.html">Cancellation</a>
-    <a href="mailto:sh7bhowk@gmail.com">Contact</a>
+    <a href="/cdn-cgi/l/email-protection#a9dac19ecbc1c6dec2e9cec4c8c0c587cac6c4">Contact</a>
   </div>
 </footer>
 
@@ -733,12 +734,17 @@ footer a:hover{color:var(--text2)}
       <li>Full trade history dashboard</li>
       <li>Future features included</li>
     </ul>
+    <div style="margin-bottom:1rem;text-align:left">
+      <label style="font-size:11px;color:var(--text3);font-family:var(--mono);letter-spacing:1px;display:block;margin-bottom:.4rem">YOUR EMAIL</label>
+      <input type="email" id="pw-email" placeholder="you@email.com" style="width:100%;background:var(--bg3);border:1px solid var(--line2);border-radius:8px;padding:.75rem 1rem;color:var(--text);font-family:var(--body);font-size:14px;outline:none;transition:all .25s;box-sizing:border-box" onfocus="this.style.borderColor='rgba(200,240,74,.4)';this.style.background='var(--bg4)'" onblur="this.style.borderColor='var(--line2)';this.style.background='var(--bg3)'">
+      <p id="pw-email-err" style="font-size:11px;color:var(--red);margin-top:.35rem;display:none">Please enter a valid email to continue.</p>
+    </div>
     <button class="btn-primary" style="width:100%;justify-content:center;font-size:15px;padding:1rem" onclick="handlePayment()">Pay with Razorpay →</button>
     <p style="font-size:11px;color:var(--text3);margin-top:1rem">Secure payment · UPI / Cards / Net Banking</p>
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ════════════════════════════════════════
 // CONFIG — update BACKEND_URL after Render deploy
 // ════════════════════════════════════════
@@ -1254,9 +1260,24 @@ function showPaywall(plan) {
     document.getElementById('pw-period').textContent = 'Launch offer · Cancel anytime';
   }
 }
-function hidePaywall() { document.getElementById('paywall-overlay').style.display = 'none'; }
+function hidePaywall() {
+  document.getElementById('paywall-overlay').style.display = 'none';
+  const ei = document.getElementById('pw-email');
+  const ee = document.getElementById('pw-email-err');
+  if (ei) ei.value = '';
+  if (ee) ee.style.display = 'none';
+}
 async function handlePayment() {
-  const email = prompt("Enter your email:");
+  const emailInput = document.getElementById('pw-email');
+  const emailErr = document.getElementById('pw-email-err');
+  const email = emailInput ? emailInput.value.trim() : '';
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  if (!emailValid) {
+    if (emailErr) emailErr.style.display = 'block';
+    if (emailInput) emailInput.focus();
+    return;
+  }
+  if (emailErr) emailErr.style.display = 'none';
   localStorage.setItem("user_email", email);
   const price = document.getElementById('pw-price').textContent;
   const isLifetime = price === '₹499';
@@ -1316,9 +1337,3 @@ async function handlePayment() {
   const rzp = new Razorpay(options);
   rzp.open();
 }
-document.getElementById('paywall-overlay').addEventListener('click', function(e) {
-  if(e.target === this) hidePaywall();
-});
-</script>
-</body>
-</html>
