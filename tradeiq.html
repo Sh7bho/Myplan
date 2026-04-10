@@ -762,6 +762,7 @@ async function checkAccess() {
   const data = await res.json();
 
   if (data.paid) {
+    localStorage.setItem('user_plan', data.plan || 'pro');
     hidePaywall();
   }
 }
@@ -1306,30 +1307,28 @@ async function handlePayment() {
     order_id: order.id,
 
     handler: async function(response) {
+      const verify = await fetch('https://tradeiq-backend-fnz2.onrender.com/verify-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: localStorage.getItem('user_email'),
+          amount: amount,
+          razorpay_order_id: response.razorpay_order_id,
+          razorpay_payment_id: response.razorpay_payment_id,
+          razorpay_signature: response.razorpay_signature
+        })
+      });
 
-  // 🔥 Send payment to backend for verification
-  const verify = await fetch('https://tradeiq-backend-fnz2.onrender.com/verify-payment', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
+      const data = await verify.json();
+
+      if (data.success) {
+        localStorage.setItem('user_plan', data.plan);
+        hidePaywall();
+        alert("Payment successful ✅");
+      } else {
+        alert("Payment verification failed ❌");
+      }
     },
-    body: JSON.stringify({
-  email: localStorage.getItem('user_email'),
-  razorpay_order_id: response.razorpay_order_id,
-  razorpay_payment_id: response.razorpay_payment_id,
-  razorpay_signature: response.razorpay_signature
-})
-  });
-
-  const data = await verify.json();
-
-  if (data.success) {
-    hidePaywall();
-    alert("Payment successful ✅");
-  } else {
-    alert("Payment verification failed ❌");
-  }
-},
 
     theme: { color: '#c8f04a' }
   };
