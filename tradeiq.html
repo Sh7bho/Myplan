@@ -743,7 +743,24 @@ footer a:hover{color:var(--text2)}
 // CONFIG — update BACKEND_URL after Render deploy
 // ════════════════════════════════════════
 const BACKEND_URL = 'https://tradeiq-backend-fnz2.onrender.com'; // ← update this
+async function checkAccess() {
+  const email = localStorage.getItem("user_email");
+  if (!email) return;
 
+  const res = await fetch(`${BACKEND_URL}/check-user`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email })
+  });
+
+  const data = await res.json();
+
+  if (data.paid) {
+    hidePaywall();
+  }
+}
+
+checkAccess();
 // ── STATE ──
 let selectedDir = 'LONG';
 let selectedEmos = ['Confident'];
@@ -1239,6 +1256,8 @@ function showPaywall(plan) {
 }
 function hidePaywall() { document.getElementById('paywall-overlay').style.display = 'none'; }
 async function handlePayment() {
+  const email = prompt("Enter your email:");
+  localStorage.setItem("user_email", email);
   const price = document.getElementById('pw-price').textContent;
   const isLifetime = price === '₹499';
 
@@ -1274,10 +1293,11 @@ async function handlePayment() {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      razorpay_order_id: response.razorpay_order_id,
-      razorpay_payment_id: response.razorpay_payment_id,
-      razorpay_signature: response.razorpay_signature
-    })
+  email: localStorage.getItem('user_email'),
+  razorpay_order_id: response.razorpay_order_id,
+  razorpay_payment_id: response.razorpay_payment_id,
+  razorpay_signature: response.razorpay_signature
+})
   });
 
   const data = await verify.json();
