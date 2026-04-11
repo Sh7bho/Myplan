@@ -822,6 +822,7 @@ async function initFreeCount() {
 }
 
 function updateFreeCountUI(remaining) {
+  if (isPaidUser()) return; // paid users — skip all free tier UI
   const el = document.getElementById('free-count');
   const hint = document.getElementById('submit-hint');
   const btn = document.getElementById('submit-btn');
@@ -839,28 +840,43 @@ function updateFreeCountUI(remaining) {
   }
 }
 
+// ── PAID USER CHECK ──
+function isPaidUser() {
+  const email = localStorage.getItem('user_email');
+  const plan = localStorage.getItem('user_plan');
+  return !!(email && plan && plan !== 'free');
+}
+
 // ── PAID UI ──
 function applyPaidUI() {
   // Hide free banner
   const banner = document.getElementById('free-banner');
   if (banner) banner.style.display = 'none';
 
-  // Hide submit hint ("Uses 1 of your 3 free analyses")
+  // Hide submit hint
   const hint = document.getElementById('submit-hint');
   if (hint) hint.style.display = 'none';
 
-  // Hide "Unlock Unlimited" button in results
-  const unlockBtn = document.querySelector('.action-btn-accent[onclick*="showPaywall"]');
-  if (unlockBtn) unlockBtn.style.display = 'none';
+  // Hide ALL showPaywall buttons
+  document.querySelectorAll('[onclick*="showPaywall"]').forEach(el => {
+    // Keep pricing page buttons visible — only hide app-internal ones
+    if (el.closest('#app-page') || el.closest('#results-state') || el.classList.contains('action-btn')) {
+      el.style.display = 'none';
+    }
+  });
 
-  // Update nav login btn to show plan instead
+  // Enable submit button (in case it got disabled)
+  const btn = document.getElementById('submit-btn');
+  if (btn) btn.disabled = false;
+
+  // Update nav login btn to show plan badge
   const loginBtn = document.getElementById('nav-login-btn');
   const plan = localStorage.getItem('user_plan') || 'pro';
   if (loginBtn) {
     loginBtn.textContent = plan === 'lifetime' ? '⚡ Lifetime' : '✓ Pro';
     loginBtn.style.borderColor = 'rgba(200,240,74,.3)';
     loginBtn.style.color = 'var(--accent)';
-    loginBtn.onclick = null; // disable opening login modal
+    loginBtn.onclick = null;
     loginBtn.style.cursor = 'default';
   }
 }
@@ -1085,7 +1101,7 @@ async function runAnalysis() {
       const err = await res.json();
       document.getElementById('loading-state').style.display = 'none';
       document.getElementById('step-1').style.display = 'block';
-      showPaywall('pro');
+      if (!isPaidUser()) showPaywall('pro');
       return;
     }
 
@@ -1102,6 +1118,7 @@ async function runAnalysis() {
     }
 
     renderResults(data, result.analysis);
+    if (isPaidUser()) applyPaidUI();
 
   } catch(err) {
     stopLoadingAnim();
@@ -1210,9 +1227,11 @@ function renderResults(data, analysis) {
     document.getElementById('analysis-cards').after(takeaway);
   }
 
-  // Show paywall if 0 left
-  const remaining = parseInt(localStorage.getItem('tiq_free') || '0');
-  if(remaining <= 0) setTimeout(() => showPaywall('pro'), 3000);
+  // Show paywall if 0 left (only for unpaid users)
+  if (!isPaidUser()) {
+    const remaining = parseInt(localStorage.getItem('tiq_free') || '0');
+    if(remaining <= 0) setTimeout(() => showPaywall('pro'), 3000);
+  }
 }
 
 // ── RESET ──
