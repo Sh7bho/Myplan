@@ -782,10 +782,12 @@ async function checkAccess() {
     localStorage.setItem('user_plan', data.plan || 'pro');
     hidePaywall();
     updateNavForLoggedIn(email);
+    applyPaidUI();
   }
 }
 
 checkAccess();
+if (localStorage.getItem('user_email') && localStorage.getItem('user_plan') && localStorage.getItem('user_plan') !== 'free') applyPaidUI();
 // ── STATE ──
 let selectedDir = 'LONG';
 let selectedEmos = ['Confident'];
@@ -837,6 +839,32 @@ function updateFreeCountUI(remaining) {
   }
 }
 
+// ── PAID UI ──
+function applyPaidUI() {
+  // Hide free banner
+  const banner = document.getElementById('free-banner');
+  if (banner) banner.style.display = 'none';
+
+  // Hide submit hint ("Uses 1 of your 3 free analyses")
+  const hint = document.getElementById('submit-hint');
+  if (hint) hint.style.display = 'none';
+
+  // Hide "Unlock Unlimited" button in results
+  const unlockBtn = document.querySelector('.action-btn-accent[onclick*="showPaywall"]');
+  if (unlockBtn) unlockBtn.style.display = 'none';
+
+  // Update nav login btn to show plan instead
+  const loginBtn = document.getElementById('nav-login-btn');
+  const plan = localStorage.getItem('user_plan') || 'pro';
+  if (loginBtn) {
+    loginBtn.textContent = plan === 'lifetime' ? '⚡ Lifetime' : '✓ Pro';
+    loginBtn.style.borderColor = 'rgba(200,240,74,.3)';
+    loginBtn.style.color = 'var(--accent)';
+    loginBtn.onclick = null; // disable opening login modal
+    loginBtn.style.cursor = 'default';
+  }
+}
+
 // ── LOGIN MODAL ──
 function showLoginModal() {
   const modal = document.getElementById('login-modal');
@@ -878,6 +906,7 @@ async function handleLogin() {
       hideLoginModal();
       updateNavForLoggedIn(email);
       hidePaywall();
+      applyPaidUI();
     } else {
       err.textContent = 'No paid account found for this email.';
       err.style.display = 'block';
@@ -1415,6 +1444,7 @@ async function handlePayment() {
       if (data.success) {
         localStorage.setItem('user_plan', data.plan);
         hidePaywall();
+        applyPaidUI();
         alert("Payment successful ✅");
       } else {
         alert("Payment verification failed ❌");
