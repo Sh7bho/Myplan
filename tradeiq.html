@@ -227,18 +227,18 @@ footer a:hover{color:var(--text2)}
 .score-item-fill{height:100%;border-radius:2px;transition:width 1s ease}
 .score-item-val{font-size:11px;font-family:var(--mono);color:var(--text2);min-width:28px;text-align:right}
 .analysis-grid{display:flex;flex-direction:column;gap:1rem;margin-bottom:1.5rem}
-.analysis-card{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:1.75rem;transition:border-color .3s}
+.analysis-card{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:1.25rem 1.5rem;transition:border-color .3s}
 .analysis-card:hover{border-color:var(--line2)}
-.ac-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1rem;gap:1rem}
+.ac-header{display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem}
 .ac-badge-wrap{display:flex;align-items:center;gap:.6rem}
-.ac-icon{font-size:1.1rem}
+.ac-icon{font-size:1rem}
 .ac-type{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;padding:.2rem .6rem;border-radius:4px;font-weight:500}
 .ac-type-mistake{background:rgba(255,92,122,.1);color:var(--red);border:1px solid rgba(255,92,122,.2)}
 .ac-type-pattern{background:rgba(251,191,36,.08);color:var(--gold);border:1px solid rgba(251,191,36,.15)}
 .ac-type-strength{background:rgba(74,222,128,.08);color:var(--green);border:1px solid rgba(74,222,128,.15)}
 .ac-type-action{background:var(--accent-dim);color:var(--accent);border:1px solid rgba(200,240,74,.2)}
-.ac-title{font-family:var(--font);font-size:1rem;font-weight:700;color:var(--text);margin-bottom:.5rem}
-.ac-body{font-size:13.5px;color:var(--text2);line-height:1.8;font-weight:300}
+.ac-title{font-family:var(--font);font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.35rem}
+.ac-body{font-size:13px;color:var(--text2);line-height:1.65;font-weight:300}
 .ac-body strong{color:var(--text);font-weight:500}
 .quick-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
 .qs-card{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:1.25rem}
@@ -386,11 +386,24 @@ footer a:hover{color:var(--text2)}
     <a onclick="openApp('history')">My Trades</a>
   </div>
   <div style="display:flex;align-items:center;gap:.75rem">
+    <span id="nav-username" style="display:none;font-size:13px;color:var(--accent);font-family:var(--mono);font-weight:500;letter-spacing:.3px"></span>
     <button id="nav-login-btn" onclick="showLoginModal()" style="background:transparent;border:1px solid var(--line2);color:var(--text2);padding:.5rem 1rem;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;font-family:var(--body)">Already paid?</button>
     <button id="nav-logout-btn" onclick="logoutUser()" style="display:none;background:transparent;border:1px solid var(--line2);color:var(--text3);padding:.5rem 1rem;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;font-family:var(--body)">Logout</button>
     <button class="nav-cta" onclick="openApp('analyse')">Analyse a Trade →</button>
   </div>
 </nav>
+
+<!-- USERNAME MODAL -->
+<div id="username-modal" style="display:none;position:fixed;inset:0;background:rgba(8,11,18,.95);backdrop-filter:blur(20px);z-index:400;align-items:center;justify-content:center;padding:1rem">
+  <div style="background:var(--bg2);border:1px solid rgba(200,240,74,.2);border-radius:20px;padding:2.5rem;max-width:400px;width:100%;text-align:center;position:relative">
+    <div style="font-size:2.5rem;margin-bottom:1rem">👋</div>
+    <h3 style="font-family:var(--font);font-size:1.4rem;font-weight:800;margin-bottom:.5rem;letter-spacing:-.5px">Vikram ko batao apna naam</h3>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1.75rem;font-weight:300;line-height:1.6">Woh personally address karega tujhe analysis mein.</p>
+    <input type="text" id="username-input" placeholder="e.g. Rahul, Arjun, Priya..." maxlength="20" style="width:100%;background:var(--bg3);border:1px solid var(--line2);border-radius:8px;padding:.85rem 1rem;color:var(--text);font-family:var(--font);font-size:15px;font-weight:600;outline:none;margin-bottom:1.25rem;box-sizing:border-box;text-align:center;transition:all .25s" onfocus="this.style.borderColor='rgba(200,240,74,.4)'" onblur="this.style.borderColor='var(--line2)'" onkeydown="if(event.key==='Enter')saveUsername()">
+    <button onclick="saveUsername()" style="width:100%;background:var(--accent);color:#080b12;padding:.9rem;border-radius:8px;font-size:14px;font-weight:700;font-family:var(--font);border:none;cursor:pointer;margin-bottom:.75rem">Let's go &#8594;</button>
+    <button onclick="skipUsername()" style="background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;font-family:var(--body)">Skip for now</button>
+  </div>
+</div>
 
 <!-- LOGIN MODAL -->
 <div id="login-modal" style="display:none;position:fixed;inset:0;background:rgba(8,11,18,.95);backdrop-filter:blur(20px);z-index:300;align-items:center;justify-content:center;padding:1rem">
@@ -796,6 +809,7 @@ footer a:hover{color:var(--text2)}
           <button class="action-btn action-btn-outline" onclick="resetApp()">← Analyse Another</button>
           <button class="action-btn action-btn-outline" onclick="switchTab('history')">View My Trades</button>
           <button class="action-btn action-btn-accent" onclick="showPaywall('pro')">Unlock Unlimited →</button>
+          <button class="action-btn action-btn-outline" onclick="shareResultCard()" id="share-btn" style="border-color:rgba(200,240,74,.3);color:var(--accent)">📤 Share Score</button>
         </div>
       </div>
     </div>
@@ -877,6 +891,7 @@ async function checkAccess() {
 checkAccess();
 if (localStorage.getItem('user_email') && localStorage.getItem('user_plan') && localStorage.getItem('user_plan') !== 'free') applyPaidUI();
 initUploadSection();
+initUsername();
 // ── STATE ──
 let selectedDir = 'LONG';
 let selectedEmos = ['Confident'];
@@ -1036,6 +1051,193 @@ async function extractFromImage() {
   }
 
   btn.disabled = false;
+}
+
+// ── USERNAME ──
+function initUsername() {
+  const name = localStorage.getItem('tiq_username');
+  if (name) {
+    updateNavUsername(name);
+  } else if (!localStorage.getItem('tiq_username_skipped')) {
+    // Show username modal on first visit after a short delay
+    setTimeout(() => {
+      document.getElementById('username-modal').style.display = 'flex';
+      document.getElementById('username-input').focus();
+    }, 1200);
+  }
+}
+
+function saveUsername() {
+  const val = document.getElementById('username-input').value.trim();
+  if (!val) return;
+  localStorage.setItem('tiq_username', val);
+  document.getElementById('username-modal').style.display = 'none';
+  updateNavUsername(val);
+}
+
+function skipUsername() {
+  localStorage.setItem('tiq_username_skipped', '1');
+  document.getElementById('username-modal').style.display = 'none';
+}
+
+function updateNavUsername(name) {
+  const el = document.getElementById('nav-username');
+  if (el) {
+    el.textContent = 'Hey, ' + name;
+    el.style.display = 'inline-block';
+  }
+}
+
+function getUsername() {
+  return localStorage.getItem('tiq_username') || null;
+}
+
+// ── SHARE CARD ──
+function shareResultCard() {
+  const score = document.getElementById('score-num')?.textContent || '—';
+  const symbol = document.querySelector('.rtag-sym')?.textContent || '';
+  const direction = document.querySelector('[class*="rtag-long"],[class*="rtag-short"]')?.textContent || '';
+  const verdict = document.querySelector('.dynamic-insert')?.querySelector('div:last-child')?.textContent || 
+                  document.querySelector('.dynamic-insert')?.textContent?.replace("VIKRAM'S VERDICT","").trim() || '';
+  const topMistake = document.querySelector('[style*="var(--red)"] div:last-child')?.textContent || '';
+  const name = getUsername();
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 1080;
+  canvas.height = 1080;
+  const ctx = canvas.getContext('2d');
+
+  // Background
+  ctx.fillStyle = '#080b12';
+  ctx.fillRect(0, 0, 1080, 1080);
+
+  // Grid pattern
+  ctx.strokeStyle = 'rgba(30,45,66,0.6)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x <= 1080; x += 60) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 1080); ctx.stroke(); }
+  for (let y = 0; y <= 1080; y += 60) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(1080, y); ctx.stroke(); }
+
+  // Glow
+  const glow = ctx.createRadialGradient(540, 400, 0, 540, 400, 500);
+  glow.addColorStop(0, 'rgba(200,240,74,0.07)');
+  glow.addColorStop(1, 'transparent');
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, 1080, 1080);
+
+  // Score color
+  const scoreNum = parseInt(score) || 0;
+  const scoreColor = scoreNum >= 70 ? '#4ade80' : scoreNum >= 50 ? '#c8f04a' : '#ff5c7a';
+
+  // TradeIQ logo
+  ctx.font = 'bold 32px Arial';
+  ctx.fillStyle = '#f0f4f8';
+  ctx.textAlign = 'left';
+  ctx.fillText('Trade', 80, 90);
+  ctx.fillStyle = '#c8f04a';
+  ctx.fillText('IQ', 80 + ctx.measureText('Trade').width, 90);
+
+  // Symbol + direction pill
+  ctx.fillStyle = 'rgba(200,240,74,0.12)';
+  roundRect(ctx, 80, 115, 200, 38, 8);
+  ctx.fill();
+  ctx.fillStyle = '#c8f04a';
+  ctx.font = 'bold 16px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText((symbol + ' · ' + direction).toUpperCase(), 180, 139);
+
+  // Big score
+  ctx.textAlign = 'center';
+  ctx.font = 'bold 220px Arial';
+  ctx.fillStyle = scoreColor;
+  ctx.globalAlpha = 0.12;
+  ctx.fillText(score, 540, 460);
+  ctx.globalAlpha = 1;
+
+  ctx.font = 'bold 160px Arial';
+  ctx.fillStyle = scoreColor;
+  ctx.fillText(score, 540, 450);
+
+  // /100
+  ctx.font = '32px Arial';
+  ctx.fillStyle = 'rgba(240,244,248,0.4)';
+  ctx.fillText('/ 100  TRADE SCORE', 540, 510);
+
+  // Divider
+  ctx.strokeStyle = 'rgba(30,45,66,1)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(80, 560); ctx.lineTo(1000, 560); ctx.stroke();
+
+  // Verdict
+  if (verdict) {
+    ctx.font = '26px Arial';
+    ctx.fillStyle = 'rgba(240,244,248,0.85)';
+    ctx.textAlign = 'center';
+    wrapText(ctx, verdict.slice(0, 120), 540, 620, 860, 40);
+  }
+
+  // Top mistake
+  if (topMistake) {
+    ctx.fillStyle = 'rgba(255,92,122,0.1)';
+    roundRect(ctx, 80, 730, 920, 70, 10);
+    ctx.fill();
+    ctx.font = 'bold 13px Arial';
+    ctx.fillStyle = '#ff5c7a';
+    ctx.textAlign = 'left';
+    ctx.fillText('TOP MISTAKE', 110, 758);
+    ctx.font = '20px Arial';
+    ctx.fillStyle = 'rgba(240,244,248,0.7)';
+    ctx.fillText(topMistake.slice(0, 60), 110, 785);
+  }
+
+  // Username
+  if (name) {
+    ctx.font = 'bold 18px Arial';
+    ctx.fillStyle = 'rgba(200,240,74,0.6)';
+    ctx.textAlign = 'left';
+    ctx.fillText(name + "'s trade", 80, 870);
+  }
+
+  // Footer
+  ctx.font = '18px Arial';
+  ctx.fillStyle = 'rgba(240,244,248,0.25)';
+  ctx.textAlign = 'center';
+  ctx.fillText('Analysed by Vikram · TradeIQ · sh7bho.github.io/tradeiq.html', 540, 1020);
+
+  // Download
+  const link = document.createElement('a');
+  link.download = 'TradeIQ-' + symbol + '-' + score + '.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+  const words = text.split(' ');
+  let line = '';
+  for (let n = 0; n < words.length; n++) {
+    const testLine = line + words[n] + ' ';
+    if (ctx.measureText(testLine).width > maxWidth && n > 0) {
+      ctx.fillText(line, x, y);
+      line = words[n] + ' ';
+      y += lineHeight;
+    } else {
+      line = testLine;
+    }
+  }
+  ctx.fillText(line, x, y);
 }
 
 // ── INIT UPLOAD SECTION ──
@@ -1310,7 +1512,7 @@ async function runAnalysis() {
     const res = await fetch(`${BACKEND_URL}/api/analyse`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tradeData: data, sessionId, isPaid: !!(localStorage.getItem('user_email') && localStorage.getItem('user_plan') && localStorage.getItem('user_plan') !== 'free'), email: localStorage.getItem('user_email') })
+      body: JSON.stringify({ tradeData: data, sessionId, isPaid: !!(localStorage.getItem('user_email') && localStorage.getItem('user_plan') && localStorage.getItem('user_plan') !== 'free'), email: localStorage.getItem('user_email'), username: localStorage.getItem('tiq_username') })
     });
 
     stopLoadingAnim();
