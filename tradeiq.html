@@ -331,6 +331,14 @@ footer a:hover{color:var(--text2)}
 .upload-locked-tags span{background:var(--bg3);border:1px solid var(--line2);border-radius:100px;padding:.3rem .85rem;font-size:11px;color:var(--text2);font-weight:400}
 .upload-unlock-btn{background:var(--accent);color:#080b12;border:none;border-radius:8px;padding:.75rem 1.75rem;font-size:13px;font-weight:700;font-family:var(--font);cursor:pointer;letter-spacing:.3px;transition:all .25s}
 .upload-unlock-btn:hover{background:var(--accent2);transform:translateY(-1px);box-shadow:0 8px 24px rgba(200,240,74,.2)}
+.upload-glow-orb{position:absolute;top:-60px;right:-60px;width:250px;height:250px;background:radial-gradient(circle,rgba(200,240,74,.12) 0%,transparent 70%);pointer-events:none;border-radius:50%}
+.upload-demo-row{margin:1.5rem 0}
+.upload-demo-item{display:flex;align-items:center;gap:1rem}
+.upload-demo-icon{font-size:2.5rem;flex-shrink:0}
+.upload-demo-arrow{font-size:1.2rem;color:rgba(200,240,74,.4);flex-shrink:0}
+.upload-demo-fields{display:flex;flex-wrap:wrap;gap:.4rem}
+.upload-demo-field{background:var(--bg3);border:1px solid rgba(200,240,74,.2);border-radius:6px;padding:.3rem .75rem;font-size:12px;color:var(--accent);font-family:var(--mono);font-weight:500;animation:field-pop .4s ease both}
+@keyframes field-pop{from{opacity:0;transform:translateY(6px) scale(.95)}to{opacity:1;transform:none}}
 .upload-active-header{display:flex;align-items:center;justify-content:space-between}
 .upload-icon-wrap{position:relative;width:52px;height:52px;margin:0 auto 1rem;display:flex;align-items:center;justify-content:center}
 .upload-icon-ring{position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(200,240,74,.3);animation:ring-pulse 2s ease-in-out infinite}
@@ -650,17 +658,34 @@ footer a:hover{color:var(--text2)}
           <div id="upload-locked" style="display:none">
             <div class="upload-locked-inner" onclick="showPaywall('pro')">
               <div class="upload-scan-lines"></div>
+              <div class="upload-glow-orb"></div>
               <div class="upload-locked-content">
-                <div class="upload-pro-pill">⚡ PRO FEATURE</div>
-                <div class="upload-locked-title">AI Screenshot Reader</div>
-                <div class="upload-locked-sub">Drop your Zerodha · Groww · TradingView screenshot — Vikram reads it and fills your entire trade form in 3 seconds.</div>
-                <div class="upload-locked-tags">
-                  <span>📊 Auto-detects symbol</span>
-                  <span>💰 Reads entry & exit</span>
-                  <span>🎯 Finds SL & target</span>
-                  <span>📅 Gets the date</span>
+                <div class="upload-pro-pill">⚡ PRO · GOOGLE VISION + AI</div>
+                <div class="upload-locked-title">Drop screenshot.<br>Form fills itself.</div>
+                <div class="upload-locked-sub">Zerodha order screen, Groww P&amp;L card, TradingView chart — Google Vision reads every number. Entry, exit, SL, target, symbol, date. All filled in 3 seconds. You just hit Analyse.</div>
+
+                <div class="upload-demo-row">
+                  <div class="upload-demo-item">
+                    <div class="upload-demo-icon">📸</div>
+                    <div class="upload-demo-arrow">→</div>
+                    <div class="upload-demo-fields">
+                      <div class="upload-demo-field" style="animation-delay:0s">NIFTY 24,850</div>
+                      <div class="upload-demo-field" style="animation-delay:.15s">SL 24,600</div>
+                      <div class="upload-demo-field" style="animation-delay:.3s">Target 25,200</div>
+                      <div class="upload-demo-field" style="animation-delay:.45s">+₹3,750</div>
+                    </div>
+                  </div>
                 </div>
-                <button class="upload-unlock-btn">Unlock with Pro →</button>
+
+                <div class="upload-locked-tags">
+                  <span>🏦 Zerodha</span>
+                  <span>🌱 Groww</span>
+                  <span>📊 TradingView</span>
+                  <span>🔷 Dhan</span>
+                  <span>+ any broker</span>
+                </div>
+                <button class="upload-unlock-btn">Unlock Pro — ₹99/month →</button>
+                <div style="font-size:11px;color:var(--text3);margin-top:.75rem">or ₹499 lifetime · No more manual entry ever</div>
               </div>
             </div>
           </div>
@@ -669,8 +694,8 @@ footer a:hover{color:var(--text2)}
           <div id="upload-active" style="display:none">
             <div class="upload-active-header">
               <div>
-                <div style="font-family:var(--font);font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.2rem">AI Screenshot Reader <span style="font-size:10px;background:var(--accent);color:#080b12;font-family:var(--mono);font-weight:700;letter-spacing:1px;padding:.15rem .5rem;border-radius:4px;margin-left:.4rem;vertical-align:middle">PRO</span></div>
-                <div style="font-size:12px;color:var(--text3)">Drop any broker screenshot — Vikram fills the form automatically</div>
+                <div style="font-family:var(--font);font-size:1rem;font-weight:800;color:var(--text);margin-bottom:.25rem;letter-spacing:-.3px">AI Screenshot Reader <span style="font-size:10px;background:var(--accent);color:#080b12;font-family:var(--mono);font-weight:700;letter-spacing:1px;padding:.15rem .5rem;border-radius:4px;margin-left:.4rem;vertical-align:middle">PRO</span></div>
+                <div style="font-size:12px;color:var(--text3)">Google Vision reads your screenshot → form fills automatically · <span style="color:rgba(200,240,74,.5)">Zerodha · Groww · TradingView · Dhan</span></div>
               </div>
             </div>
             <div id="upload-drop-zone" onclick="document.getElementById('trade-img-input').click()" style="border:1.5px dashed rgba(200,240,74,.25);border-radius:14px;padding:2.5rem 2rem;text-align:center;cursor:pointer;transition:all .3s;background:linear-gradient(135deg,rgba(200,240,74,.03),rgba(200,240,74,.01));position:relative;overflow:hidden;margin-top:1rem" ondragover="event.preventDefault();this.style.borderColor='rgba(200,240,74,.6)';this.style.background='rgba(200,240,74,.05)'" ondragleave="this.style.borderColor='rgba(200,240,74,.25)';this.style.background='linear-gradient(135deg,rgba(200,240,74,.03),rgba(200,240,74,.01))'" ondrop="handleImgDrop(event)">
