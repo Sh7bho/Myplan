@@ -604,6 +604,32 @@ footer a:hover{color:var(--text2)}
 
       <!-- STEP 1 -->
       <div id="step-1">
+
+        <!-- SCREENSHOT UPLOAD -->
+        <div class="form-section fade-up fade-up-2" id="upload-section">
+          <div class="form-section-title">UPLOAD SCREENSHOT <span style="font-size:10px;color:var(--accent);font-family:var(--mono);font-weight:400;letter-spacing:1px">OPTIONAL · AI AUTO-FILL</span></div>
+          <div id="upload-drop-zone" onclick="document.getElementById('trade-img-input').click()" style="border:1.5px dashed var(--line2);border-radius:12px;padding:2rem;text-align:center;cursor:pointer;transition:all .25s;background:var(--bg3)" ondragover="event.preventDefault();this.style.borderColor='rgba(200,240,74,.5)'" ondragleave="this.style.borderColor='var(--line2)'" ondrop="handleImgDrop(event)">
+            <div style="font-size:2rem;margin-bottom:.75rem">📸</div>
+            <div style="font-size:13px;color:var(--text2);font-weight:500;margin-bottom:.25rem">Drop your trade screenshot here</div>
+            <div style="font-size:11px;color:var(--text3)">Zerodha · Groww · TradingView · Any broker · JPG / PNG</div>
+            <input type="file" id="trade-img-input" accept="image/*" style="display:none" onchange="handleImgSelect(event)">
+          </div>
+          <div id="upload-preview" style="display:none;margin-top:1rem">
+            <div style="display:flex;align-items:center;gap:1rem;background:var(--bg3);border:1px solid var(--line2);border-radius:10px;padding:1rem">
+              <img id="upload-thumb" style="width:60px;height:60px;object-fit:cover;border-radius:6px;border:1px solid var(--line2)">
+              <div style="flex:1;min-width:0">
+                <div id="upload-filename" style="font-size:13px;color:var(--text);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+                <div id="upload-status" style="font-size:12px;color:var(--text3);margin-top:.2rem">Ready to extract</div>
+              </div>
+              <button onclick="extractFromImage()" id="extract-btn" style="background:var(--accent);color:#080b12;border:none;border-radius:8px;padding:.6rem 1.2rem;font-size:13px;font-weight:700;font-family:var(--font);cursor:pointer;white-space:nowrap;flex-shrink:0">Extract →</button>
+              <button onclick="clearUpload()" style="background:none;border:none;color:var(--text3);font-size:1.2rem;cursor:pointer;padding:.25rem;flex-shrink:0">×</button>
+            </div>
+            <div id="extract-result-banner" style="display:none;margin-top:.75rem;background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.2);border-radius:8px;padding:.85rem 1rem;font-size:12px;color:var(--green);display:none">
+              ✓ Trade details extracted — review and edit below before submitting
+            </div>
+          </div>
+        </div>
+
         <div class="form-section fade-up fade-up-2">
           <div class="form-section-title">TRADE BASICS</div>
           <div class="field-grid field-grid-3">
@@ -838,6 +864,112 @@ function updateFreeCountUI(remaining) {
       if(btn) btn.disabled = false;
     }
   }
+}
+
+// ── IMAGE UPLOAD & EXTRACTION ──
+let uploadedImageBase64 = null;
+let uploadedImageType = null;
+
+function handleImgDrop(e) {
+  e.preventDefault();
+  document.getElementById('upload-drop-zone').style.borderColor = 'var(--line2)';
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) loadImageFile(file);
+}
+
+function handleImgSelect(e) {
+  const file = e.target.files[0];
+  if (file) loadImageFile(file);
+}
+
+function loadImageFile(file) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const dataUrl = e.target.result;
+    uploadedImageBase64 = dataUrl.split(',')[1];
+    uploadedImageType = file.type || 'image/jpeg';
+
+    document.getElementById('upload-thumb').src = dataUrl;
+    document.getElementById('upload-filename').textContent = file.name;
+    document.getElementById('upload-status').textContent = 'Ready to extract';
+    document.getElementById('upload-status').style.color = 'var(--text3)';
+    document.getElementById('upload-preview').style.display = 'block';
+    document.getElementById('extract-result-banner').style.display = 'none';
+    document.getElementById('upload-drop-zone').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearUpload() {
+  uploadedImageBase64 = null;
+  uploadedImageType = null;
+  document.getElementById('upload-preview').style.display = 'none';
+  document.getElementById('upload-drop-zone').style.display = 'block';
+  document.getElementById('trade-img-input').value = '';
+  document.getElementById('extract-result-banner').style.display = 'none';
+}
+
+async function extractFromImage() {
+  if (!uploadedImageBase64) return;
+
+  const btn = document.getElementById('extract-btn');
+  const status = document.getElementById('upload-status');
+  btn.textContent = 'Extracting...';
+  btn.disabled = true;
+  status.textContent = 'AI is reading your screenshot...';
+  status.style.color = 'var(--accent)';
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/extract-trade`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ imageBase64: uploadedImageBase64, imageType: uploadedImageType })
+    });
+
+    if (!res.ok) throw new Error('Extraction failed');
+    const data = await res.json();
+
+    if (data.error) throw new Error(data.error);
+
+    // Auto-fill form fields
+    const t = data.trade;
+    if (t.symbol) document.getElementById('f-symbol').value = t.symbol;
+    if (t.entry) document.getElementById('f-entry').value = t.entry;
+    if (t.exit) document.getElementById('f-exit').value = t.exit;
+    if (t.sl) document.getElementById('f-sl').value = t.sl;
+    if (t.target) document.getElementById('f-target').value = t.target;
+    if (t.qty) document.getElementById('f-qty').value = t.qty;
+    if (t.setup) document.getElementById('f-setup').value = t.setup;
+    if (t.direction) setDir(t.direction.toUpperCase() === 'SHORT' ? 'SHORT' : 'LONG');
+    if (t.market) {
+      const sel = document.getElementById('f-market');
+      for (let opt of sel.options) {
+        if (opt.value.toLowerCase().includes(t.market.toLowerCase()) ||
+            t.market.toLowerCase().includes(opt.value.toLowerCase().split(' ')[0].toLowerCase())) {
+          sel.value = opt.value;
+          break;
+        }
+      }
+    }
+    if (t.date) document.getElementById('f-date').value = t.date;
+
+    calcRR();
+
+    status.textContent = 'Extracted successfully';
+    status.style.color = 'var(--green)';
+    document.getElementById('extract-result-banner').style.display = 'block';
+    btn.textContent = 'Re-extract';
+
+    // Scroll to form
+    document.getElementById('f-symbol').scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  } catch(e) {
+    status.textContent = 'Could not extract — fill manually';
+    status.style.color = 'var(--red)';
+    btn.textContent = 'Try Again';
+  }
+
+  btn.disabled = false;
 }
 
 // ── PAID USER CHECK ──
