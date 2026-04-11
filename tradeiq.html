@@ -318,6 +318,31 @@ footer a:hover{color:var(--text2)}
 .hi-pnl.pos{color:var(--green)}.hi-pnl.neg{color:var(--red)}.hi-pnl.neutral{color:var(--text3)}
 .hi-date{font-size:11px;color:var(--text3);font-family:var(--mono);margin-top:.2rem}
 
+/* UPLOAD FEATURE CARD */
+.upload-feature-card{border-radius:20px;margin-bottom:1.5rem;overflow:hidden}
+.upload-locked-inner{position:relative;border-radius:20px;border:1px solid rgba(200,240,74,.2);background:linear-gradient(135deg,var(--bg2) 0%,var(--bg3) 100%);padding:2rem;cursor:pointer;overflow:hidden;transition:all .3s}
+.upload-locked-inner:hover{border-color:rgba(200,240,74,.4);transform:translateY(-2px);box-shadow:0 20px 60px rgba(200,240,74,.06)}
+.upload-scan-lines{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(200,240,74,.015) 2px,rgba(200,240,74,.015) 4px);pointer-events:none}
+.upload-locked-content{position:relative;z-index:1}
+.upload-pro-pill{display:inline-flex;align-items:center;gap:.4rem;background:var(--accent);color:#080b12;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:.3rem .9rem;border-radius:100px;margin-bottom:1.25rem}
+.upload-locked-title{font-family:var(--font);font-size:1.4rem;font-weight:800;color:var(--text);letter-spacing:-.5px;margin-bottom:.6rem}
+.upload-locked-sub{font-size:13px;color:var(--text2);line-height:1.7;font-weight:300;max-width:480px;margin-bottom:1.5rem}
+.upload-locked-tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.75rem}
+.upload-locked-tags span{background:var(--bg3);border:1px solid var(--line2);border-radius:100px;padding:.3rem .85rem;font-size:11px;color:var(--text2);font-weight:400}
+.upload-unlock-btn{background:var(--accent);color:#080b12;border:none;border-radius:8px;padding:.75rem 1.75rem;font-size:13px;font-weight:700;font-family:var(--font);cursor:pointer;letter-spacing:.3px;transition:all .25s}
+.upload-unlock-btn:hover{background:var(--accent2);transform:translateY(-1px);box-shadow:0 8px 24px rgba(200,240,74,.2)}
+.upload-active-header{display:flex;align-items:center;justify-content:space-between}
+.upload-icon-wrap{position:relative;width:52px;height:52px;margin:0 auto 1rem;display:flex;align-items:center;justify-content:center}
+.upload-icon-ring{position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(200,240,74,.3);animation:ring-pulse 2s ease-in-out infinite}
+@keyframes ring-pulse{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.15);opacity:1}}
+.scan-line{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);animation:scan 1.2s ease-in-out infinite}
+@keyframes scan{0%{top:0;opacity:0}10%{opacity:1}90%{opacity:1}100%{top:100%;opacity:0}}
+@media(max-width:768px){
+  .upload-locked-title{font-size:1.15rem}
+  .upload-locked-tags{gap:.4rem}
+  .upload-locked-tags span{font-size:10px}
+}
+
 /* ANIMATIONS */
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 .fade-up{animation:fadeUp .5s ease forwards}
@@ -606,28 +631,65 @@ footer a:hover{color:var(--text2)}
       <div id="step-1">
 
         <!-- SCREENSHOT UPLOAD -->
-        <div class="form-section fade-up fade-up-2" id="upload-section">
-          <div class="form-section-title">UPLOAD SCREENSHOT <span style="font-size:10px;color:var(--accent);font-family:var(--mono);font-weight:400;letter-spacing:1px">OPTIONAL · AI AUTO-FILL</span></div>
-          <div id="upload-drop-zone" onclick="document.getElementById('trade-img-input').click()" style="border:1.5px dashed var(--line2);border-radius:12px;padding:2rem;text-align:center;cursor:pointer;transition:all .25s;background:var(--bg3)" ondragover="event.preventDefault();this.style.borderColor='rgba(200,240,74,.5)'" ondragleave="this.style.borderColor='var(--line2)'" ondrop="handleImgDrop(event)">
-            <div style="font-size:2rem;margin-bottom:.75rem">📸</div>
-            <div style="font-size:13px;color:var(--text2);font-weight:500;margin-bottom:.25rem">Drop your trade screenshot here</div>
-            <div style="font-size:11px;color:var(--text3)">Zerodha · Groww · TradingView · Any broker · JPG / PNG</div>
-            <input type="file" id="trade-img-input" accept="image/*" style="display:none" onchange="handleImgSelect(event)">
-          </div>
-          <div id="upload-preview" style="display:none;margin-top:1rem">
-            <div style="display:flex;align-items:center;gap:1rem;background:var(--bg3);border:1px solid var(--line2);border-radius:10px;padding:1rem">
-              <img id="upload-thumb" style="width:60px;height:60px;object-fit:cover;border-radius:6px;border:1px solid var(--line2)">
-              <div style="flex:1;min-width:0">
-                <div id="upload-filename" style="font-size:13px;color:var(--text);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
-                <div id="upload-status" style="font-size:12px;color:var(--text3);margin-top:.2rem">Ready to extract</div>
+        <div class="upload-feature-card fade-up fade-up-2" id="upload-section">
+
+          <!-- FREE USER: locked teaser -->
+          <div id="upload-locked" style="display:none">
+            <div class="upload-locked-inner" onclick="showPaywall('pro')">
+              <div class="upload-scan-lines"></div>
+              <div class="upload-locked-content">
+                <div class="upload-pro-pill">⚡ PRO FEATURE</div>
+                <div class="upload-locked-title">AI Screenshot Reader</div>
+                <div class="upload-locked-sub">Drop your Zerodha · Groww · TradingView screenshot — Vikram reads it and fills your entire trade form in 3 seconds.</div>
+                <div class="upload-locked-tags">
+                  <span>📊 Auto-detects symbol</span>
+                  <span>💰 Reads entry & exit</span>
+                  <span>🎯 Finds SL & target</span>
+                  <span>📅 Gets the date</span>
+                </div>
+                <button class="upload-unlock-btn">Unlock with Pro →</button>
               </div>
-              <button onclick="extractFromImage()" id="extract-btn" style="background:var(--accent);color:#080b12;border:none;border-radius:8px;padding:.6rem 1.2rem;font-size:13px;font-weight:700;font-family:var(--font);cursor:pointer;white-space:nowrap;flex-shrink:0">Extract →</button>
-              <button onclick="clearUpload()" style="background:none;border:none;color:var(--text3);font-size:1.2rem;cursor:pointer;padding:.25rem;flex-shrink:0">×</button>
-            </div>
-            <div id="extract-result-banner" style="display:none;margin-top:.75rem;background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.2);border-radius:8px;padding:.85rem 1rem;font-size:12px;color:var(--green);display:none">
-              ✓ Trade details extracted — review and edit below before submitting
             </div>
           </div>
+
+          <!-- PAID USER: active upload zone -->
+          <div id="upload-active" style="display:none">
+            <div class="upload-active-header">
+              <div>
+                <div style="font-family:var(--font);font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.2rem">AI Screenshot Reader <span style="font-size:10px;background:var(--accent);color:#080b12;font-family:var(--mono);font-weight:700;letter-spacing:1px;padding:.15rem .5rem;border-radius:4px;margin-left:.4rem;vertical-align:middle">PRO</span></div>
+                <div style="font-size:12px;color:var(--text3)">Drop any broker screenshot — Vikram fills the form automatically</div>
+              </div>
+            </div>
+            <div id="upload-drop-zone" onclick="document.getElementById('trade-img-input').click()" style="border:1.5px dashed rgba(200,240,74,.25);border-radius:14px;padding:2.5rem 2rem;text-align:center;cursor:pointer;transition:all .3s;background:linear-gradient(135deg,rgba(200,240,74,.03),rgba(200,240,74,.01));position:relative;overflow:hidden;margin-top:1rem" ondragover="event.preventDefault();this.style.borderColor='rgba(200,240,74,.6)';this.style.background='rgba(200,240,74,.05)'" ondragleave="this.style.borderColor='rgba(200,240,74,.25)';this.style.background='linear-gradient(135deg,rgba(200,240,74,.03),rgba(200,240,74,.01))'" ondrop="handleImgDrop(event)">
+              <div class="upload-icon-wrap">
+                <div class="upload-icon-ring"></div>
+                <div style="font-size:1.8rem;position:relative;z-index:1">📸</div>
+              </div>
+              <div style="font-size:14px;color:var(--text);font-weight:600;margin-bottom:.4rem">Drop screenshot or click to upload</div>
+              <div style="font-size:11px;color:var(--text3);letter-spacing:.3px">Zerodha · Groww · Dhan · TradingView · Any broker · JPG / PNG</div>
+              <input type="file" id="trade-img-input" accept="image/*" style="display:none" onchange="if(isPaidUser())handleImgSelect(event)">
+            </div>
+            <div id="upload-preview" style="display:none;margin-top:1rem">
+              <div style="display:flex;align-items:center;gap:1rem;background:var(--bg3);border:1px solid var(--line2);border-radius:12px;padding:1rem">
+                <div style="position:relative;flex-shrink:0">
+                  <img id="upload-thumb" style="width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid var(--line2)">
+                  <div id="upload-scanning-overlay" style="display:none;position:absolute;inset:0;border-radius:8px;overflow:hidden;background:rgba(8,11,18,.5)">
+                    <div class="scan-line"></div>
+                  </div>
+                </div>
+                <div style="flex:1;min-width:0">
+                  <div id="upload-filename" style="font-size:13px;color:var(--text);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+                  <div id="upload-status" style="font-size:12px;color:var(--text3);margin-top:.25rem;display:flex;align-items:center;gap:.4rem">Ready to extract</div>
+                </div>
+                <button onclick="extractFromImage()" id="extract-btn" style="background:var(--accent);color:#080b12;border:none;border-radius:8px;padding:.65rem 1.25rem;font-size:13px;font-weight:700;font-family:var(--font);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .2s">Extract →</button>
+                <button onclick="clearUpload()" style="background:none;border:none;color:var(--text3);font-size:1.3rem;cursor:pointer;padding:.25rem;flex-shrink:0;line-height:1">×</button>
+              </div>
+              <div id="extract-result-banner" style="display:none;margin-top:.75rem;background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.2);border-radius:10px;padding:.9rem 1.1rem;font-size:13px;color:var(--green);display:flex;align-items:center;gap:.6rem">
+                <span style="font-size:1rem">✓</span> Trade details extracted — review and edit the fields below before submitting
+              </div>
+            </div>
+          </div>
+
         </div>
 
         <div class="form-section fade-up fade-up-2">
@@ -814,6 +876,7 @@ async function checkAccess() {
 
 checkAccess();
 if (localStorage.getItem('user_email') && localStorage.getItem('user_plan') && localStorage.getItem('user_plan') !== 'free') applyPaidUI();
+initUploadSection();
 // ── STATE ──
 let selectedDir = 'LONG';
 let selectedEmos = ['Confident'];
@@ -910,6 +973,7 @@ function clearUpload() {
 }
 
 async function extractFromImage() {
+  if (!isPaidUser()) { showPaywall('pro'); return; }
   if (!uploadedImageBase64) return;
 
   const btn = document.getElementById('extract-btn');
@@ -918,12 +982,14 @@ async function extractFromImage() {
   btn.disabled = true;
   status.textContent = 'AI is reading your screenshot...';
   status.style.color = 'var(--accent)';
+  const scanOverlay = document.getElementById('upload-scanning-overlay');
+  if (scanOverlay) scanOverlay.style.display = 'block';
 
   try {
     const res = await fetch(`${BACKEND_URL}/api/extract-trade`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ imageBase64: uploadedImageBase64, imageType: uploadedImageType })
+      body: JSON.stringify({ imageBase64: uploadedImageBase64, imageType: uploadedImageType, email: localStorage.getItem('user_email') })
     });
 
     if (!res.ok) throw new Error('Extraction failed');
@@ -972,6 +1038,20 @@ async function extractFromImage() {
   btn.disabled = false;
 }
 
+// ── INIT UPLOAD SECTION ──
+function initUploadSection() {
+  const locked = document.getElementById('upload-locked');
+  const active = document.getElementById('upload-active');
+  if (!locked || !active) return;
+  if (isPaidUser()) {
+    locked.style.display = 'none';
+    active.style.display = 'block';
+  } else {
+    locked.style.display = 'block';
+    active.style.display = 'none';
+  }
+}
+
 // ── PAID USER CHECK ──
 function isPaidUser() {
   const email = localStorage.getItem('user_email');
@@ -1000,6 +1080,9 @@ function applyPaidUI() {
   // Enable submit button (in case it got disabled)
   const btn = document.getElementById('submit-btn');
   if (btn) btn.disabled = false;
+
+  // Update upload section
+  initUploadSection();
 
   // Update nav login btn to show plan badge
   const loginBtn = document.getElementById('nav-login-btn');
@@ -1055,6 +1138,7 @@ async function handleLogin() {
       updateNavForLoggedIn(email);
       hidePaywall();
       applyPaidUI();
+      initUploadSection();
     } else {
       err.textContent = 'No paid account found for this email.';
       err.style.display = 'block';
@@ -1065,6 +1149,8 @@ async function handleLogin() {
   }
 
   btn.textContent = 'Restore Access';
+  const so = document.getElementById('upload-scanning-overlay');
+  if (so) so.style.display = 'none';
   btn.disabled = false;
 }
 
