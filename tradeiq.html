@@ -1047,7 +1047,7 @@ async function runAnalysis() {
     const res = await fetch(`${BACKEND_URL}/api/analyse`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tradeData: data, sessionId, isPaid: false })
+      body: JSON.stringify({ tradeData: data, sessionId, isPaid: !!(localStorage.getItem('user_email') && localStorage.getItem('user_plan') && localStorage.getItem('user_plan') !== 'free'), email: localStorage.getItem('user_email') })
     });
 
     stopLoadingAnim();
