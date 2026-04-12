@@ -108,15 +108,29 @@ section{padding:6rem 2rem;position:relative;z-index:1}
 .pricing-btn-ghost:hover{border-color:var(--text3);color:var(--text)}
 .pricing-btn-accent{background:var(--accent);color:#080b12}
 .pricing-btn-accent:hover{background:var(--accent2);transform:translateY(-1px)}
+
+/* FOUNDER + SOCIAL PROOF SECTION */
 #reviews{background:var(--bg)}
-.reviews-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:4rem}
-.review-card{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:1.5rem}
-.review-stars{color:var(--gold);font-size:12px;margin-bottom:1rem;letter-spacing:2px}
-.review-text{font-size:13px;color:var(--text2);line-height:1.75;font-weight:300;margin-bottom:1.25rem;font-style:italic}
-.review-author{display:flex;align-items:center;gap:.75rem}
-.review-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent-dim);border:1px solid rgba(200,240,74,.2);display:flex;align-items:center;justify-content:center;font-family:var(--font);font-size:11px;font-weight:800;color:var(--accent)}
-.review-name{font-size:13px;font-weight:500;color:var(--text)}
-.review-handle{font-size:11px;color:var(--text3);font-family:var(--mono)}
+.founding-wrap{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:4rem;align-items:start}
+.founder-card{background:var(--bg2);border:1px solid var(--line);border-radius:20px;padding:2.5rem}
+.founder-avatar{width:56px;height:56px;border-radius:14px;background:var(--accent-dim);border:1px solid rgba(200,240,74,.25);display:flex;align-items:center;justify-content:center;font-family:var(--font);font-size:1.4rem;font-weight:800;color:var(--accent);margin-bottom:1.5rem}
+.founder-name{font-family:var(--font);font-size:1rem;font-weight:800;color:var(--text);margin-bottom:.25rem}
+.founder-handle{font-size:11px;color:var(--text3);font-family:var(--mono);letter-spacing:.5px;margin-bottom:1.25rem}
+.founder-story{font-size:14px;color:var(--text2);line-height:1.8;font-weight:300}
+.founder-story strong{color:var(--text);font-weight:500}
+.founding-right{display:flex;flex-direction:column;gap:1rem}
+.founding-offer-card{background:linear-gradient(135deg,var(--bg3),var(--bg2));border:1px solid rgba(200,240,74,.2);border-radius:20px;padding:2rem}
+.founding-badge{display:inline-flex;align-items:center;gap:.4rem;background:var(--accent);color:#080b12;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:.3rem .9rem;border-radius:100px;margin-bottom:1.25rem}
+.founding-title{font-family:var(--font);font-size:1.3rem;font-weight:800;color:var(--text);letter-spacing:-.5px;margin-bottom:.75rem}
+.founding-body{font-size:13px;color:var(--text2);line-height:1.75;font-weight:300;margin-bottom:1.5rem}
+.founding-perks{list-style:none;display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.75rem}
+.founding-perks li{font-size:13px;color:var(--text2);display:flex;align-items:center;gap:.6rem}
+.founding-perks li::before{content:'→';color:var(--accent);font-weight:700;font-size:11px}
+.founding-note{background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:1.25rem}
+.founding-note-label{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:1.5px;margin-bottom:.5rem}
+.founding-note-text{font-size:13px;color:var(--text2);line-height:1.7;font-weight:300}
+.founding-note-text strong{color:var(--accent)}
+
 #cta-section{background:var(--bg1);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .cta-inner{text-align:center;max-width:600px;margin:0 auto}
 .cta-inner h2{font-family:var(--font);font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-1px;margin-bottom:1rem}
@@ -366,6 +380,7 @@ footer a:hover{color:var(--text2)}
   .pattern-card-full{grid-column:auto}
   .paywall-card{padding:1.75rem;border-radius:16px}
   .upload-locked-title{font-size:1.2rem}
+  .founding-wrap{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -377,7 +392,7 @@ footer a:hover{color:var(--text2)}
   <div class="nav-links">
     <a onclick="showLanding();setTimeout(()=>document.getElementById('how').scrollIntoView({behavior:'smooth'}),100)">How it works</a>
     <a onclick="showLanding();setTimeout(()=>document.getElementById('pricing').scrollIntoView({behavior:'smooth'}),100)">Pricing</a>
-    <a onclick="showLanding();setTimeout(()=>document.getElementById('reviews').scrollIntoView({behavior:'smooth'}),100)">Reviews</a>
+    <a onclick="showLanding();setTimeout(()=>document.getElementById('reviews').scrollIntoView({behavior:'smooth'}),100)">About</a>
     <a onclick="openApp('history')">My Trades</a>
   </div>
   <div style="display:flex;align-items:center;gap:.75rem">
@@ -557,27 +572,56 @@ footer a:hover{color:var(--text2)}
   </div>
 </section>
 
+<!-- FOUNDER + FOUNDING TRADER SECTION (replaces fake reviews) -->
 <section id="reviews">
   <div class="section-inner">
-    <span class="section-tag">EARLY USERS</span>
-    <h2 class="section-title">Traders are talking.</h2>
-    <p class="section-sub">Early access feedback from the Indian trading community.</p>
-    <div class="reviews-grid">
-      <div class="review-card">
-        <div class="review-stars">★★★★★</div>
-        <p class="review-text">"Bhai it caught that I always overtrade on expiry day. No trading coach told me this clearly. Seeing it written out hit different."</p>
-        <div class="review-author"><div class="review-avatar">AK</div><div><div class="review-name">Arjun K.</div><div class="review-handle">Options trader · Mumbai</div></div></div>
+    <span class="section-tag">WHO MADE THIS</span>
+    <h2 class="section-title">Built by a trader,<br>not a startup.</h2>
+    <p class="section-sub">No VC money. No team of 20. Just one person who got tired of making the same mistakes.</p>
+
+    <div class="founding-wrap">
+
+      <!-- Founder card -->
+      <div class="founder-card">
+        <div class="founder-avatar">S</div>
+        <div class="founder-name">Shubho</div>
+        <div class="founder-handle">FOUNDER · TRADEIQ</div>
+        <p class="founder-story">
+          I built this because I kept losing money on the <strong>same trades</strong> — FOMO entries, wrong SL sizing, revenge after a red day. I'd journal, I'd reflect, but nothing stuck.<br><br>
+          So I built Vikram — an AI that actually calls out what I was doing wrong, every single time, in plain language. No sugarcoating.<br><br>
+          TradeIQ is <strong>early and honest</strong>. No fake user counts. No manufactured reviews. If you try it and it genuinely helps you, I'd love to hear from you.
+        </p>
+        <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--line);display:flex;align-items:center;gap:.75rem">
+          <div style="width:8px;height:8px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite;flex-shrink:0"></div>
+          <span style="font-size:12px;color:var(--text3);font-family:var(--mono)">Actively building · Responds to feedback personally</span>
+        </div>
       </div>
-      <div class="review-card">
-        <div class="review-stars">★★★★★</div>
-        <p class="review-text">"Pasted my worst trade ever. Got 4 things wrong with it, all accurate. ₹99/month is nothing compared to what I lose per bad trade."</p>
-        <div class="review-author"><div class="review-avatar">RV</div><div><div class="review-name">Rohan V.</div><div class="review-handle">Equity + F&amp;O · Pune</div></div></div>
+
+      <!-- Founding trader offer -->
+      <div class="founding-right">
+        <div class="founding-offer-card">
+          <div class="founding-badge">🎯 FOUNDING TRADER OFFER</div>
+          <div class="founding-title">Be one of the first.<br>Shape what this becomes.</div>
+          <p class="founding-body">
+            TradeIQ is new. There are no hundreds of reviews yet — and I'm not going to make them up. Instead, I'm looking for <strong>10–20 real traders</strong> who want to try it, break it, and tell me what's wrong.
+          </p>
+          <ul class="founding-perks">
+            <li>Get lifetime access at the launch price before it goes up</li>
+            <li>Direct line to me — your feedback shapes the roadmap</li>
+            <li>Your name in the app as a founding member (if you want)</li>
+            <li>First access to every new feature I ship</li>
+          </ul>
+          <button class="pricing-btn pricing-btn-accent" style="border-radius:8px;font-size:14px;padding:.9rem" onclick="showPaywall('lifetime')">Join as Founding Trader — ₹499 →</button>
+        </div>
+
+        <div class="founding-note">
+          <div class="founding-note-label">HONEST DISCLAIMER</div>
+          <p class="founding-note-text">
+            TradeIQ won't make you a profitable trader overnight. It will <strong>show you your patterns</strong> — what you're doing wrong, when, and why. What you do with that is up to you. Try the 3 free analyses first and judge it yourself.
+          </p>
+        </div>
       </div>
-      <div class="review-card">
-        <div class="review-stars">★★★★☆</div>
-        <p class="review-text">"My FOMO trades have a 23% win rate vs planned trades at 68%. That one stat from the pattern tracker changed how I think about trade selection."</p>
-        <div class="review-author"><div class="review-avatar">SM</div><div><div class="review-name">Sneha M.</div><div class="review-handle">Crypto + NSE · Bangalore</div></div></div>
-      </div>
+
     </div>
   </div>
 </section>
@@ -593,7 +637,7 @@ footer a:hover{color:var(--text2)}
 </section>
 
 <footer>
-  <div>© 2026 TradeIQ · Built for Indian Traders · By <span style="color:var(--accent);font-weight:700;font-family:var(--font)">Shubho</span></div>
+  <div>© 2026 TradeIQ · <span style="color:var(--text3)">Made by</span> <span style="color:var(--accent);font-weight:700;font-family:var(--font)">Shubho</span> · <span style="color:var(--text3);font-size:11px">I kept blowing up the same trade. So I built the tool I wished existed.</span></div>
   <div style="display:flex;gap:1.5rem;flex-wrap:wrap">
     <a href="terms.html">Terms</a>
     <a href="privacy.html">Privacy</a>
@@ -894,13 +938,11 @@ function generateId() {
 document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
 
 (async function boot() {
-  // Restore login state
   const email = localStorage.getItem('user_email');
   const plan = localStorage.getItem('user_plan');
   if (email && plan && plan !== 'free') {
     updateNavForLoggedIn(email);
     applyPaidUI();
-    // Re-verify with server silently
     try {
       const res = await fetch(`${BACKEND_URL}/check-user`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -910,7 +952,6 @@ document.getElementById('f-date').value = new Date().toISOString().split('T')[0]
       if (data.paid) {
         localStorage.setItem('user_plan', data.plan || 'pro');
       } else {
-        // Server says not paid — clear
         localStorage.removeItem('user_plan');
       }
     } catch {}
@@ -1031,7 +1072,6 @@ function clearUpload() {
   document.getElementById('upload-preview').style.display = 'none';
   document.getElementById('upload-drop-zone').style.display = 'block';
   document.getElementById('trade-img-input').value = '';
-  // Reset button and overlay so second analysis works without refresh
   const btn = document.getElementById('analyse-ss-btn');
   if (btn) { btn.disabled = false; btn.textContent = '🧠 Analyse This →'; }
   const scanOverlay = document.getElementById('upload-scanning-overlay');
@@ -1055,7 +1095,6 @@ async function runScreenshotAnalysis() {
   status.style.color = 'var(--accent)';
   if (scanOverlay) scanOverlay.style.display = 'block';
 
-  // Show loading state
   document.getElementById('step-1').style.display = 'none';
   document.getElementById('loading-state').style.display = 'block';
   document.getElementById('results-state').style.display = 'none';
@@ -1064,7 +1103,6 @@ async function runScreenshotAnalysis() {
   document.querySelectorAll('.dynamic-insert').forEach(el => el.remove());
   document.getElementById('analysis-cards').innerHTML = '';
 
-  // Custom loading steps for screenshot
   ['ls-1','ls-2','ls-3','ls-4','ls-5'].forEach(id => document.getElementById(id).className = 'loading-step');
   document.getElementById('ls-1').textContent = 'Scanning the screenshot';
   document.getElementById('ls-2').textContent = 'Identifying symbol and price levels';
@@ -1105,7 +1143,6 @@ async function runScreenshotAnalysis() {
     const result = await res.json();
     if (result.ipHash) { ipHash = result.ipHash; localStorage.setItem('tiq_iphash', ipHash); }
 
-    // Build a data object from detectedInfo for the results renderer
     const det = result.analysis.detectedInfo || {};
     const syntheticData = {
       symbol: det.symbol || 'Screenshot',
@@ -1300,7 +1337,6 @@ async function runAnalysis() {
   document.querySelectorAll('.dynamic-insert').forEach(el => el.remove());
   document.getElementById('analysis-cards').innerHTML = '';
 
-  // Reset loading step labels
   const defaultSteps = ['Reading trade details','Identifying emotional biases','Checking risk management','Analysing setup quality','Writing your breakdown'];
   defaultSteps.forEach((txt, i) => { const el = document.getElementById('ls-' + (i+1)); el.textContent = txt; el.className = 'loading-step'; });
 
@@ -1364,7 +1400,6 @@ function renderResults(data, analysis) {
   setStep(3);
   window.scrollTo(0, 0);
 
-  // Tags
   const tagsEl = document.getElementById('results-tags');
   const dirClass = data.direction === 'LONG' ? 'rtag-long' : 'rtag-short';
   tagsEl.innerHTML = `
@@ -1376,13 +1411,11 @@ function renderResults(data, analysis) {
     ${data.isScreenshot ? `<span class="rtag" style="background:rgba(96,165,250,.1);color:var(--blue);border:1px solid rgba(96,165,250,.2)">📸 Screenshot</span>` : ''}
   `;
 
-  // Score
   const scoreNum = analysis.score || 0;
   const scoreColor = scoreNum >= 70 ? 'var(--green)' : scoreNum >= 50 ? 'var(--accent)' : 'var(--red)';
   document.getElementById('score-num').textContent = scoreNum;
   document.getElementById('score-num').style.color = scoreColor;
 
-  // Score breakdown
   const sb = analysis.scoreBreakdown || {};
   const dims = [
     { key: 'discipline', label: 'Discipline' },
@@ -1400,7 +1433,6 @@ function renderResults(data, analysis) {
     </div>`;
   }).join('');
 
-  // Quick stats
   const pnlNum = data.pnl;
   const pnlClass = (data.isOpen || data.isScreenshot) ? 'acc' : pnlNum >= 0 ? 'pos' : 'neg';
   const pnlStr = (data.isOpen || data.isScreenshot) ? (analysis.pnlFormatted || 'N/A') : (analysis.pnlFormatted || ((pnlNum >= 0 ? '+' : '') + '₹' + Math.abs(pnlNum || 0).toFixed(0)));
@@ -1411,7 +1443,6 @@ function renderResults(data, analysis) {
     <div class="qs-card"><div class="qs-label">PLAN</div><div class="qs-val" style="font-size:.85rem">${data.planFollowed || '—'}</div></div>
   `;
 
-  // Verdict
   if (analysis.verdict) {
     const verdictEl = document.createElement('div');
     verdictEl.className = 'dynamic-insert';
@@ -1420,7 +1451,6 @@ function renderResults(data, analysis) {
     document.getElementById('quick-stats').after(verdictEl);
   }
 
-  // Cards
   const typeMap = {
     mistake: { badge: 'ac-type-mistake', label: 'MISTAKE', icon: '⚠️' },
     pattern: { badge: 'ac-type-pattern', label: 'PATTERN', icon: '📊' },
@@ -1437,7 +1467,6 @@ function renderResults(data, analysis) {
     </div>`;
   }).join('');
 
-  // Top mistake + action
   if (analysis.topMistake || analysis.topAction) {
     const takeaway = document.createElement('div');
     takeaway.className = 'dynamic-insert';
@@ -1457,7 +1486,6 @@ function renderResults(data, analysis) {
     document.getElementById('analysis-cards').after(takeaway);
   }
 
-  // Show paywall if 0 remaining and free user
   if (!isPaidUser()) {
     const remaining = parseInt(localStorage.getItem('tiq_free') || '0');
     if (remaining <= 0) setTimeout(() => showPaywall('pro'), 3000);
@@ -1474,7 +1502,6 @@ function resetApp() {
   clearUpload();
   setStep(1);
   initFreeCount();
-  // Reset loading step labels to defaults
   const defaultSteps = ['Reading trade details','Identifying emotional biases','Checking risk management','Analysing setup quality','Writing your breakdown'];
   defaultSteps.forEach((txt, i) => { document.getElementById('ls-' + (i+1)).textContent = txt; });
   window.scrollTo(0, 0);
@@ -1716,7 +1743,7 @@ async function handlePayment() {
 
   const price = document.getElementById('pw-price').textContent;
   const isLifetime = price === '₹499';
-  const amount = isLifetime ? 49900 : 9900; // paise
+  const amount = isLifetime ? 49900 : 9900;
 
   try {
     const res = await fetch(`${BACKEND_URL}/create-order`, {
