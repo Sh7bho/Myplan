@@ -599,7 +599,7 @@ footer a:hover{color:var(--text2)}
     <a href="privacy.html">Privacy</a>
     <a href="refund.html">Refund</a>
     <a href="cancellation.html">Cancellation</a>
-    <a href="mailto:contact@tradeiq.in">Contact</a>
+    <a href="/cdn-cgi/l/email-protection#ea8985849e8b899eaa9e988b8e8f839bc48384">Contact</a>
   </div>
 </footer>
 </div>
@@ -874,7 +874,7 @@ footer a:hover{color:var(--text2)}
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 const BACKEND_URL = 'https://tradeiq-backend-fnz2.onrender.com';
 
 // ── STATE ──
@@ -1031,6 +1031,13 @@ function clearUpload() {
   document.getElementById('upload-preview').style.display = 'none';
   document.getElementById('upload-drop-zone').style.display = 'block';
   document.getElementById('trade-img-input').value = '';
+  // Reset button and overlay so second analysis works without refresh
+  const btn = document.getElementById('analyse-ss-btn');
+  if (btn) { btn.disabled = false; btn.textContent = '🧠 Analyse This →'; }
+  const scanOverlay = document.getElementById('upload-scanning-overlay');
+  if (scanOverlay) scanOverlay.style.display = 'none';
+  const status = document.getElementById('upload-status');
+  if (status) { status.textContent = 'Ready to analyse'; status.style.color = 'var(--text3)'; }
 }
 
 // ── SCREENSHOT ANALYSIS ──
