@@ -3,148 +3,355 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TradeIQ — AI Trade Analyser for Indian Traders</title>
+<title>TradeIQ — Stop Repeating The Same Mistakes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <style>
+
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
+  --black:#04050a;--dark:#07080f;--panel:#0b0d16;--card:#0f1220;
+  --border:#151a28;--border2:#1d2438;--border3:#242e45;
+  --lime:#c8f53a;--lime2:#b0d930;--lime-dim:rgba(200,245,58,.07);--lime-glow:rgba(200,245,58,.12);
+  --red:#ff3b55;--green:#00d46a;--blue:#3d8eff;--gold:#ffaa00;--orange:#ff6b35;
+  --white:#eef1f8;--grey:#7a8799;--grey2:#3e4d62;--grey3:#252f42;
+  --font:'Bebas Neue',sans-serif;
+  --body:'Plus Jakarta Sans',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --radius:6px;
+  /* App vars */
   --bg:#080b12;--bg1:#0d1117;--bg2:#111820;--bg3:#161f2e;--bg4:#1c2738;
   --line:#1e2d42;--line2:#243448;
-  --accent:#c8f04a;--accent2:#a8d438;
-  --accent-dim:rgba(200,240,74,0.12);--accent-dim2:rgba(200,240,74,0.06);
-  --text:#f0f4f8;--text2:#8899aa;--text3:#4a5a6a;
-  --red:#ff5c7a;--green:#4ade80;--blue:#60a5fa;--gold:#fbbf24;
-  --font:'Syne',sans-serif;--body:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
+  --accent:#c8f53a;--accent2:#b0d930;
+  --accent-dim:rgba(200,245,58,0.12);--accent-dim2:rgba(200,245,58,0.06);
+  --text:#eef1f8;--text2:#8899aa;--text3:#4a5a6a;
 }
+
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:15px;line-height:1.6;overflow-x:hidden}
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:var(--line2);border-radius:2px}
-body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.4}
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.2rem 2.5rem;background:rgba(8,11,18,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--line)}
-.nav-logo{font-family:var(--font);font-size:1.1rem;font-weight:800;letter-spacing:-0.5px;color:var(--text);cursor:pointer}
-.nav-logo span{color:var(--accent)}
-.nav-links{display:flex;align-items:center;gap:2rem}
-.nav-links a{color:var(--text2);text-decoration:none;font-size:13px;font-weight:500;transition:color .2s;letter-spacing:.3px;cursor:pointer}
-.nav-links a:hover{color:var(--text)}
-.nav-cta{background:var(--accent);color:#080b12;padding:.5rem 1.2rem;border-radius:6px;font-size:13px;font-weight:700;font-family:var(--font);text-decoration:none;letter-spacing:.3px;transition:all .2s;cursor:pointer;border:none}
-.nav-cta:hover{background:var(--accent2);transform:translateY(-1px)}
-#home{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8rem 2rem 4rem;position:relative;overflow:hidden}
-.hero-glow{position:absolute;top:20%;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(200,240,74,.07) 0%,transparent 70%);pointer-events:none}
-.hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:60px 60px;opacity:.3;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%,black,transparent);pointer-events:none}
-.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:var(--accent-dim);border:1px solid rgba(200,240,74,.25);border-radius:100px;padding:.35rem 1rem;font-size:12px;font-weight:500;color:var(--accent);margin-bottom:2rem;letter-spacing:.5px;font-family:var(--mono)}
-.hero-badge::before{content:'';width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
-h1{font-family:var(--font);font-size:clamp(2.8rem,7vw,5.5rem);font-weight:800;line-height:1.05;letter-spacing:-2px;margin-bottom:1.5rem;max-width:900px}
-h1 .line1{display:block;color:var(--text)}
-h1 .line2{display:block;color:var(--accent)}
-.hero-sub{font-size:1.1rem;color:var(--text2);max-width:520px;margin:0 auto 2.5rem;line-height:1.7;font-weight:300}
-.hero-actions{display:flex;align-items:center;gap:1rem;justify-content:center;flex-wrap:wrap}
-.btn-primary{background:var(--accent);color:#080b12;padding:.85rem 2rem;border-radius:8px;font-size:14px;font-weight:700;font-family:var(--font);text-decoration:none;letter-spacing:.3px;transition:all .25s;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:.5rem}
-.btn-primary:hover{background:var(--accent2);transform:translateY(-2px);box-shadow:0 12px 30px rgba(200,240,74,.2)}
-.btn-secondary{background:transparent;color:var(--text2);padding:.85rem 2rem;border-radius:8px;font-size:14px;font-weight:500;font-family:var(--body);text-decoration:none;transition:all .25s;border:1px solid var(--line2);cursor:pointer;display:inline-flex;align-items:center;gap:.5rem}
-.btn-secondary:hover{border-color:var(--text3);color:var(--text)}
-.hero-stats{display:flex;gap:3rem;justify-content:center;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--line)}
-.hero-stat{text-align:center}
-.hero-stat-num{font-family:var(--font);font-size:1.8rem;font-weight:800;color:var(--accent);display:block}
-.hero-stat-label{font-size:12px;color:var(--text3);letter-spacing:.5px;margin-top:.2rem}
-section{padding:6rem 2rem;position:relative;z-index:1}
-.section-inner{max-width:1100px;margin:0 auto}
-.section-tag{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:2px;margin-bottom:1rem;display:block}
-.section-title{font-family:var(--font);font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:1rem}
-.section-sub{font-size:1rem;color:var(--text2);max-width:500px;line-height:1.7;font-weight:300}
-#how{background:var(--bg1)}
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5px;margin-top:4rem;background:var(--line)}
-.step{background:var(--bg1);padding:2.5rem;position:relative;overflow:hidden;transition:background .3s}
-.step:hover{background:var(--bg2)}
-.step-num{font-family:var(--mono);font-size:11px;color:var(--text3);letter-spacing:2px;margin-bottom:1.5rem}
-.step-icon{width:44px;height:44px;border-radius:10px;background:var(--accent-dim);border:1px solid rgba(200,240,74,.2);display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;font-size:1.3rem}
-.step h3{font-family:var(--font);font-size:1.1rem;font-weight:700;margin-bottom:.75rem;color:var(--text)}
-.step p{font-size:13px;color:var(--text2);line-height:1.7;font-weight:300}
-.step-accent{position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent);opacity:0;transition:opacity .3s}
-.step:hover .step-accent{opacity:1}
-#sample{background:var(--bg)}
-.sample-wrap{display:grid;grid-template-columns:1fr 1.2fr;gap:3rem;align-items:start;margin-top:4rem}
-.sample-input{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:2rem;position:sticky;top:100px}
-.sample-label{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:1.5px;margin-bottom:.75rem}
-.sample-field{background:var(--bg3);border:1px solid var(--line2);border-radius:8px;padding:.85rem 1rem;margin-bottom:.75rem;font-size:13px;color:var(--text2);font-family:var(--mono)}
-.sample-field strong{color:var(--accent);font-weight:500}
-.sample-output{display:flex;flex-direction:column;gap:1rem}
-.output-card{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:1.5rem;transition:border-color .3s}
-.output-card:hover{border-color:var(--line2)}
-.output-card-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
-.output-badge{padding:.2rem .65rem;border-radius:4px;font-size:10px;font-weight:700;font-family:var(--mono);letter-spacing:1px}
-.badge-mistake{background:rgba(255,92,122,.12);color:var(--red);border:1px solid rgba(255,92,122,.2)}
-.badge-pattern{background:rgba(251,191,36,.1);color:var(--gold);border:1px solid rgba(251,191,36,.2)}
-.badge-strength{background:rgba(74,222,128,.1);color:var(--green);border:1px solid rgba(74,222,128,.2)}
-.badge-action{background:var(--accent-dim);color:var(--accent);border:1px solid rgba(200,240,74,.2)}
-.output-title{font-family:var(--font);font-size:.95rem;font-weight:700;color:var(--text)}
-.output-body{font-size:13px;color:var(--text2);line-height:1.75;font-weight:300}
-.output-body strong{color:var(--text);font-weight:500}
-.score-row{display:flex;align-items:center;gap:1rem;margin-top:1rem}
-.score-bar-wrap{flex:1;height:4px;background:var(--line2);border-radius:2px}
-.score-bar{height:4px;border-radius:2px;background:var(--accent)}
-.score-label{font-family:var(--mono);font-size:11px;color:var(--accent);min-width:30px}
-#pricing{background:var(--bg1)}
-.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:4rem}
-.pricing-card{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:2rem;position:relative;transition:all .3s}
-.pricing-card.featured{background:var(--bg3);border-color:rgba(200,240,74,.3);transform:scale(1.02)}
-.pricing-card:hover:not(.featured){border-color:var(--line2)}
-.pricing-featured-tag{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#080b12;padding:.25rem 1rem;border-radius:100px;font-size:11px;font-weight:700;font-family:var(--font);letter-spacing:.5px;white-space:nowrap}
-.pricing-name{font-family:var(--font);font-size:.85rem;font-weight:700;color:var(--text3);letter-spacing:1px;margin-bottom:1rem}
-.pricing-price{font-family:var(--font);font-size:2.5rem;font-weight:800;color:var(--text);letter-spacing:-1px;margin-bottom:.25rem}
-.pricing-period{font-size:12px;color:var(--text3);margin-bottom:1.75rem}
-.pricing-divider{height:1px;background:var(--line);margin:1.5rem 0}
-.pricing-features{list-style:none;display:flex;flex-direction:column;gap:.75rem;margin-bottom:2rem}
-.pricing-features li{font-size:13px;color:var(--text2);display:flex;align-items:flex-start;gap:.6rem;font-weight:300}
-.pricing-features li.included::before{content:'✓';font-size:10px;color:var(--accent);background:var(--accent-dim);border:1px solid rgba(200,240,74,.3);border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
-.pricing-features li.excluded{opacity:.4}
-.pricing-features li.excluded::before{content:'';width:14px;height:14px;border-radius:50%;background:var(--line);border:1px solid var(--line2);flex-shrink:0;margin-top:2px;display:block}
-.pricing-btn{width:100%;padding:.85rem;border-radius:8px;font-size:13px;font-weight:700;font-family:var(--font);cursor:pointer;transition:all .25s;letter-spacing:.3px;border:none}
-.pricing-btn-ghost{background:transparent;border:1px solid var(--line2);color:var(--text2)}
-.pricing-btn-ghost:hover{border-color:var(--text3);color:var(--text)}
-.pricing-btn-accent{background:var(--accent);color:#080b12}
-.pricing-btn-accent:hover{background:var(--accent2);transform:translateY(-1px)}
+body{background:var(--black);color:var(--white);font-family:var(--body);overflow-x:hidden}
 
-/* FOUNDER + SOCIAL PROOF SECTION */
-#reviews{background:var(--bg)}
-.founding-wrap{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:4rem;align-items:start}
-.founder-card{background:var(--bg2);border:1px solid var(--line);border-radius:20px;padding:2.5rem}
-.founder-avatar{width:56px;height:56px;border-radius:14px;background:var(--accent-dim);border:1px solid rgba(200,240,74,.25);display:flex;align-items:center;justify-content:center;font-family:var(--font);font-size:1.4rem;font-weight:800;color:var(--accent);margin-bottom:1.5rem}
-.founder-name{font-family:var(--font);font-size:1rem;font-weight:800;color:var(--text);margin-bottom:.25rem}
-.founder-handle{font-size:11px;color:var(--text3);font-family:var(--mono);letter-spacing:.5px;margin-bottom:1.25rem}
-.founder-story{font-size:14px;color:var(--text2);line-height:1.8;font-weight:300}
-.founder-story strong{color:var(--text);font-weight:500}
-.founding-right{display:flex;flex-direction:column;gap:1rem}
-.founding-offer-card{background:linear-gradient(135deg,var(--bg3),var(--bg2));border:1px solid rgba(200,240,74,.2);border-radius:20px;padding:2rem}
-.founding-badge{display:inline-flex;align-items:center;gap:.4rem;background:var(--accent);color:#080b12;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:.3rem .9rem;border-radius:100px;margin-bottom:1.25rem}
-.founding-title{font-family:var(--font);font-size:1.3rem;font-weight:800;color:var(--text);letter-spacing:-.5px;margin-bottom:.75rem}
-.founding-body{font-size:13px;color:var(--text2);line-height:1.75;font-weight:300;margin-bottom:1.5rem}
-.founding-perks{list-style:none;display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.75rem}
-.founding-perks li{font-size:13px;color:var(--text2);display:flex;align-items:center;gap:.6rem}
-.founding-perks li::before{content:'→';color:var(--accent);font-weight:700;font-size:11px}
-.founding-note{background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:1.25rem}
-.founding-note-label{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:1.5px;margin-bottom:.5rem}
-.founding-note-text{font-size:13px;color:var(--text2);line-height:1.7;font-weight:300}
-.founding-note-text strong{color:var(--accent)}
+/* SCROLLBAR */
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:var(--black)}
+::-webkit-scrollbar-thumb{background:var(--border3)}
 
-#cta-section{background:var(--bg1);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.cta-inner{text-align:center;max-width:600px;margin:0 auto}
-.cta-inner h2{font-family:var(--font);font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-1px;margin-bottom:1rem}
-.cta-inner p{color:var(--text2);font-weight:300;margin-bottom:2rem}
-footer{padding:2rem 2.5rem;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--text3)}
-footer a{color:var(--text3);text-decoration:none;transition:color .2s}
-footer a:hover{color:var(--text2)}
+/* NOISE TEXTURE */
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9000;opacity:.5}
+
+/* ── TICKER ── */
+.ticker{position:fixed;top:0;left:0;right:0;z-index:600;height:26px;background:var(--dark);border-bottom:1px solid var(--border);overflow:hidden;display:flex;align-items:center}
+.ticker-track{display:flex;animation:tick 30s linear infinite;white-space:nowrap}
+.ticker-item{font-family:var(--mono);font-size:10px;padding:0 1.75rem;color:var(--grey);display:flex;align-items:center;gap:.5rem;border-right:1px solid var(--border)}
+.ticker-item .sym{color:var(--white);font-weight:700}
+.ticker-item .up{color:var(--green)}
+.ticker-item .dn{color:var(--red)}
+@keyframes tick{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* ── NAV ── */
+nav{position:fixed;top:26px;left:0;right:0;z-index:500;height:56px;background:rgba(4,5,10,.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 3vw;gap:2rem}
+.nav-logo{font-family:var(--font);font-size:1.7rem;letter-spacing:3px;color:var(--white);cursor:pointer;margin-right:auto}
+.nav-logo em{color:var(--lime);font-style:normal}
+.nav-pulse{display:flex;align-items:center;gap:.45rem;font-family:var(--mono);font-size:10px;color:var(--grey);letter-spacing:1px;margin-right:1rem}
+.nav-pulse-dot{width:5px;height:5px;background:var(--green);border-radius:50%;animation:pulse 2.5s ease infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.nav-links{display:flex;gap:2rem}
+.nav-links a{font-family:var(--mono);font-size:10px;color:var(--grey);text-decoration:none;letter-spacing:1.5px;cursor:pointer;transition:color .2s;text-transform:uppercase}
+.nav-links a:hover{color:var(--white)}
+.nav-ghost{background:none;border:1px solid var(--border3);color:var(--grey);padding:.38rem .9rem;font-family:var(--mono);font-size:10px;letter-spacing:1px;cursor:pointer;transition:all .2s;text-transform:uppercase;border-radius:var(--radius)}
+.nav-ghost:hover{border-color:var(--lime);color:var(--lime)}
+.nav-cta{background:var(--lime);color:var(--black);padding:.42rem 1.1rem;font-family:var(--font);font-size:1rem;letter-spacing:2px;border:none;cursor:pointer;transition:all .2s;border-radius:var(--radius)}
+.nav-cta:hover{background:var(--lime2);transform:translateY(-1px)}
+
+/* ── HERO ── */
+#hero{min-height:100vh;display:grid;grid-template-columns:1.1fr 1fr;padding:82px 0 0;position:relative;overflow:hidden}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:52px 52px;opacity:.4;mask-image:radial-gradient(ellipse 70% 80% at 40% 50%,black,transparent)}
+.hero-glow{position:absolute;left:-10vw;top:20%;width:50vw;height:60vh;background:radial-gradient(ellipse,rgba(200,245,58,.05) 0%,transparent 70%);pointer-events:none}
+
+.hero-l{padding:5rem 2rem 4rem 5vw;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:2}
+.hero-r{display:flex;align-items:center;justify-content:center;padding:5rem 5vw 4rem 2rem;position:relative;z-index:2}
+
+.hero-tag{display:inline-flex;align-items:center;gap:.5rem;border:1px solid rgba(200,245,58,.25);padding:.3rem .85rem;font-family:var(--mono);font-size:10px;color:var(--lime);letter-spacing:2px;margin-bottom:2rem;border-radius:2px}
+.hero-tag-dot{width:5px;height:5px;background:var(--lime);border-radius:50%;animation:pulse 2.5s infinite}
+
+h1.hero-h{font-family:var(--font);font-size:clamp(4rem,7.5vw,7.5rem);line-height:.93;letter-spacing:1.5px;margin-bottom:1.75rem}
+h1.hero-h .d{color:var(--grey2);display:block}
+h1.hero-h .w{color:var(--white);display:block}
+h1.hero-h .a{color:var(--lime);display:block}
+
+.hero-sub{font-size:.975rem;color:var(--grey);max-width:440px;line-height:1.8;margin-bottom:2.5rem;font-weight:400}
+.hero-sub strong{color:var(--white);font-weight:600}
+
+.hero-btns{display:flex;align-items:center;gap:1rem;margin-bottom:3rem;flex-wrap:wrap}
+.btn-main{background:var(--lime);color:var(--black);padding:.9rem 2.25rem;font-family:var(--font);font-size:1.35rem;letter-spacing:2.5px;border:none;cursor:pointer;transition:all .25s;border-radius:var(--radius);display:inline-flex;align-items:center;gap:.6rem}
+.btn-main:hover{background:var(--lime2);transform:translateY(-2px);box-shadow:0 12px 32px rgba(200,245,58,.18)}
+.btn-ghost{background:none;border:1px solid var(--border3);color:var(--grey);padding:.9rem 1.75rem;font-family:var(--mono);font-size:11px;letter-spacing:1.5px;cursor:pointer;transition:all .25s;text-transform:uppercase;border-radius:var(--radius)}
+.btn-ghost:hover{border-color:var(--border2+40);color:var(--white)}
+
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.h-stat{padding:1rem 1.25rem;border-right:1px solid var(--border);background:var(--panel)}
+.h-stat:last-child{border-right:none}
+.h-stat-val{font-family:var(--font);font-size:1.9rem;color:var(--lime);line-height:1;display:block}
+.h-stat-label{font-family:var(--mono);font-size:9px;color:var(--grey2);letter-spacing:1.5px;margin-top:.2rem;text-transform:uppercase}
+
+/* TERMINAL */
+.terminal{background:var(--panel);border:1px solid var(--border2);border-radius:var(--radius);overflow:hidden;width:100%;max-width:490px;box-shadow:0 32px 80px rgba(0,0,0,.5)}
+.t-bar{background:var(--dark);border-bottom:1px solid var(--border);padding:.55rem 1rem;display:flex;align-items:center;justify-content:space-between}
+.t-dots{display:flex;gap:.35rem}
+.t-dot{width:9px;height:9px;border-radius:50%}
+.t-title{font-family:var(--mono);font-size:9px;color:var(--grey2);letter-spacing:2px}
+.t-body{padding:1.1rem 1.25rem;display:flex;flex-direction:column;gap:.5rem}
+.t-row{font-family:var(--mono);font-size:11px;display:flex;gap:.6rem;align-items:flex-start;line-height:1.5}
+.t-prompt{color:var(--lime);flex-shrink:0;margin-top:1px}
+.t-val{color:var(--grey)}
+.t-val .h{color:var(--white);font-weight:700}
+.t-val .e{color:var(--red)}
+.t-val .g{color:var(--green)}
+.t-val .w{color:var(--gold)}
+.t-val .a{color:var(--lime)}
+.t-sep{height:1px;background:var(--border);margin:.3rem 0}
+.t-score-box{background:rgba(200,245,58,.05);border:1px solid rgba(200,245,58,.1);border-radius:4px;padding:.9rem;margin:.2rem 0;display:flex;align-items:center;gap:1rem}
+.t-big-score{font-family:var(--font);font-size:2.8rem;color:var(--red);line-height:1;min-width:48px}
+.t-bars{flex:1;display:flex;flex-direction:column;gap:.3rem}
+.t-bar-label{font-family:var(--mono);font-size:8px;color:var(--grey2);letter-spacing:1px;margin-bottom:2px}
+.t-brow{display:flex;align-items:center;gap:.5rem}
+.t-bname{font-family:var(--mono);font-size:8.5px;color:var(--grey2);width:58px;flex-shrink:0}
+.t-btrack{flex:1;height:2px;background:var(--border2);border-radius:1px}
+.t-bfill{height:2px;border-radius:1px}
+.t-cursor{display:inline-block;width:7px;height:12px;background:var(--lime);animation:cblink .9s step-end infinite;vertical-align:middle;margin-left:3px;border-radius:1px}
+@keyframes cblink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ── PROOF STRIP ── */
+#proof{border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--dark);padding:1.5rem 3vw}
+.proof-row{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap}
+.proof-chip{display:flex;align-items:center;gap:.6rem;padding:.75rem 2rem;border-right:1px solid var(--border)}
+.proof-chip:last-child{border-right:none}
+.proof-icon{width:30px;height:30px;background:var(--lime-dim);border:1px solid rgba(200,245,58,.15);display:flex;align-items:center;justify-content:center;font-size:.85rem;border-radius:4px;flex-shrink:0}
+.proof-text{font-family:var(--mono);font-size:10px;line-height:1.4}
+.proof-text strong{color:var(--white);display:block;font-size:11px;letter-spacing:.3px}
+.proof-text span{color:var(--grey2)}
+
+/* ── HOW IT WORKS ── */
+#how{padding:6rem 5vw;background:var(--dark)}
+.sec-tag{font-family:var(--mono);font-size:10px;letter-spacing:4px;color:var(--lime);text-transform:uppercase;display:flex;align-items:center;gap:.6rem;margin-bottom:.9rem}
+.sec-tag::before{content:'//';color:var(--grey2)}
+.sec-h{font-family:var(--font);font-size:clamp(2.8rem,4.5vw,4.5rem);letter-spacing:1.5px;line-height:.95;margin-bottom:1rem}
+.sec-sub{font-size:.92rem;color:var(--grey);max-width:460px;line-height:1.75;margin-bottom:3.5rem}
+
+.steps{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.step{padding:2.25rem;border-right:1px solid var(--border);background:var(--panel);transition:background .25s;position:relative;overflow:hidden}
+.step:last-child{border-right:none}
+.step:hover{background:var(--card)}
+.step-n{font-family:var(--font);font-size:4.5rem;color:var(--border3);line-height:1;margin-bottom:1rem;transition:color .25s}
+.step:hover .step-n{color:rgba(200,245,58,.15)}
+.step-ico{width:40px;height:40px;background:var(--lime-dim);border:1px solid rgba(200,245,58,.18);display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:1rem;border-radius:4px}
+.step h3{font-family:var(--font);font-size:1.5rem;letter-spacing:1px;margin-bottom:.6rem}
+.step p{font-size:13px;color:var(--grey);line-height:1.75}
+.step-bar{position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--lime);transform:scaleX(0);transform-origin:left;transition:transform .35s ease}
+.step:hover .step-bar{transform:scaleX(1)}
+
+/* ── SAMPLE ── */
+#sample{padding:6rem 5vw;background:var(--black)}
+.sample-wrap{display:grid;grid-template-columns:300px 1fr;gap:2px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-top:3.5rem}
+.s-input{background:var(--panel);padding:1.5rem}
+.s-label{font-family:var(--mono);font-size:9px;letter-spacing:2.5px;color:var(--grey2);text-transform:uppercase;margin-bottom:.9rem}
+.s-row{display:flex;justify-content:space-between;align-items:center;padding:.55rem 0;border-bottom:1px solid var(--border)}
+.s-row:last-of-type{border-bottom:none}
+.s-key{font-family:var(--mono);font-size:10.5px;color:var(--grey2)}
+.s-val{font-family:var(--mono);font-size:10.5px;color:var(--white);font-weight:500}
+.s-val.l{color:var(--lime)}.s-val.r{color:var(--red)}.s-val.g{color:var(--green)}
+.s-notes{margin-top:.9rem;background:var(--dark);border:1px solid var(--border);padding:.75rem;border-radius:4px}
+.s-notes-label{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--grey2);text-transform:uppercase;margin-bottom:.4rem}
+.s-notes-text{font-family:var(--mono);font-size:10.5px;color:var(--grey);line-height:1.6;font-style:italic}
+
+.s-output{background:var(--dark);padding:1.5rem;display:flex;flex-direction:column;gap:.85rem}
+.s-score{background:var(--panel);border:1px solid var(--border2);padding:1.1rem 1.25rem;display:flex;align-items:center;gap:1.25rem;border-radius:4px}
+.s-score-num{font-family:var(--font);font-size:3.5rem;color:var(--red);line-height:1}
+.s-score-right{flex:1}
+.s-score-label{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--grey2);margin-bottom:.5rem}
+.s-dim{display:flex;align-items:center;gap:.5rem;margin-bottom:.28rem}
+.s-dim-name{font-family:var(--mono);font-size:9px;color:var(--grey2);width:72px}
+.s-dim-track{flex:1;height:2px;background:var(--border2)}
+.s-dim-fill{height:2px}
+
+/* SAMPLE CARDS — Hinglish content */
+.s-card{background:var(--panel);border-radius:4px;padding:1rem 1.1rem;border-left:3px solid}
+.s-card.m{border-color:var(--red)}.s-card.p{border-color:var(--gold)}.s-card.ac{border-color:var(--lime)}.s-card.st{border-color:var(--green)}
+.s-card-tag{font-family:var(--mono);font-size:9px;letter-spacing:2px;font-weight:700;margin-bottom:.35rem}
+.s-card-tag.m{color:var(--red)}.s-card-tag.p{color:var(--gold)}.s-card-tag.ac{color:var(--lime)}.s-card-tag.st{color:var(--green)}
+.s-card-title{font-family:var(--font);font-size:1.05rem;letter-spacing:.5px;color:var(--white);margin-bottom:.3rem}
+.s-card-body{font-size:12.5px;color:var(--grey);line-height:1.7}
+.s-card-body strong{color:var(--white)}
+
+/* ── PRICING ── */
+#pricing{padding:6rem 5vw;background:var(--dark);border-top:1px solid var(--border)}
+.p-grid{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-top:3.5rem}
+.p-card{padding:2.25rem;border-right:1px solid var(--border);background:var(--panel);position:relative;transition:background .25s}
+.p-card:last-child{border-right:none}
+.p-card.feat{background:var(--card);border-right-color:var(--border)}
+.p-card:hover:not(.feat){background:var(--card)}
+.p-popular{position:absolute;top:0;left:0;right:0;background:var(--lime);color:var(--black);font-family:var(--mono);font-size:8.5px;letter-spacing:3px;text-align:center;padding:.28rem;text-transform:uppercase}
+.p-tier{font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--grey2);margin-bottom:1.25rem;text-transform:uppercase}
+.p-tier.ft{margin-top:1.5rem}
+.p-price{font-family:var(--font);font-size:3.8rem;color:var(--white);line-height:1;letter-spacing:1px}
+.p-price em{font-size:1rem;font-style:normal;color:var(--grey);font-family:var(--body);font-weight:300;vertical-align:super}
+.p-price.lime{color:var(--lime)}
+.p-period{font-family:var(--mono);font-size:9.5px;color:var(--grey2);letter-spacing:1px;margin-top:.3rem;margin-bottom:1.75rem}
+.p-div{height:1px;background:var(--border);margin-bottom:1.6rem}
+.p-feats{list-style:none;display:flex;flex-direction:column;gap:.6rem;margin-bottom:2rem}
+.p-feats li{font-size:12.5px;color:var(--grey);display:flex;align-items:flex-start;gap:.55rem;line-height:1.4}
+.p-feats li.on{color:var(--white)}.p-feats li.on::before{content:'✓';color:var(--lime);font-size:10px;flex-shrink:0;margin-top:2px}
+.p-feats li.off{opacity:.3}.p-feats li.off::before{content:'—';color:var(--grey2);font-size:10px;flex-shrink:0;margin-top:2px}
+.p-btn{width:100%;padding:.8rem;font-family:var(--font);font-size:1.15rem;letter-spacing:2px;border:none;cursor:pointer;transition:all .25s;border-radius:4px}
+.p-btn-o{background:none;border:1px solid var(--border3);color:var(--grey)}.p-btn-o:hover{border-color:var(--white);color:var(--white)}
+.p-btn-l{background:var(--lime);color:var(--black)}.p-btn-l:hover{background:var(--lime2)}
+
+/* ── FOUNDER ── */
+#founder{padding:6rem 5vw;background:var(--black);border-top:1px solid var(--border)}
+.f-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:3.5rem}
+.f-card{background:var(--panel);border:1px solid var(--border2);padding:2.25rem;border-radius:var(--radius);position:relative;overflow:hidden}
+.f-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--lime),transparent 60%)}
+.f-tag{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--lime);text-transform:uppercase;margin-bottom:1.1rem}
+.f-name{font-family:var(--font);font-size:2.2rem;letter-spacing:2px;margin-bottom:.2rem}
+.f-role{font-family:var(--mono);font-size:9px;color:var(--grey2);letter-spacing:2px;text-transform:uppercase;margin-bottom:1.5rem}
+.f-story{font-size:13.5px;color:var(--grey);line-height:1.9}
+.f-story strong{color:var(--white);font-weight:600}
+.f-signal{display:flex;align-items:center;gap:.65rem;margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border)}
+.f-signal-dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 2.5s infinite;flex-shrink:0}
+.f-signal-text{font-family:var(--mono);font-size:9.5px;color:var(--grey2);letter-spacing:.5px}
+
+.fo-card{background:var(--panel);border:1px solid rgba(200,245,58,.18);padding:2.25rem;border-radius:var(--radius);position:relative;overflow:hidden}
+.fo-card::after{content:'FOUNDING';position:absolute;bottom:-15px;right:-5px;font-family:var(--font);font-size:5rem;color:rgba(200,245,58,.035);letter-spacing:4px;pointer-events:none;white-space:nowrap}
+.fo-badge{display:inline-flex;align-items:center;gap:.4rem;background:var(--lime);color:var(--black);font-family:var(--mono);font-size:9px;letter-spacing:2px;padding:.28rem .75rem;border-radius:2px;margin-bottom:1.1rem;text-transform:uppercase}
+.fo-h{font-family:var(--font);font-size:1.85rem;letter-spacing:1px;line-height:1.05;margin-bottom:.85rem}
+.fo-body{font-size:13px;color:var(--grey);line-height:1.8;margin-bottom:1.25rem}
+.fo-perks{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.75rem}
+.fo-perks li{font-size:13px;color:var(--white);display:flex;align-items:flex-start;gap:.55rem;line-height:1.4}
+.fo-perks li::before{content:'→';color:var(--lime);font-weight:700;flex-shrink:0}
+.fo-disc{background:rgba(200,245,58,.05);border:1px solid rgba(200,245,58,.1);padding:.9rem 1.1rem;border-radius:4px;margin-top:1.1rem}
+.fo-disc-label{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--grey2);text-transform:uppercase;margin-bottom:.35rem}
+.fo-disc-text{font-size:12px;color:var(--grey);line-height:1.65}
+.fo-disc-text strong{color:var(--lime)}
+
+/* ── CTA ── */
+#cta{padding:7rem 5vw;background:var(--lime);text-align:center;position:relative;overflow:hidden}
+#cta::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:repeating-linear-gradient(45deg,transparent,transparent 60px,rgba(0,0,0,.018) 60px,rgba(0,0,0,.018) 61px);
+  pointer-events: none;   /* ← ADD THIS LINE */
+}
+.cta-tag{font-family:var(--mono);font-size:10px;letter-spacing:4px;color:rgba(0,0,0,.4);margin-bottom:1.1rem;text-transform:uppercase}
+.cta-h{font-family:var(--font);font-size:clamp(3rem,7vw,6.5rem);color:var(--black);letter-spacing:2px;line-height:.92;margin-bottom:1.5rem}
+.cta-sub{font-size:.95rem;color:rgba(0,0,0,.5);max-width:420px;margin:0 auto 2.5rem;line-height:1.7}
+.btn-cta{background:var(--black);color:var(--lime);padding:1rem 2.75rem;font-family:var(--font);font-size:1.5rem;letter-spacing:3px;border:none;cursor:pointer;transition:all .25s;border-radius:var(--radius);display:inline-flex;align-items:center;gap:.75remposition: relative;z-index: 10;}
+.btn-cta:hover{transform:translateY(-3px);box-shadow:0 20px 48px rgba(0,0,0,.25)}
+.cta-hint{font-family:var(--mono);font-size:10px;color:rgba(0,0,0,.35);margin-top:.9rem;letter-spacing:1px}
+
+/* ── FOOTER ── */
+footer{background:var(--dark);border-top:1px solid var(--border);padding:1.5rem 3vw;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.f-logo{font-family:var(--font);font-size:1.3rem;letter-spacing:2px}
+.f-logo em{color:var(--lime);font-style:normal}
+.f-tagline{font-family:var(--mono);font-size:10px;color:var(--grey2);letter-spacing:.5px;max-width:400px}
+.f-tagline strong{color:rgba(200,245,58,.6)}
+.f-links{display:flex;gap:1.25rem;flex-wrap:wrap}
+.f-links a{font-family:var(--mono);font-size:9.5px;color:var(--grey2);text-decoration:none;letter-spacing:1px;transition:color .2s;text-transform:uppercase}
+.f-links a:hover{color:var(--white)}
+
+/* ── MODALS ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(4,5,10,.93);backdrop-filter:blur(16px);z-index:800;align-items:center;justify-content:center;padding:1rem}
+.modal{background:var(--panel);border:1px solid var(--border2);border-radius:10px;padding:2.5rem;max-width:420px;width:100%;position:relative;box-shadow:0 32px 80px rgba(0,0,0,.6)}
+.modal-close{position:absolute;top:1rem;right:1.1rem;background:none;border:none;color:var(--grey2);font-size:1.4rem;cursor:pointer;line-height:1;transition:color .2s}
+.modal-close:hover{color:var(--white)}
+.modal-icon{font-size:1.75rem;margin-bottom:1rem}
+.modal-title{font-family:var(--font);font-size:2rem;letter-spacing:1.5px;margin-bottom:.35rem}
+.modal-sub{font-size:13px;color:var(--grey);margin-bottom:1.75rem;line-height:1.6}
+.field-label{font-family:var(--mono);font-size:9.5px;letter-spacing:2px;color:var(--grey2);text-transform:uppercase;display:block;margin-bottom:.4rem}
+.field-input{width:100%;background:var(--dark);border:1px solid var(--border2);border-radius:var(--radius);padding:.75rem 1rem;color:var(--white);font-family:var(--mono);font-size:13px;outline:none;transition:all .2s;box-sizing:border-box;letter-spacing:.5px}
+.field-input:focus{border-color:var(--lime);background:var(--black)}
+.field-input::placeholder{color:var(--grey2)}
+.field-err{font-family:var(--mono);font-size:10px;color:var(--red);margin-top:.4rem;display:none;letter-spacing:.5px}
+.modal-btn{width:100%;padding:.9rem;font-family:var(--font);font-size:1.3rem;letter-spacing:2px;border:none;cursor:pointer;border-radius:var(--radius);transition:all .25s;margin-top:1.1rem}
+.modal-btn-lime{background:var(--lime);color:var(--black)}.modal-btn-lime:hover{background:var(--lime2)}
+.modal-btn-skip{background:none;border:none;color:var(--grey2);font-size:12px;cursor:pointer;font-family:var(--mono);letter-spacing:1px;margin-top:.65rem;width:100%;text-align:center;padding:.4rem}
+.modal-btn-skip:hover{color:var(--grey)}
+
+/* ── PAYWALL ── */
+#paywall-overlay{display:none;position:fixed;inset:0;background:rgba(4,5,10,.95);backdrop-filter:blur(20px);z-index:99999 !important;align-items:center;justify-content:center;padding:1rem;overflow-y:auto}
+.pw-card{background:var(--panel);border:1px solid var(--border2);border-radius:12px;max-width:500px;width:100%;margin:auto;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.7);position:relative}
+.pw-top{background:var(--dark);border-bottom:1px solid var(--border);padding:1.75rem 2rem}
+.pw-close{position:absolute;top:1rem;right:1.1rem;background:none;border:none;color:var(--grey2);font-size:1.4rem;cursor:pointer;z-index:10000;transition:color .2s}
+.pw-close:hover{color:var(--white)}
+.pw-plan-tag{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--lime);text-transform:uppercase;margin-bottom:.5rem}
+.pw-price-row{display:flex;align-items:baseline;gap:.6rem;margin-bottom:.15rem}
+.pw-price{font-family:var(--font);font-size:3.5rem;color:var(--lime);line-height:1}
+.pw-og{font-family:var(--mono);font-size:10.5px;color:var(--grey2);text-decoration:line-through;letter-spacing:.5px}
+.pw-period{font-family:var(--mono);font-size:10px;color:var(--grey2);letter-spacing:.5px}
+.pw-body{padding:1.75rem 2rem}
+.pw-feats{list-style:none;display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.75rem}
+.pw-feats li{font-size:13px;color:var(--white);display:flex;align-items:center;gap:.65rem}
+.pw-feats li::before{content:'✓';color:var(--lime);font-weight:700;font-size:11px;flex-shrink:0}
+.pw-email-wrap{margin-bottom:1.25rem}
+.pw-btn{width:100%;padding:.95rem;font-family:var(--font);font-size:1.35rem;letter-spacing:2px;border:none;cursor:pointer;border-radius:var(--radius);background:var(--lime);color:var(--black);transition:all .25s}
+.pw-btn:hover{background:var(--lime2);transform:translateY(-1px)}
+.pw-trust{display:flex;align-items:center;justify-content:center;gap:1.5rem;margin-top:1.1rem;padding-top:1.1rem;border-top:1px solid var(--border)}
+.pw-trust-item{font-family:var(--mono);font-size:9px;color:var(--grey2);letter-spacing:.5px;display:flex;align-items:center;gap:.4rem}
+.pw-switch{text-align:center;margin-top:.75rem}
+.pw-switch button{background:none;border:none;color:var(--grey2);font-family:var(--mono);font-size:10px;cursor:pointer;letter-spacing:.5px;text-decoration:underline;transition:color .2s}
+.pw-switch button:hover{color:var(--grey)}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.au{opacity:0;animation:fadeUp .55s ease forwards}
+.au1{animation-delay:.05s}.au2{animation-delay:.15s}.au3{animation-delay:.25s}.au4{animation-delay:.35s}.au5{animation-delay:.45s}
+
+/* SCROLL REVEAL */
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .55s ease,transform .55s ease}
+.reveal.in{opacity:1;transform:translateY(0)}
+
+/* ── MOBILE ── */
+@media(max-width:900px){
+  .nav-links,.nav-pulse{display:none}
+  nav{padding:0 1.25rem;gap:1rem}
+  #hero{grid-template-columns:1fr;min-height:auto;padding-bottom:3rem}
+  .hero-r{display:none}
+  .hero-l{padding:2rem 1.25rem}
+  .hero-stats{grid-template-columns:repeat(2,1fr)}
+  .steps,.p-grid{grid-template-columns:1fr}
+  .step,.p-card{border-right:none;border-bottom:1px solid var(--border)}
+  .step:last-child,.p-card:last-child{border-bottom:none}
+  .sample-wrap{grid-template-columns:1fr}
+  .f-grid{grid-template-columns:1fr}
+  footer{flex-direction:column}
+  .proof-row{justify-content:flex-start}
+  .proof-chip{border-right:none;border-bottom:1px solid var(--border);width:50%}
+}
+@media(max-width:500px){
+  .hero-stats{grid-template-columns:repeat(2,1fr)}
+  .proof-chip{width:100%}
+}
+
+
+/* LANDING/APP SWITCH */
+#tiq-landing{display:block}
+
+
+/* Cursor */
+body{cursor:none}
+#cur{position:fixed;width:10px;height:10px;border-radius:50%;background:var(--lime);pointer-events:none;z-index:100000;transform:translate(-50%,-50%);transition:width .15s,height .15s;mix-blend-mode:difference;will-change:transform}
+#cur-ring{position:fixed;width:38px;height:38px;border-radius:50%;border:1.5px solid rgba(200,245,58,.45);pointer-events:none;z-index:100000;transform:translate(-50%,-50%);transition:width .22s ease,height .22s ease,border-color .2s;will-change:transform}
+#cur-dot{position:fixed;width:4px;height:4px;border-radius:50%;background:rgba(200,245,58,.35);pointer-events:none;z-index:100000;transform:translate(-50%,-50%)}
+body.ch #cur{width:5px;height:5px}
+body.ch #cur-ring{width:50px;height:50px;border-color:rgba(200,245,58,.75)}
+body.ck #cur-ring{width:28px;height:28px}
 
 /* APP PAGE */
-#app-page{display:none;min-height:100vh;padding:6rem 2rem 4rem}
+#app-page{display:none;min-height:100vh;padding:6rem 2rem 4rem;background:#080b12;color:#eef1f8}
 .app-inner{max-width:860px;margin:0 auto}
 .app-header{text-align:center;margin-bottom:3rem}
-.app-header h2{font-family:var(--font);font-size:2rem;font-weight:800;letter-spacing:-1px;margin-bottom:.5rem}
-.app-header p{color:var(--text2);font-size:.9rem;font-weight:300}
+.app-header h2{font-family:var(--font);font-size:2rem;letter-spacing:1px;margin-bottom:.5rem;color:#eef1f8}
+.app-header p{color:#8899aa;font-size:.9rem;font-weight:300}
 .app-tabs{display:flex;gap:.5rem;margin-bottom:2rem;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:.35rem}
 .app-tab{flex:1;padding:.6rem 1rem;border-radius:8px;border:none;background:transparent;color:var(--text3);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;transition:all .25s;letter-spacing:.3px}
 .app-tab.active{background:var(--bg4);color:var(--text);border:1px solid var(--line2)}
@@ -382,276 +589,354 @@ footer a:hover{color:var(--text2)}
   .upload-locked-title{font-size:1.2rem}
   .founding-wrap{grid-template-columns:1fr}
 }
+
 </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-  <div class="nav-logo" onclick="showLanding()">Trade<span>IQ</span></div>
-  <div class="nav-links">
-    <a onclick="showLanding();setTimeout(()=>document.getElementById('how').scrollIntoView({behavior:'smooth'}),100)">How it works</a>
-    <a onclick="showLanding();setTimeout(()=>document.getElementById('pricing').scrollIntoView({behavior:'smooth'}),100)">Pricing</a>
-    <a onclick="showLanding();setTimeout(()=>document.getElementById('reviews').scrollIntoView({behavior:'smooth'}),100)">About</a>
-    <a onclick="openApp('history')">My Trades</a>
-  </div>
-  <div style="display:flex;align-items:center;gap:.75rem">
-    <span id="nav-username" style="display:none;font-size:13px;color:var(--accent);font-family:var(--mono);font-weight:500;letter-spacing:.3px"></span>
-    <button id="nav-login-btn" onclick="showLoginModal()" style="background:transparent;border:1px solid var(--line2);color:var(--text2);padding:.5rem 1rem;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;font-family:var(--body)">Already paid?</button>
-    <button id="nav-logout-btn" onclick="logoutUser()" style="display:none;background:transparent;border:1px solid var(--line2);color:var(--text3);padding:.5rem 1rem;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;font-family:var(--body)">Logout</button>
-    <button class="nav-cta" onclick="openApp('analyse')">Analyse a Trade →</button>
-  </div>
-</nav>
-
-<!-- USERNAME MODAL -->
-<div id="username-modal" style="display:none;position:fixed;inset:0;background:rgba(8,11,18,.95);backdrop-filter:blur(20px);z-index:400;align-items:center;justify-content:center;padding:1rem">
-  <div style="background:var(--bg2);border:1px solid rgba(200,240,74,.2);border-radius:20px;padding:2.5rem;max-width:400px;width:100%;text-align:center;position:relative">
-    <div style="font-size:2.5rem;margin-bottom:1rem">👋</div>
-    <h3 style="font-family:var(--font);font-size:1.4rem;font-weight:800;margin-bottom:.5rem;letter-spacing:-.5px">Vikram ko batao apna naam</h3>
-    <p style="font-size:13px;color:var(--text2);margin-bottom:1.75rem;font-weight:300;line-height:1.6">Woh personally address karega tujhe analysis mein.</p>
-    <input type="text" id="username-input" placeholder="e.g. Rahul, Arjun, Priya..." maxlength="20" style="width:100%;background:var(--bg3);border:1px solid var(--line2);border-radius:8px;padding:.85rem 1rem;color:var(--text);font-family:var(--font);font-size:15px;font-weight:600;outline:none;margin-bottom:1.25rem;box-sizing:border-box;text-align:center;transition:all .25s" onfocus="this.style.borderColor='rgba(200,240,74,.4)'" onblur="this.style.borderColor='var(--line2)'" onkeydown="if(event.key==='Enter')saveUsername()">
-    <button onclick="saveUsername()" style="width:100%;background:var(--accent);color:#080b12;padding:.9rem;border-radius:8px;font-size:14px;font-weight:700;font-family:var(--font);border:none;cursor:pointer;margin-bottom:.75rem">Let's go →</button>
-    <button onclick="skipUsername()" style="background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;font-family:var(--body)">Skip for now</button>
-  </div>
-</div>
-
-<!-- LOGIN MODAL -->
-<div id="login-modal" style="display:none;position:fixed;inset:0;background:rgba(8,11,18,.95);backdrop-filter:blur(20px);z-index:300;align-items:center;justify-content:center;padding:1rem">
-  <div style="background:var(--bg2);border:1px solid var(--line2);border-radius:20px;padding:2.5rem;max-width:400px;width:100%;text-align:center;position:relative">
-    <button onclick="hideLoginModal()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--text3);font-size:1.5rem;cursor:pointer">×</button>
-    <div style="font-size:2rem;margin-bottom:1rem">🔑</div>
-    <h3 style="font-family:var(--font);font-size:1.3rem;font-weight:800;margin-bottom:.5rem">Welcome back</h3>
-    <p style="font-size:13px;color:var(--text2);margin-bottom:1.5rem;font-weight:300">Enter the email you used to purchase</p>
-    <input type="email" id="login-email" placeholder="your@email.com" style="width:100%;background:var(--bg3);border:1px solid var(--line2);border-radius:8px;padding:.75rem 1rem;color:var(--text);font-family:var(--body);font-size:14px;outline:none;margin-bottom:.75rem;box-sizing:border-box;transition:all .25s" onfocus="this.style.borderColor='rgba(200,240,74,.4)'" onblur="this.style.borderColor='var(--line2)'">
-    <p id="login-err" style="font-size:12px;color:var(--red);margin-bottom:.75rem;display:none">No paid account found for this email.</p>
-    <button onclick="handleLogin()" id="login-submit-btn" style="width:100%;background:var(--accent);color:#080b12;padding:.85rem;border-radius:8px;font-size:14px;font-weight:700;font-family:var(--font);border:none;cursor:pointer;transition:all .25s">Restore Access</button>
-  </div>
-</div>
+<!-- CURSOR -->
+<div id="cur"></div>
+<div id="cur-ring"></div>
+<div id="cur-dot"></div>
 
 <!-- LANDING -->
-<div id="landing-page">
+<div id="tiq-landing">
 
-<section id="home">
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <div class="ticker-item"><span class="sym">NIFTY50</span><span class="up">▲ 24,125 +0.38%</span></div>
+    <div class="ticker-item"><span class="sym">BANKNIFTY</span><span class="dn">▼ 51,840 −0.52%</span></div>
+    <div class="ticker-item"><span class="sym">BTCUSD</span><span class="up">▲ 84,200 +1.4%</span></div>
+    <div class="ticker-item"><span class="sym">GOLD</span><span class="up">▲ 3,234 +0.6%</span></div>
+    <div class="ticker-item"><span class="sym">SENSEX</span><span class="up">▲ 79,408 +0.41%</span></div>
+    <div class="ticker-item"><span class="sym">RELIANCE</span><span class="dn">▼ 1,248 −0.3%</span></div>
+    <div class="ticker-item"><span class="sym">EURUSD</span><span class="up">▲ 1.1312 +0.22%</span></div>
+    <div class="ticker-item"><span class="sym">NIFTY50</span><span class="up">▲ 24,125 +0.38%</span></div>
+    <div class="ticker-item"><span class="sym">BANKNIFTY</span><span class="dn">▼ 51,840 −0.52%</span></div>
+    <div class="ticker-item"><span class="sym">BTCUSD</span><span class="up">▲ 84,200 +1.4%</span></div>
+    <div class="ticker-item"><span class="sym">GOLD</span><span class="up">▲ 3,234 +0.6%</span></div>
+    <div class="ticker-item"><span class="sym">SENSEX</span><span class="up">▲ 79,408 +0.41%</span></div>
+    <div class="ticker-item"><span class="sym">RELIANCE</span><span class="dn">▼ 1,248 −0.3%</span></div>
+    <div class="ticker-item"><span class="sym">EURUSD</span><span class="up">▲ 1.1312 +0.22%</span></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="showLanding()">TRADE<em>IQ</em></div>
+  <div class="nav-pulse"><div class="nav-pulse-dot"></div>VIKRAM ONLINE</div>
+  <div class="nav-links">
+    <a href="#how">How It Works</a>
+    <a href="#sample">Sample</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#founder">About</a>
+  </div>
+  <button class="nav-ghost" id="nav-login-btn" onclick="showLoginModal()">Already Paid?</button>
+  <button class="nav-ghost" id="nav-logout-btn" style="display:none" onclick="logoutUser()">Logout</button>
+  <button class="nav-cta" onclick="openApp()">Analyse Trade →</button>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
   <div class="hero-grid"></div>
   <div class="hero-glow"></div>
-  <div class="hero-badge">🇮🇳 Built for Indian Traders</div>
-  <h1>
-    <span class="line1">Stop repeating the</span>
-    <span class="line2">same mistakes.</span>
-  </h1>
-  <p class="hero-sub">Paste your trade. Get a brutally honest AI breakdown of your mistakes, emotional biases, and exactly what to fix next time.</p>
-  <div class="hero-actions">
-    <button class="btn-primary" onclick="openApp('analyse')">Analyse My Trade Free →</button>
-    <a href="#sample" class="btn-secondary">See a sample</a>
+
+  <div class="hero-l">
+    <div class="hero-tag au au1"><div class="hero-tag-dot"></div>🇮🇳 INDIAN TRADERS KE LIYE</div>
+    <h1 class="hero-h au au2">
+      <span class="d">TU ALREADY</span>
+      <span class="w">JAANTA HAI</span>
+      <span class="a">KYA GALAT HUA.</span>
+    </h1>
+    <p class="hero-sub au au3">
+      Bas maanta nahi. <strong>Vikram maan leta hai.</strong> Koi bhi trade paste kar — F&O, equity, crypto, forex — aur paa ek seedha, kard-by-card breakdown: kya galat kiya, kab emotional tha, aur agli baar kya fix karna hai.
+    </p>
+    <div class="hero-btns au au4">
+      <button class="btn-main" onclick="openApp()">Free Analyse Karo →</button>
+      <button class="btn-ghost" onclick="document.getElementById('sample').scrollIntoView({behavior:'smooth'})">Sample Dekho</button>
+    </div>
+    <div class="hero-stats au au5">
+      <div class="h-stat"><span class="h-stat-val">3</span><span class="h-stat-label">Free Analyses</span></div>
+      <div class="h-stat"><span class="h-stat-val">&lt;15s</span><span class="h-stat-label">Result Time</span></div>
+      <div class="h-stat"><span class="h-stat-val">6</span><span class="h-stat-label">Dimensions</span></div>
+      <div class="h-stat"><span class="h-stat-val">₹99</span><span class="h-stat-label">Unlimited</span></div>
+    </div>
   </div>
-  <div class="hero-stats">
-    <div class="hero-stat"><span class="hero-stat-num">3</span><span class="hero-stat-label">FREE ANALYSES</span></div>
-    <div class="hero-stat"><span class="hero-stat-num">&lt;15s</span><span class="hero-stat-label">RESULT TIME</span></div>
-    <div class="hero-stat"><span class="hero-stat-num">NSE</span><span class="hero-stat-label">BSE · CRYPTO · FOREX</span></div>
+
+  <div class="hero-r au au3">
+    <div class="terminal">
+      <div class="t-bar">
+        <div class="t-dots">
+          <div class="t-dot" style="background:#ff5f57"></div>
+          <div class="t-dot" style="background:#febc2e"></div>
+          <div class="t-dot" style="background:#28c840"></div>
+        </div>
+        <div class="t-title">VIKRAM // TRADE ANALYSIS</div>
+        <div></div>
+      </div>
+      <div class="t-body">
+        <div class="t-row"><span class="t-prompt">›</span><span class="t-val">Symbol: <span class="h">BANKNIFTY</span> | Dir: <span class="e">SHORT</span> | Qty: <span class="h">50</span></span></div>
+        <div class="t-row"><span class="t-prompt">›</span><span class="t-val">Entry: <span class="h">47,200</span> → Exit: <span class="h">46,850</span></span></div>
+        <div class="t-row"><span class="t-prompt">›</span><span class="t-val">SL: <span class="h">47,000</span> | Target: <span class="h">46,600</span> | R:R: <span class="w">0.83</span></span></div>
+        <div class="t-row"><span class="t-prompt">›</span><span class="t-val">Emotion: <span class="e">FOMO</span> | Plan: <span class="e">Nahi Tha</span></span></div>
+        <div class="t-row"><span class="t-prompt">›</span><span class="t-val">Notes: <span class="a">"Sab log buy kar rahe the, main bhi kood gaya"</span></span></div>
+        <div class="t-sep"></div>
+        <div class="t-row"><span class="t-prompt">›</span><span class="t-val"><span class="w">Analysis chal rahi hai</span><span class="t-cursor"></span></span></div>
+        <div class="t-score-box">
+          <div class="t-big-score" id="animScore">0</div>
+          <div class="t-bars">
+            <div class="t-bar-label">TRADE SCORE / 100</div>
+            <div class="t-brow"><span class="t-bname">DISCIPLINE</span><div class="t-btrack"><div class="t-bfill" style="width:22%;background:var(--red)"></div></div></div>
+            <div class="t-brow"><span class="t-bname">RISK MGMT</span><div class="t-btrack"><div class="t-bfill" style="width:18%;background:var(--red)"></div></div></div>
+            <div class="t-brow"><span class="t-bname">SETUP</span><div class="t-btrack"><div class="t-bfill" style="width:55%;background:var(--gold)"></div></div></div>
+            <div class="t-brow"><span class="t-bname">EMOTION</span><div class="t-btrack"><div class="t-bfill" style="width:10%;background:var(--red)"></div></div></div>
+          </div>
+        </div>
+        <div class="t-sep"></div>
+        <div class="t-row"><span class="t-prompt" style="color:var(--red)">!</span><span class="t-val"><span class="e">3 Galtiyan</span> · <span class="w">1 Pattern</span> · <span class="g">1 Action</span></span></div>
+        <div class="t-row"><span class="t-prompt" style="color:var(--red)">!</span><span class="t-val"><span class="e">SL BankNifty ATR ke hisaab se bahut tight tha</span></span></div>
+        <div class="t-row"><span class="t-prompt" style="color:var(--red)">!</span><span class="t-val"><span class="e">Late FOMO entry — koi edge nahi tha</span></span></div>
+        <div class="t-row"><span class="t-prompt" style="color:var(--lime)">✓</span><span class="t-val"><span class="g">Action: Retest ka wait karo, hamesha</span></span></div>
+      </div>
+    </div>
   </div>
 </section>
 
+<!-- PROOF STRIP -->
+<div id="proof">
+  <div class="proof-row">
+    <div class="proof-chip"><div class="proof-icon">🏦</div><div class="proof-text"><strong>NSE / BSE</strong><span>Equity & F&O</span></div></div>
+    <div class="proof-chip"><div class="proof-icon">₿</div><div class="proof-text"><strong>Crypto</strong><span>BTC, ETH & more</span></div></div>
+    <div class="proof-chip"><div class="proof-icon">💱</div><div class="proof-text"><strong>Forex</strong><span>All major pairs</span></div></div>
+    <div class="proof-chip"><div class="proof-icon">📸</div><div class="proof-text"><strong>Screenshots</strong><span>Drop chart, Vikram reads it</span></div></div>
+    <div class="proof-chip"><div class="proof-icon">🔥</div><div class="proof-text"><strong>No Card Needed</strong><span>3 free analyses</span></div></div>
+    <div class="proof-chip"><div class="proof-icon">🧠</div><div class="proof-text"><strong>Pattern Tracking</strong><span>Sab trades mein</span></div></div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
 <section id="how">
-  <div class="section-inner">
-    <span class="section-tag">HOW IT WORKS</span>
-    <h2 class="section-title">Three steps.<br>One honest analysis.</h2>
-    <p class="section-sub">No fluff. No generic tips. Real feedback on your actual trade.</p>
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">01</div>
-        <div class="step-icon">📋</div>
-        <h3>Enter Your Trade</h3>
-        <p>Fill in entry, exit, stop loss, target, and what you were thinking. Takes 2 minutes.</p>
-        <div class="step-accent"></div>
-      </div>
-      <div class="step">
-        <div class="step-num">02</div>
-        <div class="step-icon">🧠</div>
-        <h3>Vikram Analyses It</h3>
-        <p>Our AI — trained to think like a strict senior Indian trader — reviews your trade across 6 dimensions: discipline, risk, timing, emotion, setup quality and execution.</p>
-        <div class="step-accent"></div>
-      </div>
-      <div class="step">
-        <div class="step-num">03</div>
-        <div class="step-icon">📈</div>
-        <h3>Get Your Breakdown</h3>
-        <p>Receive card-by-card analysis — your mistakes, patterns, strengths, and specific actions to fix your next trade.</p>
-        <div class="step-accent"></div>
-      </div>
+  <div class="sec-tag">How It Works</div>
+  <h2 class="sec-h">TEEN STEPS.<br>EK SEEDHA<br>JAWAB.</h2>
+  <p class="sec-sub">No generic tips. No sugarcoating. Teri actual trade pe real feedback — 15 seconds mein.</p>
+  <div class="steps">
+    <div class="step reveal">
+      <div class="step-n">01</div>
+      <div class="step-ico">📋</div>
+      <h3>TRADE ENTER KAR</h3>
+      <p>Entry, exit, stop loss, target, aur tu kya soch raha tha. 2 minute lagenge. Ya screenshot drop kar — Vikram khud padh leta hai.</p>
+      <div class="step-bar"></div>
+    </div>
+    <div class="step reveal">
+      <div class="step-n">02</div>
+      <div class="step-ico">🧠</div>
+      <h3>VIKRAM ANALYSE KARTA HAI</h3>
+      <p>Hamara AI — jo ek senior Indian trader ki tarah sochta hai — teri trade ko 6 dimensions pe score karta hai: discipline, risk, timing, emotion, setup quality, aur execution.</p>
+      <div class="step-bar"></div>
+    </div>
+    <div class="step reveal">
+      <div class="step-n">03</div>
+      <div class="step-ico">📈</div>
+      <h3>BREAKDOWN MIL JAATA HAI</h3>
+      <p>Card-by-card analysis. Teri galtiyan, tere patterns, tere blind spots — aur ek specific cheez jo agli baar fix karni hai. Koi bakwaas nahi.</p>
+      <div class="step-bar"></div>
     </div>
   </div>
 </section>
 
+<!-- SAMPLE ANALYSIS — full Hinglish -->
 <section id="sample">
-  <div class="section-inner">
-    <span class="section-tag">SAMPLE ANALYSIS</span>
-    <h2 class="section-title">This is what you get.</h2>
-    <p class="section-sub">A real breakdown. Not a generic tip. Specific to your trade.</p>
-    <div class="sample-wrap">
-      <div class="sample-input">
-        <div class="sample-label">TRADE INPUT</div>
-        <div class="sample-field">Symbol: <strong>BANKNIFTY</strong></div>
-        <div class="sample-field">Direction: <strong>LONG</strong> · Market: <strong>Indian F&amp;O</strong></div>
-        <div class="sample-field">Entry: <strong>₹47,200</strong> · Exit: <strong>₹46,850</strong></div>
-        <div class="sample-field">SL: <strong>₹47,000</strong> · Target: <strong>₹47,800</strong></div>
-        <div class="sample-field">Emotion: <strong>FOMO</strong></div>
-        <div class="sample-field">Notes: <strong>"Everyone was buying, jumped in late"</strong></div>
+  <div class="sec-tag">Sample Analysis</div>
+  <h2 class="sec-h">YAHI MILEGA<br>TUJHE.</h2>
+  <p class="sec-sub">Real breakdown. Generic tip nahi. Teri exact trade pe specific feedback.</p>
+
+  <div class="sample-wrap">
+    <div class="s-input">
+      <div class="s-label">// Trade Input</div>
+      <div class="s-row"><span class="s-key">SYMBOL</span><span class="s-val l">BANKNIFTY</span></div>
+      <div class="s-row"><span class="s-key">DIRECTION</span><span class="s-val r">SHORT</span></div>
+      <div class="s-row"><span class="s-key">MARKET</span><span class="s-val">Indian F&O</span></div>
+      <div class="s-row"><span class="s-key">ENTRY</span><span class="s-val">₹47,200</span></div>
+      <div class="s-row"><span class="s-key">EXIT</span><span class="s-val">₹46,850</span></div>
+      <div class="s-row"><span class="s-key">STOP LOSS</span><span class="s-val r">₹47,000</span></div>
+      <div class="s-row"><span class="s-key">TARGET</span><span class="s-val g">₹46,600</span></div>
+      <div class="s-row"><span class="s-key">EMOTION</span><span class="s-val r">FOMO</span></div>
+      <div class="s-row"><span class="s-key">PLAN</span><span class="s-val r">Nahi Tha</span></div>
+      <div class="s-notes">
+        <div class="s-notes-label">Notes</div>
+        <div class="s-notes-text">"Sab log buy kar rahe the, main bhi late jump kar gaya. Laga ki breakout hai."</div>
       </div>
-      <div class="sample-output">
-        <div class="output-card">
-          <div class="output-card-header"><span class="output-badge badge-mistake">MISTAKE</span><span class="output-title">Classic late FOMO entry</span></div>
-          <p class="output-body">Your own notes say "everyone was buying" — that's the signal to <strong>not enter</strong>, not to enter. When retail piles in, institutions are already distributing. You entered at ₹47,200 when the move started at ₹46,600. Zero edge.</p>
-          <div class="score-row"><span class="score-label">Risk</span><div class="score-bar-wrap"><div class="score-bar" style="width:85%;background:var(--red)"></div></div><span class="score-label" style="color:var(--red)">High</span></div>
+    </div>
+
+    <div class="s-output">
+      <div class="s-score">
+        <div class="s-score-num">31</div>
+        <div class="s-score-right">
+          <div class="s-score-label">TRADE SCORE / 100</div>
+          <div class="s-dim"><span class="s-dim-name">DISCIPLINE</span><div class="s-dim-track"><div class="s-dim-fill" style="width:22%;background:var(--red)"></div></div></div>
+          <div class="s-dim"><span class="s-dim-name">RISK MGMT</span><div class="s-dim-track"><div class="s-dim-fill" style="width:18%;background:var(--red)"></div></div></div>
+          <div class="s-dim"><span class="s-dim-name">SETUP</span><div class="s-dim-track"><div class="s-dim-fill" style="width:55%;background:var(--gold)"></div></div></div>
+          <div class="s-dim"><span class="s-dim-name">EMOTION</span><div class="s-dim-track"><div class="s-dim-fill" style="width:10%;background:var(--red)"></div></div></div>
         </div>
-        <div class="output-card">
-          <div class="output-card-header"><span class="output-badge badge-pattern">PATTERN</span><span class="output-title">SL too tight for BankNifty ATR</span></div>
-          <p class="output-body">₹200 SL on BankNifty — which moves 400-600 points on a normal day. Price noise alone hit your SL before the trade could work. <strong>ATR-based stops would have changed the outcome completely.</strong></p>
-        </div>
-        <div class="output-card">
-          <div class="output-card-header"><span class="output-badge badge-action">ACTION</span><span class="output-title">Wait for the retest, always</span></div>
-          <p class="output-body">Same direction, better price, tighter SL, higher R:R. <strong>Wait for price to retest the breakout level</strong> instead of chasing. This one habit change can improve your win rate by 15-20%.</p>
-        </div>
+      </div>
+
+      <div class="s-card m reveal">
+        <div class="s-card-tag m">⚠ GALTI</div>
+        <div class="s-card-title">Classic Late FOMO Entry</div>
+        <div class="s-card-body">Tera apna note bol raha hai "sab log buy kar rahe the" — yahi signal hai ki <strong>mat enter kar</strong>. Jab retail pile in hota hai, institutions already distribute kar chuke hote hain. Tu ₹47,200 pe ghusa jab move ₹46,600 se shuru hua tha. <strong>Zero edge tha tera.</strong></div>
+      </div>
+
+      <div class="s-card p reveal">
+        <div class="s-card-tag p">◉ PATTERN</div>
+        <div class="s-card-title">SL BankNifty ATR Ke Liye Bahut Tight Tha</div>
+        <div class="s-card-body">₹200 ka SL BankNifty pe — jo normal din mein 400–600 points move karta hai. <strong>Price noise ne akele tera SL hit kar diya</strong> trade kaam karne se pehle. ATR-based stops hote toh outcome alag hota.</div>
+      </div>
+
+      <div class="s-card ac reveal">
+        <div class="s-card-tag ac">→ ACTION</div>
+        <div class="s-card-title">Retest Ka Wait Karo. Hamesha.</div>
+        <div class="s-card-body">Same direction, better price, tighter SL, higher R:R. <strong>Breakout level pe retest ka wait karo</strong> instead of chasing. Yeh ek habit change tera win rate 15–20% improve kar sakta hai.</div>
+      </div>
+
+      <div class="s-card st reveal">
+        <div class="s-card-tag st">✓ STRENGTH</div>
+        <div class="s-card-title">Direction Sahi Tha</div>
+        <div class="s-card-body">BankNifty us din neeche hi gaya — <strong>teri market read sahi thi</strong>. Problem direction nahi, entry timing aur SL sizing thi. Isko fix kar aur yeh trade profitable hoti.</div>
       </div>
     </div>
   </div>
 </section>
 
+<!-- PRICING -->
 <section id="pricing">
-  <div class="section-inner">
-    <span class="section-tag">PRICING</span>
-    <h2 class="section-title">Start free.<br>Upgrade when ready.</h2>
-    <p class="section-sub">No credit card needed to start. 3 free analyses, then decide.</p>
-    <div class="pricing-grid">
-      <div class="pricing-card">
-        <div class="pricing-name">FREE</div>
-        <div class="pricing-price">₹<span style="font-size:3rem">0</span></div>
-        <div class="pricing-period">3 analyses total · no card needed</div>
-        <div class="pricing-divider"></div>
-        <ul class="pricing-features">
-          <li class="included">3 trade analyses</li>
-          <li class="included">Full breakdown per trade</li>
-          <li class="included">Mistake identification</li>
-          <li class="excluded">Screenshot analysis (AI reads your chart)</li>
-          <li class="excluded">Pattern tracking</li>
-          <li class="excluded">Trade history</li>
-        </ul>
-        <button class="pricing-btn pricing-btn-ghost" onclick="openApp('analyse')">Start Free →</button>
+  <div class="sec-tag">Pricing</div>
+  <h2 class="sec-h">FREE SHURU KAR.<br>UPGRADE JAB<br>KAAM KARE.</h2>
+  <p class="sec-sub">3 free analyses. No card. No tricks. Pehle khud dekho Vikram kya kar sakta hai.</p>
+  <div class="p-grid">
+    <div class="p-card reveal">
+      <div class="p-tier">Free</div>
+      <div class="p-price"><em>₹</em>0</div>
+      <div class="p-period">3 ANALYSES TOTAL · NO CARD</div>
+      <div class="p-div"></div>
+      <ul class="p-feats">
+        <li class="on">3 trade analyses</li>
+        <li class="on">6-dimension full breakdown</li>
+        <li class="on">Mistake identification</li>
+        <li class="off">Screenshot / chart analysis</li>
+        <li class="off">Pattern tracking</li>
+        <li class="off">Trade history dashboard</li>
+      </ul>
+      <button class="p-btn p-btn-o" onclick="openApp()">Free Shuru Karo →</button>
+    </div>
+
+    <div class="p-card feat reveal">
+      <div class="p-popular">// Sabse Popular</div>
+      <div class="p-tier ft">Pro</div>
+      <div class="p-price lime"><em>₹</em>99</div>
+      <div class="p-period">PER MONTH · CANCEL ANYTIME</div>
+      <div class="p-div"></div>
+      <ul class="p-feats">
+        <li class="on">Unlimited analyses</li>
+        <li class="on">6-dimension full breakdown</li>
+        <li class="on">Mistake identification</li>
+        <li class="on">📸 Screenshot → Vikram khud padhta hai</li>
+        <li class="on">Pattern tracking across trades</li>
+        <li class="on">Trade history dashboard</li>
+      </ul>
+      <button class="p-btn p-btn-l" onclick="showPaywall('pro')">Pro Lo →</button>
+    </div>
+
+    <div class="p-card reveal">
+      <div class="p-tier">Lifetime</div>
+      <div class="p-price"><em>₹</em>499</div>
+      <div class="p-period">BAAR BAAR NAHI · HAMESHA KE LIYE</div>
+      <div class="p-div"></div>
+      <ul class="p-feats">
+        <li class="on">Pro mein jo bhi hai sab</li>
+        <li class="on">Lifetime access</li>
+        <li class="on">Future features bhi</li>
+        <li class="on">📸 Screenshot analysis</li>
+        <li class="on">Priority support</li>
+        <li class="on">Founding member status</li>
+      </ul>
+      <button class="p-btn p-btn-o" onclick="showPaywall('lifetime')">Lifetime Lo →</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOUNDER -->
+<section id="founder">
+  <div class="sec-tag">Who Built This</div>
+  <h2 class="sec-h">EK TRADER NE<br>BANAYA. STARTUP<br>NE NAHI.</h2>
+  <p class="sec-sub">No VC money. No 20-person team. Ek banda jo apni hi galtiyan repeat karte karte thak gaya.</p>
+  <div class="f-grid">
+    <div class="f-card reveal">
+      <div class="f-tag">// Founder</div>
+      <div class="f-name">SHUBHO</div>
+      <div class="f-role">Builder · TradeIQ · Mumbai</div>
+      <p class="f-story">
+        Maine yeh isliye banaya kyunki main baar baar <strong>same trades pe paisa khota tha</strong> — FOMO entries, galat SL sizing, red day ke baad revenge. Journal karta tha, reflect karta tha — par kuch kaam nahi aata tha.<br><br>
+        Toh maine Vikram banaya — ek AI jo mujhe har baar seedha bolta hai ki main kya galat kar raha tha. <strong>Koi sugarcoating nahi. Koi generic tips nahi.</strong> Woh feedback jo ek senior trader deta hai jab woh tujhe baar baar wahi galti karte dekhke thak jaata hai.<br><br>
+        TradeIQ naya hai aur honest hai. Fake user counts nahi. Banawti reviews nahi. <strong>3 free analyses try karo. Khud judge karo.</strong>
+      </p>
+      <div class="f-signal">
+        <div class="f-signal-dot"></div>
+        <div class="f-signal-text">Actively building · Feedback pe personally respond karta hoon</div>
       </div>
-      <div class="pricing-card featured">
-        <div class="pricing-featured-tag">MOST POPULAR</div>
-        <div class="pricing-name">PRO</div>
-        <div class="pricing-price">₹<span style="font-size:3rem">99</span></div>
-        <div class="pricing-period">per month · cancel anytime</div>
-        <div class="pricing-divider"></div>
-        <ul class="pricing-features">
-          <li class="included">Unlimited analyses</li>
-          <li class="included">Full breakdown per trade</li>
-          <li class="included">Mistake identification</li>
-          <li class="included">📸 Screenshot analysis — drop chart, get feedback</li>
-          <li class="included">Pattern tracking across trades</li>
-          <li class="included">Trade history dashboard</li>
-        </ul>
-        <button class="pricing-btn pricing-btn-accent" onclick="showPaywall('pro')">Get Pro →</button>
-      </div>
-      <div class="pricing-card">
-        <div class="pricing-name">LIFETIME</div>
-        <div class="pricing-price">₹<span style="font-size:3rem">499</span></div>
-        <div class="pricing-period">one time · forever</div>
-        <div class="pricing-divider"></div>
-        <ul class="pricing-features">
-          <li class="included">Everything in Pro</li>
-          <li class="included">Lifetime access</li>
-          <li class="included">Future features included</li>
-          <li class="included">📸 Screenshot analysis</li>
-          <li class="included">Pattern tracking</li>
-          <li class="included">Priority support</li>
-        </ul>
-        <button class="pricing-btn pricing-btn-ghost" onclick="showPaywall('lifetime')">Get Lifetime →</button>
+    </div>
+
+    <div class="fo-card reveal">
+      <div class="fo-badge">🎯 Founding Trader Offer</div>
+      <div class="fo-h">PEHLE LOG<br>MEIN SE EK BAN.</div>
+      <p class="fo-body">TradeIQ naya hai. Hundreds of reviews nahi hain — aur main bana bhi nahi raha. Main 10–20 real traders dhundh raha hoon jo ise try karein, tod karein, aur bataein kya galat hai.</p>
+      <ul class="fo-perks">
+        <li>Lifetime access launch price pe — badhne se pehle</li>
+        <li>Direct line to me — tera feedback roadmap banata hai</li>
+        <li>App mein founding member ka naam (agar chahiye)</li>
+        <li>Har naye feature ka first access</li>
+      </ul>
+      <button class="p-btn p-btn-l" style="width:100%;margin-bottom:0" onclick="showPaywall('lifetime')">Founding Trader Bano — ₹499 →</button>
+      <div class="fo-disc">
+        <div class="fo-disc-label">// Honest Disclaimer</div>
+        <p class="fo-disc-text">TradeIQ tujhe ek raat mein profitable trader nahi banayega. Yeh <strong>tere patterns dikhayega</strong> — kya galat kar raha hai, kab, aur kyun. Uske baad kya karna hai — woh tere upar hai. Pehle 3 free analyses try karo.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- FOUNDER + FOUNDING TRADER SECTION (replaces fake reviews) -->
-<section id="reviews">
-  <div class="section-inner">
-    <span class="section-tag">WHO MADE THIS</span>
-    <h2 class="section-title">Built by a trader,<br>not a startup.</h2>
-    <p class="section-sub">No VC money. No team of 20. Just one person who got tired of making the same mistakes.</p>
-
-    <div class="founding-wrap">
-
-      <!-- Founder card -->
-      <div class="founder-card">
-        <div class="founder-avatar">S</div>
-        <div class="founder-name">Shubho</div>
-        <div class="founder-handle">FOUNDER · TRADEIQ</div>
-        <p class="founder-story">
-          I built this because I kept losing money on the <strong>same trades</strong> — FOMO entries, wrong SL sizing, revenge after a red day. I'd journal, I'd reflect, but nothing stuck.<br><br>
-          So I built Vikram — an AI that actually calls out what I was doing wrong, every single time, in plain language. No sugarcoating.<br><br>
-          TradeIQ is <strong>early and honest</strong>. No fake user counts. No manufactured reviews. If you try it and it genuinely helps you, I'd love to hear from you.
-        </p>
-        <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--line);display:flex;align-items:center;gap:.75rem">
-          <div style="width:8px;height:8px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite;flex-shrink:0"></div>
-          <span style="font-size:12px;color:var(--text3);font-family:var(--mono)">Actively building · Responds to feedback personally</span>
-        </div>
-      </div>
-
-      <!-- Founding trader offer -->
-      <div class="founding-right">
-        <div class="founding-offer-card">
-          <div class="founding-badge">🎯 FOUNDING TRADER OFFER</div>
-          <div class="founding-title">Be one of the first.<br>Shape what this becomes.</div>
-          <p class="founding-body">
-            TradeIQ is new. There are no hundreds of reviews yet — and I'm not going to make them up. Instead, I'm looking for <strong>10–20 real traders</strong> who want to try it, break it, and tell me what's wrong.
-          </p>
-          <ul class="founding-perks">
-            <li>Get lifetime access at the launch price before it goes up</li>
-            <li>Direct line to me — your feedback shapes the roadmap</li>
-            <li>Your name in the app as a founding member (if you want)</li>
-            <li>First access to every new feature I ship</li>
-          </ul>
-          <button class="pricing-btn pricing-btn-accent" style="border-radius:8px;font-size:14px;padding:.9rem" onclick="showPaywall('lifetime')">Join as Founding Trader — ₹499 →</button>
-        </div>
-
-        <div class="founding-note">
-          <div class="founding-note-label">HONEST DISCLAIMER</div>
-          <p class="founding-note-text">
-            TradeIQ won't make you a profitable trader overnight. It will <strong>show you your patterns</strong> — what you're doing wrong, when, and why. What you do with that is up to you. Try the 3 free analyses first and judge it yourself.
-          </p>
-        </div>
-      </div>
-
-    </div>
-  </div>
+<!-- CTA -->
+<section id="cta">
+  <div class="cta-tag">// Agla Trade</div>
+  <div class="cta-h">AGLI BAAR<br>SOCH KE<br>TRADE KAR.</div>
+  <p class="cta-sub">3 free analyses. No card needed. 2 minute lagenge. Vikram ready hai.</p>
+  <button class="btn-cta" onclick="openApp()">Apna Trade Analyse Karo →</button>
+  <div class="cta-hint">FREE · NO SIGNUP · RESULT IN &lt;15 SECONDS</div>
 </section>
 
-<section id="cta-section">
-  <div class="section-inner">
-    <div class="cta-inner">
-      <h2>Your next trade deserves better thinking.</h2>
-      <p>3 free analyses. No card needed. Takes 2 minutes.</p>
-      <button class="btn-primary" onclick="openApp('analyse')" style="font-size:15px;padding:1rem 2.5rem">Analyse My Trade Free →</button>
-    </div>
-  </div>
-</section>
-
+<!-- FOOTER -->
 <footer>
-  <div>© 2026 TradeIQ · <span style="color:var(--text3)">Made by</span> <span style="color:var(--accent);font-weight:700;font-family:var(--font)">Shubho</span> · <span style="color:var(--text3);font-size:11px">I kept blowing up the same trade. So I built the tool I wished existed.</span></div>
-  <div style="display:flex;gap:1.5rem;flex-wrap:wrap">
+  <div class="f-logo">TRADE<em>IQ</em></div>
+  <div class="f-tagline">© 2026 · Mumbai se, <strong>Shubho</strong> ne banaya · Maine baar baar same trade pe paisa khoya. Toh woh tool banaya jo kash pehle hota.</div>
+  <div class="f-links">
     <a href="terms.html">Terms</a>
     <a href="privacy.html">Privacy</a>
     <a href="refund.html">Refund</a>
     <a href="cancellation.html">Cancellation</a>
-    <a href="/cdn-cgi/l/email-protection#ea8985849e8b899eaa9e988b8e8f839bc48384">Contact</a>
+    <a href="mailto:contact@tradeiq.in">Contact</a>
   </div>
 </footer>
+
+
 </div>
 
+<!-- APP PAGE -->
 <!-- APP PAGE -->
 <div id="app-page">
   <div class="app-inner">
     <div class="app-header fade-up">
+      <button onclick="showLanding()" style="background:none;border:1px solid var(--line2);color:var(--text3);padding:.4rem 1rem;border-radius:6px;font-family:var(--mono);font-size:10px;letter-spacing:1px;cursor:pointer;margin-bottom:1.5rem;display:inline-flex;align-items:center;gap:.4rem;transition:all .2s;text-transform:uppercase">← Back to Home</button>
       <h2>TradeIQ</h2>
       <p>Your personal trading mentor. Brutally honest, always specific.</p>
     </div>
@@ -917,6 +1202,45 @@ footer a:hover{color:var(--text2)}
     <p style="font-size:11px;color:var(--text3);margin-top:1rem">Secure payment · UPI / Cards / Net Banking</p>
   </div>
 </div>
+
+
+
+<!-- LANDING PAYWALL (same as paywall overlay but triggered from landing) -->
+
+<!-- SCRIPTS -->
+<script>
+// ── CURSOR ──
+const _cur=document.getElementById('cur'),_ring=document.getElementById('cur-ring'),_dot=document.getElementById('cur-dot');
+let _mx=window.innerWidth/2,_my=window.innerHeight/2,_tx=_mx,_ty=_my;
+document.addEventListener('mousemove',e=>{
+  _mx=e.clientX;_my=e.clientY;
+  _cur.style.left=_mx+'px';_cur.style.top=_my+'px';
+  _ring.style.left=_mx+'px';_ring.style.top=_my+'px';
+});
+setInterval(()=>{
+  _tx+=(_mx-_tx)*.1;_ty+=(_my-_ty)*.1;
+  _dot.style.left=_tx+'px';_dot.style.top=_ty+'px';
+},16);
+document.addEventListener('mousedown',()=>document.body.classList.add('ck'));
+document.addEventListener('mouseup',()=>document.body.classList.remove('ck'));
+
+// ── SCORE ANIM ──
+let _sd=false;
+const _termEl=document.querySelector('.term');
+if(_termEl){
+  new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting&&!_sd){_sd=true;const el=document.getElementById('animScore');if(el){let i=0;const iv=setInterval(()=>{i+=2;el.textContent=Math.min(i,31);if(i>=31)clearInterval(iv);},45);}}})},{threshold:.3}).observe(_termEl);
+}
+
+// ── SCROLL REVEAL ──
+const _ro=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('in');})},{threshold:.08});
+document.querySelectorAll('.rv,.reveal').forEach(el=>_ro.observe(el));
+
+// Hover cursor scaling
+document.addEventListener('mouseover',e=>{
+  if(e.target.closest('button,a,[onclick],.step,.pc-card,.pchip')){document.body.classList.add('ch');}
+  else document.body.classList.remove('ch');
+});
+</script>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 const BACKEND_URL = 'https://tradeiq-backend-fnz2.onrender.com';
@@ -1218,14 +1542,14 @@ function getUsername() { return localStorage.getItem('tiq_username') || null; }
 
 // ── NAV ──
 function openApp(tab) {
-  document.getElementById('landing-page').style.display = 'none';
+  document.getElementById('tiq-landing').style.display = 'none';
   document.getElementById('app-page').style.display = 'block';
   window.scrollTo(0, 0);
   switchTab(tab || 'analyse');
 }
 
 function showLanding() {
-  document.getElementById('landing-page').style.display = 'block';
+  var ld=document.getElementById('tiq-landing'); if(ld)ld.style.display='block';
   document.getElementById('app-page').style.display = 'none';
   window.scrollTo(0, 0);
 }
@@ -1866,5 +2190,37 @@ function shareResultCard() {
   link.click();
 }
 </script>
+
+
+<!-- USERNAME MODAL -->
+<div class="modal-bg" id="username-modal">
+  <div class="modal">
+    <div class="modal-icon">👋</div>
+    <div class="modal-title">APNA NAAM BATAO</div>
+    <p class="modal-sub">Vikram tujhe personally address karega apni analysis mein.</p>
+    <label class="field-label">Tera Naam</label>
+    <input type="text" class="field-input" id="username-input" placeholder="Rahul, Arjun, Priya..." maxlength="20" onkeydown="if(event.key==='Enter')saveUsername()" style="text-align:center">
+    <button class="modal-btn modal-btn-lime" onclick="saveUsername()">Chalte Hain →</button>
+    <button class="modal-btn-skip" onclick="skipUsername()">Skip karo abhi ke liye</button>
+  </div>
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="modal-bg" id="login-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="hideLoginModal()">×</button>
+    <div class="modal-icon">🔑</div>
+    <div class="modal-title">WAPAS AA GAYE</div>
+    <p class="modal-sub">Purchase karte waqt jo email diya tha woh dalo.</p>
+    <label class="field-label">Email Address</label>
+    <input type="email" class="field-input" id="login-email" placeholder="tumhara@email.com">
+    <p class="field-err" id="login-err">Is email pe koi paid account nahi mila.</p>
+    <button class="modal-btn modal-btn-lime" onclick="handleLogin()" id="login-submit-btn">Access Restore Karo →</button>
+  </div>
+</div>
+
+<!-- PAYWALL -->
+
+
 </body>
 </html>
