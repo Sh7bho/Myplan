@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TradeIQ — Apni Trading Mistakes Ko Samjho</title>
+<title>TradeIQ — Stop Repeating The Same Mistakes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <style>
 
@@ -321,138 +321,18 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:1.5rem 
 }
 
 
-/* ── APP PAGE STYLES ── */
+/* LANDING/APP SWITCH */
+#tiq-landing{display:block}
+#app-page{display:none;background:var(--bg)}
 
-*{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --bg:#080b12;--bg1:#0d1117;--bg2:#111820;--bg3:#161f2e;--bg4:#1c2738;
-  --line:#1e2d42;--line2:#243448;
-  --accent:#c8f04a;--accent2:#a8d438;
-  --accent-dim:rgba(200,240,74,0.12);--accent-dim2:rgba(200,240,74,0.06);
-  --text:#f0f4f8;--text2:#8899aa;--text3:#4a5a6a;
-  --red:#ff5c7a;--green:#4ade80;--blue:#60a5fa;--gold:#fbbf24;
-  --font:'Syne',sans-serif;--body:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
-}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:15px;line-height:1.6;overflow-x:hidden}
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:var(--line2);border-radius:2px}
-body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.4}
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.2rem 2.5rem;background:rgba(8,11,18,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--line)}
-.nav-logo{font-family:var(--font);font-size:1.1rem;font-weight:800;letter-spacing:-0.5px;color:var(--text);cursor:pointer}
-.nav-logo span{color:var(--accent)}
-.nav-links{display:flex;align-items:center;gap:2rem}
-.nav-links a{color:var(--text2);text-decoration:none;font-size:13px;font-weight:500;transition:color .2s;letter-spacing:.3px;cursor:pointer}
-.nav-links a:hover{color:var(--text)}
-.nav-cta{background:var(--accent);color:#080b12;padding:.5rem 1.2rem;border-radius:6px;font-size:13px;font-weight:700;font-family:var(--font);text-decoration:none;letter-spacing:.3px;transition:all .2s;cursor:pointer;border:none}
-.nav-cta:hover{background:var(--accent2);transform:translateY(-1px)}
-#home{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8rem 2rem 4rem;position:relative;overflow:hidden}
-.hero-glow{position:absolute;top:20%;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(200,240,74,.07) 0%,transparent 70%);pointer-events:none}
-.hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:60px 60px;opacity:.3;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%,black,transparent);pointer-events:none}
-.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:var(--accent-dim);border:1px solid rgba(200,240,74,.25);border-radius:100px;padding:.35rem 1rem;font-size:12px;font-weight:500;color:var(--accent);margin-bottom:2rem;letter-spacing:.5px;font-family:var(--mono)}
-.hero-badge::before{content:'';width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
-h1{font-family:var(--font);font-size:clamp(2.8rem,7vw,5.5rem);font-weight:800;line-height:1.05;letter-spacing:-2px;margin-bottom:1.5rem;max-width:900px}
-h1 .line1{display:block;color:var(--text)}
-h1 .line2{display:block;color:var(--accent)}
-.hero-sub{font-size:1.1rem;color:var(--text2);max-width:520px;margin:0 auto 2.5rem;line-height:1.7;font-weight:300}
-.hero-actions{display:flex;align-items:center;gap:1rem;justify-content:center;flex-wrap:wrap}
-.btn-primary{background:var(--accent);color:#080b12;padding:.85rem 2rem;border-radius:8px;font-size:14px;font-weight:700;font-family:var(--font);text-decoration:none;letter-spacing:.3px;transition:all .25s;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:.5rem}
-.btn-primary:hover{background:var(--accent2);transform:translateY(-2px);box-shadow:0 12px 30px rgba(200,240,74,.2)}
-.btn-secondary{background:transparent;color:var(--text2);padding:.85rem 2rem;border-radius:8px;font-size:14px;font-weight:500;font-family:var(--body);text-decoration:none;transition:all .25s;border:1px solid var(--line2);cursor:pointer;display:inline-flex;align-items:center;gap:.5rem}
-.btn-secondary:hover{border-color:var(--text3);color:var(--text)}
-.hero-stats{display:flex;gap:3rem;justify-content:center;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--line)}
-.hero-stat{text-align:center}
-.hero-stat-num{font-family:var(--font);font-size:1.8rem;font-weight:800;color:var(--accent);display:block}
-.hero-stat-label{font-size:12px;color:var(--text3);letter-spacing:.5px;margin-top:.2rem}
-section{padding:6rem 2rem;position:relative;z-index:1}
-.section-inner{max-width:1100px;margin:0 auto}
-.section-tag{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:2px;margin-bottom:1rem;display:block}
-.section-title{font-family:var(--font);font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:1rem}
-.section-sub{font-size:1rem;color:var(--text2);max-width:500px;line-height:1.7;font-weight:300}
-#how{background:var(--bg1)}
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5px;margin-top:4rem;background:var(--line)}
-.step{background:var(--bg1);padding:2.5rem;position:relative;overflow:hidden;transition:background .3s}
-.step:hover{background:var(--bg2)}
-.step-num{font-family:var(--mono);font-size:11px;color:var(--text3);letter-spacing:2px;margin-bottom:1.5rem}
-.step-icon{width:44px;height:44px;border-radius:10px;background:var(--accent-dim);border:1px solid rgba(200,240,74,.2);display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;font-size:1.3rem}
-.step h3{font-family:var(--font);font-size:1.1rem;font-weight:700;margin-bottom:.75rem;color:var(--text)}
-.step p{font-size:13px;color:var(--text2);line-height:1.7;font-weight:300}
-.step-accent{position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent);opacity:0;transition:opacity .3s}
-.step:hover .step-accent{opacity:1}
-#sample{background:var(--bg)}
-.sample-wrap{display:grid;grid-template-columns:1fr 1.2fr;gap:3rem;align-items:start;margin-top:4rem}
-.sample-input{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:2rem;position:sticky;top:100px}
-.sample-label{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:1.5px;margin-bottom:.75rem}
-.sample-field{background:var(--bg3);border:1px solid var(--line2);border-radius:8px;padding:.85rem 1rem;margin-bottom:.75rem;font-size:13px;color:var(--text2);font-family:var(--mono)}
-.sample-field strong{color:var(--accent);font-weight:500}
-.sample-output{display:flex;flex-direction:column;gap:1rem}
-.output-card{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:1.5rem;transition:border-color .3s}
-.output-card:hover{border-color:var(--line2)}
-.output-card-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
-.output-badge{padding:.2rem .65rem;border-radius:4px;font-size:10px;font-weight:700;font-family:var(--mono);letter-spacing:1px}
-.badge-mistake{background:rgba(255,92,122,.12);color:var(--red);border:1px solid rgba(255,92,122,.2)}
-.badge-pattern{background:rgba(251,191,36,.1);color:var(--gold);border:1px solid rgba(251,191,36,.2)}
-.badge-strength{background:rgba(74,222,128,.1);color:var(--green);border:1px solid rgba(74,222,128,.2)}
-.badge-action{background:var(--accent-dim);color:var(--accent);border:1px solid rgba(200,240,74,.2)}
-.output-title{font-family:var(--font);font-size:.95rem;font-weight:700;color:var(--text)}
-.output-body{font-size:13px;color:var(--text2);line-height:1.75;font-weight:300}
-.output-body strong{color:var(--text);font-weight:500}
-.score-row{display:flex;align-items:center;gap:1rem;margin-top:1rem}
-.score-bar-wrap{flex:1;height:4px;background:var(--line2);border-radius:2px}
-.score-bar{height:4px;border-radius:2px;background:var(--accent)}
-.score-label{font-family:var(--mono);font-size:11px;color:var(--accent);min-width:30px}
-#pricing{background:var(--bg1)}
-.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:4rem}
-.pricing-card{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:2rem;position:relative;transition:all .3s}
-.pricing-card.featured{background:var(--bg3);border-color:rgba(200,240,74,.3);transform:scale(1.02)}
-.pricing-card:hover:not(.featured){border-color:var(--line2)}
-.pricing-featured-tag{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#080b12;padding:.25rem 1rem;border-radius:100px;font-size:11px;font-weight:700;font-family:var(--font);letter-spacing:.5px;white-space:nowrap}
-.pricing-name{font-family:var(--font);font-size:.85rem;font-weight:700;color:var(--text3);letter-spacing:1px;margin-bottom:1rem}
-.pricing-price{font-family:var(--font);font-size:2.5rem;font-weight:800;color:var(--text);letter-spacing:-1px;margin-bottom:.25rem}
-.pricing-period{font-size:12px;color:var(--text3);margin-bottom:1.75rem}
-.pricing-divider{height:1px;background:var(--line);margin:1.5rem 0}
-.pricing-features{list-style:none;display:flex;flex-direction:column;gap:.75rem;margin-bottom:2rem}
-.pricing-features li{font-size:13px;color:var(--text2);display:flex;align-items:flex-start;gap:.6rem;font-weight:300}
-.pricing-features li.included::before{content:'✓';font-size:10px;color:var(--accent);background:var(--accent-dim);border:1px solid rgba(200,240,74,.3);border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
-.pricing-features li.excluded{opacity:.4}
-.pricing-features li.excluded::before{content:'';width:14px;height:14px;border-radius:50%;background:var(--line);border:1px solid var(--line2);flex-shrink:0;margin-top:2px;display:block}
-.pricing-btn{width:100%;padding:.85rem;border-radius:8px;font-size:13px;font-weight:700;font-family:var(--font);cursor:pointer;transition:all .25s;letter-spacing:.3px;border:none}
-.pricing-btn-ghost{background:transparent;border:1px solid var(--line2);color:var(--text2)}
-.pricing-btn-ghost:hover{border-color:var(--text3);color:var(--text)}
-.pricing-btn-accent{background:var(--accent);color:#080b12}
-.pricing-btn-accent:hover{background:var(--accent2);transform:translateY(-1px)}
-
-/* FOUNDER + SOCIAL PROOF SECTION */
-#reviews{background:var(--bg)}
-.founding-wrap{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:4rem;align-items:start}
-.founder-card{background:var(--bg2);border:1px solid var(--line);border-radius:20px;padding:2.5rem}
-.founder-avatar{width:56px;height:56px;border-radius:14px;background:var(--accent-dim);border:1px solid rgba(200,240,74,.25);display:flex;align-items:center;justify-content:center;font-family:var(--font);font-size:1.4rem;font-weight:800;color:var(--accent);margin-bottom:1.5rem}
-.founder-name{font-family:var(--font);font-size:1rem;font-weight:800;color:var(--text);margin-bottom:.25rem}
-.founder-handle{font-size:11px;color:var(--text3);font-family:var(--mono);letter-spacing:.5px;margin-bottom:1.25rem}
-.founder-story{font-size:14px;color:var(--text2);line-height:1.8;font-weight:300}
-.founder-story strong{color:var(--text);font-weight:500}
-.founding-right{display:flex;flex-direction:column;gap:1rem}
-.founding-offer-card{background:linear-gradient(135deg,var(--bg3),var(--bg2));border:1px solid rgba(200,240,74,.2);border-radius:20px;padding:2rem}
-.founding-badge{display:inline-flex;align-items:center;gap:.4rem;background:var(--accent);color:#080b12;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:.3rem .9rem;border-radius:100px;margin-bottom:1.25rem}
-.founding-title{font-family:var(--font);font-size:1.3rem;font-weight:800;color:var(--text);letter-spacing:-.5px;margin-bottom:.75rem}
-.founding-body{font-size:13px;color:var(--text2);line-height:1.75;font-weight:300;margin-bottom:1.5rem}
-.founding-perks{list-style:none;display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.75rem}
-.founding-perks li{font-size:13px;color:var(--text2);display:flex;align-items:center;gap:.6rem}
-.founding-perks li::before{content:'→';color:var(--accent);font-weight:700;font-size:11px}
-.founding-note{background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:1.25rem}
-.founding-note-label{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:1.5px;margin-bottom:.5rem}
-.founding-note-text{font-size:13px;color:var(--text2);line-height:1.7;font-weight:300}
-.founding-note-text strong{color:var(--accent)}
-
-#cta-section{background:var(--bg1);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.cta-inner{text-align:center;max-width:600px;margin:0 auto}
-.cta-inner h2{font-family:var(--font);font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-1px;margin-bottom:1rem}
-.cta-inner p{color:var(--text2);font-weight:300;margin-bottom:2rem}
-footer{padding:2rem 2.5rem;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--text3)}
-footer a{color:var(--text3);text-decoration:none;transition:color .2s}
-footer a:hover{color:var(--text2)}
+/* Cursor */
+body{cursor:none}
+#cur{position:fixed;width:10px;height:10px;border-radius:50%;background:var(--lime);pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .15s,height .15s;mix-blend-mode:difference;will-change:transform}
+#cur-ring{position:fixed;width:38px;height:38px;border-radius:50%;border:1.5px solid rgba(200,245,58,.45);pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .22s ease,height .22s ease,border-color .2s;will-change:transform}
+#cur-dot{position:fixed;width:4px;height:4px;border-radius:50%;background:rgba(200,245,58,.35);pointer-events:none;z-index:9997;transform:translate(-50%,-50%)}
+body.ch #cur{width:5px;height:5px}
+body.ch #cur-ring{width:50px;height:50px;border-color:rgba(200,245,58,.75)}
+body.ck #cur-ring{width:28px;height:28px}
 
 /* APP PAGE */
 #app-page{display:none;min-height:100vh;padding:6rem 2rem 4rem}
@@ -702,30 +582,38 @@ footer a:hover{color:var(--text2)}
 </head>
 <body>
 
-<div id="landing-page">
+<!-- CURSOR -->
+<div id="cur"></div>
+<div id="cur-ring"></div>
+<div id="cur-dot"></div>
+
+<!-- LANDING -->
+<div id="tiq-landing">
+
+
 <!-- TICKER -->
 <div class="ticker">
   <div class="ticker-track">
-    <div class="ticker-item"><span class="sym">NIFTY50</span><span class="up">▲ 23,842.65 +0.86%</span></div>
-    <div class="ticker-item"><span class="sym">BANKNIFTY</span><span class="dn">▼ 55,605.05 −0.55%</span></div>
-    <div class="ticker-item"><span class="sym">BTCUSD</span><span class="up">▲ 74,357 +0.20%</span></div>
-    <div class="ticker-item"><span class="sym">GOLD</span><span class="dn">▼ 4,760 -0.35%</span></div>
-    <div class="ticker-item"><span class="sym">SENSEX</span><span class="up">▲ 76,847 +0.91%</span></div>
-    <div class="ticker-item"><span class="sym">US100</span><span class="up">▲ 25,500 +0.1%</span></div>
-    <div class="ticker-item"><span class="sym">EURUSD</span><span class="dn">▼ 1.1760 −0.05%</span></div>
-    <div class="ticker-item"><span class="sym">NIFTY50</span><span class="up">▲ 23,842.65 +0.86%</span></div>
-    <div class="ticker-item"><span class="sym">BANKNIFTY</span><span class="dn">▼ 55,605.05 −0.55%</span></div>
-    <div class="ticker-item"><span class="sym">BTCUSD</span><span class="up">▲ 74,357 +0.20%</span></div>
-    <div class="ticker-item"><span class="sym">GOLD</span><span class="dn">▼ 4,760 -0.35%</span></div>
-    <div class="ticker-item"><span class="sym">SENSEX</span><span class="up">▲ 76,847 +0.91%</span></div>
-    <div class="ticker-item"><span class="sym">US100</span><span class="up">▲ 25,500 +0.1%</span></div>
-    <div class="ticker-item"><span class="sym">EURUSD</span><span class="dn">▼ 1.1760 −0.05%</span></div>
+    <div class="ticker-item"><span class="sym">NIFTY50</span><span class="up">▲ 24,125 +0.38%</span></div>
+    <div class="ticker-item"><span class="sym">BANKNIFTY</span><span class="dn">▼ 51,840 −0.52%</span></div>
+    <div class="ticker-item"><span class="sym">BTCUSD</span><span class="up">▲ 84,200 +1.4%</span></div>
+    <div class="ticker-item"><span class="sym">GOLD</span><span class="up">▲ 3,234 +0.6%</span></div>
+    <div class="ticker-item"><span class="sym">SENSEX</span><span class="up">▲ 79,408 +0.41%</span></div>
+    <div class="ticker-item"><span class="sym">RELIANCE</span><span class="dn">▼ 1,248 −0.3%</span></div>
+    <div class="ticker-item"><span class="sym">EURUSD</span><span class="up">▲ 1.1312 +0.22%</span></div>
+    <div class="ticker-item"><span class="sym">NIFTY50</span><span class="up">▲ 24,125 +0.38%</span></div>
+    <div class="ticker-item"><span class="sym">BANKNIFTY</span><span class="dn">▼ 51,840 −0.52%</span></div>
+    <div class="ticker-item"><span class="sym">BTCUSD</span><span class="up">▲ 84,200 +1.4%</span></div>
+    <div class="ticker-item"><span class="sym">GOLD</span><span class="up">▲ 3,234 +0.6%</span></div>
+    <div class="ticker-item"><span class="sym">SENSEX</span><span class="up">▲ 79,408 +0.41%</span></div>
+    <div class="ticker-item"><span class="sym">RELIANCE</span><span class="dn">▼ 1,248 −0.3%</span></div>
+    <div class="ticker-item"><span class="sym">EURUSD</span><span class="up">▲ 1.1312 +0.22%</span></div>
   </div>
 </div>
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo">TRADE<em>IQ</em></div>
+  <div class="nav-logo" onclick="showLanding()">TRADE<em>IQ</em></div>
   <div class="nav-pulse"><div class="nav-pulse-dot"></div>VIKRAM ONLINE</div>
   <div class="nav-links">
     <a href="#how">How It Works</a>
@@ -912,8 +800,8 @@ footer a:hover{color:var(--text2)}
 <!-- PRICING -->
 <section id="pricing">
   <div class="sec-tag">Pricing</div>
-  <h2 class="sec-h">START FREE.<br>UPGRADE WHEN<br>IT WORKS.</h2>
-  <p class="sec-sub">3 free analyses. No card. No tricks. Check what Vikram can do.</p>
+  <h2 class="sec-h">FREE SHURU KAR.<br>UPGRADE JAB<br>KAAM KARE.</h2>
+  <p class="sec-sub">3 free analyses. No card. No tricks. Pehle khud dekho Vikram kya kar sakta hai.</p>
   <div class="p-grid">
     <div class="p-card reveal">
       <div class="p-tier">Free</div>
@@ -928,11 +816,11 @@ footer a:hover{color:var(--text2)}
         <li class="off">Pattern tracking</li>
         <li class="off">Trade history dashboard</li>
       </ul>
-      <button class="p-btn p-btn-o" onclick="openApp()">Start free →</button>
+      <button class="p-btn p-btn-o" onclick="openApp()">Free Shuru Karo →</button>
     </div>
 
     <div class="p-card feat reveal">
-      <div class="p-popular">// Most Popular</div>
+      <div class="p-popular">// Sabse Popular</div>
       <div class="p-tier ft">Pro</div>
       <div class="p-price lime"><em>₹</em>99</div>
       <div class="p-period">PER MONTH · CANCEL ANYTIME</div>
@@ -975,20 +863,15 @@ footer a:hover{color:var(--text2)}
     <div class="f-card reveal">
       <div class="f-tag">// Founder</div>
       <div class="f-name">SHUBHO</div>
-      <div class="f-role">Builder · TradeIQ </div>
+      <div class="f-role">Builder · TradeIQ · Mumbai</div>
       <p class="f-story">
-        I built this because I kept losing money on the same trades — repeating mistakes like <strong>FOMO entries, poor stop-loss sizing, and revenge trading after red days</strong>.<br><br>
-        I tried journaling. I reflected. But <strong>nothing really changed</strong>.<br><br>
-        So I built <strong>Vikram</strong> — an AI that tells me exactly what I’m doing wrong. <strong>No sugarcoating. No generic advice.</strong> Just the kind of direct, honest feedback you’d expect from a seasoned trader who’s seen these mistakes too many times.<br><br>
-
-<strong>TradeIQ</strong> is new, and it’s built on honesty.<br>
-<strong>No fake user counts. No fabricated reviews.</strong><br><br>
-
-<strong>Try 3 free analyses — and decide for yourself.</strong>
+        Maine yeh isliye banaya kyunki main baar baar <strong>same trades pe paisa khota tha</strong> — FOMO entries, galat SL sizing, red day ke baad revenge. Journal karta tha, reflect karta tha — par kuch kaam nahi aata tha.<br><br>
+        Toh maine Vikram banaya — ek AI jo mujhe har baar seedha bolta hai ki main kya galat kar raha tha. <strong>Koi sugarcoating nahi. Koi generic tips nahi.</strong> Woh feedback jo ek senior trader deta hai jab woh tujhe baar baar wahi galti karte dekhke thak jaata hai.<br><br>
+        TradeIQ naya hai aur honest hai. Fake user counts nahi. Banawti reviews nahi. <strong>3 free analyses try karo. Khud judge karo.</strong>
       </p>
       <div class="f-signal">
         <div class="f-signal-dot"></div>
-        <div class="f-signal-text">Actively building · I personally respond to Feedback</div>
+        <div class="f-signal-text">Actively building · Feedback pe personally respond karta hoon</div>
       </div>
     </div>
 
@@ -1023,7 +906,7 @@ footer a:hover{color:var(--text2)}
 <!-- FOOTER -->
 <footer>
   <div class="f-logo">TRADE<em>IQ</em></div>
-  <div class="f-tagline">© 2026 · <strong>Shubho</strong> · Maine baar baar same trade pe paisa khoya. Toh woh tool banaya jo kash pehle hota.</div>
+  <div class="f-tagline">© 2026 · Mumbai se, <strong>Shubho</strong> ne banaya · Maine baar baar same trade pe paisa khoya. Toh woh tool banaya jo kash pehle hota.</div>
   <div class="f-links">
     <a href="terms.html">Terms</a>
     <a href="privacy.html">Privacy</a>
@@ -1037,12 +920,12 @@ footer a:hover{color:var(--text2)}
 <div class="modal-bg" id="username-modal">
   <div class="modal">
     <div class="modal-icon">👋</div>
-    <div class="modal-title">What should we call you?</div>
-    <p class="modal-sub">Vikram will personally address you in the analysis.</p>
-    <label class="field-label">Your name</label>
+    <div class="modal-title">APNA NAAM BATAO</div>
+    <p class="modal-sub">Vikram tujhe personally address karega apni analysis mein.</p>
+    <label class="field-label">Tera Naam</label>
     <input type="text" class="field-input" id="username-input" placeholder="Rahul, Arjun, Priya..." maxlength="20" onkeydown="if(event.key==='Enter')saveUsername()" style="text-align:center">
-    <button class="modal-btn modal-btn-lime" onclick="saveUsername()">Let's go →</button>
-    <button class="modal-btn-skip" onclick="skipUsername()">Skip for now</button>
+    <button class="modal-btn modal-btn-lime" onclick="saveUsername()">Chalte Hain →</button>
+    <button class="modal-btn-skip" onclick="skipUsername()">Skip karo abhi ke liye</button>
   </div>
 </div>
 
@@ -1099,9 +982,11 @@ footer a:hover{color:var(--text2)}
     </div>
   </div>
 </div>
+
+
 </div>
 
-
+<!-- APP PAGE -->
 <!-- APP PAGE -->
 <div id="app-page">
   <div class="app-inner">
@@ -1345,8 +1230,6 @@ footer a:hover{color:var(--text2)}
   </div>
 </div>
 
-
-
 <!-- PAYWALL -->
 <div id="paywall-overlay">
   <div class="paywall-card" style="position:relative">
@@ -1376,32 +1259,80 @@ footer a:hover{color:var(--text2)}
 
 
 
-<!-- USERNAME MODAL -->
-<div id="username-modal" style="display:none;position:fixed;inset:0;background:rgba(8,11,18,.95);backdrop-filter:blur(20px);z-index:400;align-items:center;justify-content:center;padding:1rem">
-  <div style="background:var(--bg2);border:1px solid rgba(200,240,74,.2);border-radius:20px;padding:2.5rem;max-width:400px;width:100%;text-align:center;position:relative">
-    <div style="font-size:2.5rem;margin-bottom:1rem">👋</div>
-    <h3 style="font-family:var(--font);font-size:1.4rem;font-weight:800;margin-bottom:.5rem;letter-spacing:-.5px">Vikram ko batao apna naam</h3>
-    <p style="font-size:13px;color:var(--text2);margin-bottom:1.75rem;font-weight:300;line-height:1.6">Woh personally address karega tujhe analysis mein.</p>
-    <input type="text" id="username-input" placeholder="e.g. Rahul, Arjun, Priya..." maxlength="20" style="width:100%;background:var(--bg3);border:1px solid var(--line2);border-radius:8px;padding:.85rem 1rem;color:var(--text);font-family:var(--font);font-size:15px;font-weight:600;outline:none;margin-bottom:1.25rem;box-sizing:border-box;text-align:center;transition:all .25s" onfocus="this.style.borderColor='rgba(200,240,74,.4)'" onblur="this.style.borderColor='var(--line2)'" onkeydown="if(event.key==='Enter')saveUsername()">
-    <button onclick="saveUsername()" style="width:100%;background:var(--accent);color:#080b12;padding:.9rem;border-radius:8px;font-size:14px;font-weight:700;font-family:var(--font);border:none;cursor:pointer;margin-bottom:.75rem">Let's go →</button>
-    <button onclick="skipUsername()" style="background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;font-family:var(--body)">Skip for now</button>
-  </div>
-</div>
+<!-- LANDING PAYWALL (same as paywall overlay but triggered from landing) -->
 
-<!-- LOGIN MODAL -->
-<div id="login-modal" style="display:none;position:fixed;inset:0;background:rgba(8,11,18,.95);backdrop-filter:blur(20px);z-index:300;align-items:center;justify-content:center;padding:1rem">
-  <div style="background:var(--bg2);border:1px solid var(--line2);border-radius:20px;padding:2.5rem;max-width:400px;width:100%;text-align:center;position:relative">
-    <button onclick="hideLoginModal()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--text3);font-size:1.5rem;cursor:pointer">×</button>
-    <div style="font-size:2rem;margin-bottom:1rem">🔑</div>
-    <h3 style="font-family:var(--font);font-size:1.3rem;font-weight:800;margin-bottom:.5rem">Welcome back</h3>
-    <p style="font-size:13px;color:var(--text2);margin-bottom:1.5rem;font-weight:300">Enter the email you used to purchase</p>
-    <input type="email" id="login-email" placeholder="your@email.com" style="width:100%;background:var(--bg3);border:1px solid var(--line2);border-radius:8px;padding:.75rem 1rem;color:var(--text);font-family:var(--body);font-size:14px;outline:none;margin-bottom:.75rem;box-sizing:border-box;transition:all .25s" onfocus="this.style.borderColor='rgba(200,240,74,.4)'" onblur="this.style.borderColor='var(--line2)'">
-    <p id="login-err" style="font-size:12px;color:var(--red);margin-bottom:.75rem;display:none">No paid account found for this email.</p>
-    <button onclick="handleLogin()" id="login-submit-btn" style="width:100%;background:var(--accent);color:#080b12;padding:.85rem;border-radius:8px;font-size:14px;font-weight:700;font-family:var(--font);border:none;cursor:pointer;transition:all .25s">Restore Access</button>
-  </div>
-</div>
-
+<!-- SCRIPTS -->
 <script>
+// ── CURSOR ──
+const _cur=document.getElementById('cur'),_ring=document.getElementById('cur-ring'),_dot=document.getElementById('cur-dot');
+let _mx=window.innerWidth/2,_my=window.innerHeight/2,_tx=_mx,_ty=_my;
+document.addEventListener('mousemove',e=>{
+  _mx=e.clientX;_my=e.clientY;
+  _cur.style.left=_mx+'px';_cur.style.top=_my+'px';
+  _ring.style.left=_mx+'px';_ring.style.top=_my+'px';
+});
+setInterval(()=>{
+  _tx+=(_mx-_tx)*.1;_ty+=(_my-_ty)*.1;
+  _dot.style.left=_tx+'px';_dot.style.top=_ty+'px';
+},16);
+document.querySelectorAll('button,a,[onclick],.step,.pc-card,.pchip,.p-c').forEach(el=>{
+  el.addEventListener('mouseenter',()=>document.body.classList.add('ch'));
+  el.addEventListener('mouseleave',()=>document.body.classList.remove('ch'));
+});
+document.addEventListener('mousedown',()=>document.body.classList.add('ck'));
+document.addEventListener('mouseup',()=>document.body.classList.remove('ck'));
+
+// ── SCORE ANIM ──
+let _sd=false;
+const _termEl=document.querySelector('.term');
+if(_termEl){
+  new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting&&!_sd){_sd=true;const el=document.getElementById('animScore');if(el){let i=0;const iv=setInterval(()=>{i+=2;el.textContent=Math.min(i,31);if(i>=31)clearInterval(iv);},45);}}});},{threshold:.3}).observe(_termEl);
+}
+
+// ── SCROLL REVEAL ──
+const _ro=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('in');});},{threshold:.08});
+document.querySelectorAll('.rv').forEach(el=>_ro.observe(el));
+
+// ── V3 PAYWALL (landing) - unified with app paywall ──
+let _lpwPlan='pro';
+function showPaywall(plan){
+  _lpwPlan=plan||'pro';
+  const appVisible=document.getElementById('app-page').style.display==='block';
+  if(appVisible){
+    // in-app paywall
+    const o=document.getElementById('paywall-overlay');
+    if(!o){alert('Upgrade coming soon!');return;}
+    o.style.display='flex';
+    const isLife=plan==='lifetime';
+    document.getElementById('pw-price').textContent=isLife?'₹499':'₹99';
+    document.getElementById('pw-og').textContent=isLife?'₹999 regular price':'₹299/month regular price';
+    document.getElementById('pw-period').textContent=isLife?'One time · Lifetime access':'Launch offer · Cancel anytime';
+  } else {
+    // landing paywall - reuse same overlay
+    const o=document.getElementById('paywall-overlay');
+    if(!o){alert('Upgrade coming soon!');return;}
+    o.style.display='flex';
+    const isLife=plan==='lifetime';
+    document.getElementById('pw-price').textContent=isLife?'₹499':'₹99';
+    document.getElementById('pw-og').textContent=isLife?'₹999 regular price':'₹299/month regular price';
+    document.getElementById('pw-period').textContent=isLife?'One time · Lifetime access':'Launch offer · Cancel anytime';
+  }
+}
+
+function openApp(tab){
+  document.getElementById('tiq-landing').style.display='none';
+  document.getElementById('app-page').style.display='block';
+  window.scrollTo(0,0);
+  if(typeof switchTab==='function') switchTab(tab||'analyse');
+}
+function showLanding(){
+  var ld=document.getElementById('tiq-landing');if(ld)ld.style.display='block';
+  document.getElementById('app-page').style.display='none';
+  window.scrollTo(0,0);
+}
+</script>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 const BACKEND_URL = 'https://tradeiq-backend-fnz2.onrender.com';
 
 // ── STATE ──
@@ -1701,14 +1632,14 @@ function getUsername() { return localStorage.getItem('tiq_username') || null; }
 
 // ── NAV ──
 function openApp(tab) {
-  document.getElementById('landing-page').style.display = 'none';
+  document.getElementById('tiq-landing').style.display = 'none';
   document.getElementById('app-page').style.display = 'block';
   window.scrollTo(0, 0);
   switchTab(tab || 'analyse');
 }
 
 function showLanding() {
-  document.getElementById('landing-page').style.display = 'block';
+  var ld=document.getElementById('tiq-landing'); if(ld)ld.style.display='block';
   document.getElementById('app-page').style.display = 'none';
   window.scrollTo(0, 0);
 }
@@ -2348,7 +2279,7 @@ function shareResultCard() {
   link.href = canvas.toDataURL('image/png');
   link.click();
 }
-
 </script>
+
 </body>
 </html>
