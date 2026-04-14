@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TradeIQ — Stop Making Same Mistakes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{ --black:#04050a; --dark:#07080f; --panel:#0b0d16; --card:#0f1220; --border:#151a28; --border2:#1d2438; --border3:#242e45; --lime:#c8f53a; --lime2:#b0d930; --red:#ff3b55; --white:#eef1f8; --grey:#7a8799; --font:'Bebas Neue',sans-serif; --body:'Plus Jakarta Sans',sans-serif; --mono:'JetBrains Mono',monospace; --radius:6px;}
+*{margin:0;padding:0;box-sizing:border-box; cursor: none; }
+body{background:var(--black);color:var(--white);font-family:var(--body);overflow-x:hidden}
+#cursor { width: 20px; height: 20px; border: 1px solid var(--lime); position: fixed; pointer-events: none; z-index: 9999; transition: transform 0.1s ease-out; border-radius: 50%; transform: translate(-50%, -50%); }
+#cursor-dot { width: 4px; height: 4px; background: var(--lime); position: fixed; pointer-events: none; z-index: 9999; border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 10px var(--lime); }
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:60px;background:rgba(4,5,10,.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 5vw;}
+.nav-logo{font-family:var(--font);font-size:1.7rem;letter-spacing:3px;color:var(--white);margin-right:auto; cursor: none;}
+.nav-cta{background:var(--lime);color:var(--black);padding:.5rem 1.2rem;font-family:var(--font);font-size:1.1rem;border:none;border-radius:var(--radius); cursor: none;}
+#landing-view { display: block; padding: 180px 5vw; text-align: center; }
+#app-view { display: none; padding: 100px 5vw; }
+.form-section{background:var(--panel); border:1px solid var(--border2); border-radius:12px; padding:2rem; max-width:800px; margin:0 auto;}
+.field-grid{display:grid; grid-template-columns: 1fr 1fr; gap:1rem;}
+.field{display:flex; flex-direction:column; gap:.5rem; margin-bottom: 1.5rem; text-align:left;}
+.field label{font-family:var(--mono); font-size:10px; color:var(--grey); letter-spacing:1px; text-transform:uppercase;}
+.field input, .field select, .field textarea{background:var(--dark); border:1px solid var(--border3); padding:12px; color:var(--white); border-radius:6px; outline:none; font-family:var(--body);}
+#loading-state{display:none; text-align:center; padding: 4rem 1rem;}
+.spinner{width:40px; height:40px; border:3px solid var(--border3); border-top-color:var(--lime); border-radius:50%; animation:spin 1s linear infinite; margin: 0 auto 1.5rem;}
+@keyframes spin{to{transform:rotate(360deg)}}
+#wake-msg { color: #ffaa00; font-family: var(--mono); font-size: 11px; margin-top: 1rem; display: none; }
+#results-state{display:none; max-width:800px; margin:0 auto;}
+.score-box{text-align:center; padding: 2.5rem; background: var(--panel); border-radius: 12px; border: 1px solid var(--border2); margin-bottom: 1.5rem;}
+.score-val{font-family: var(--font); font-size: 6rem; color: var(--lime); line-height: 1;}
+.analysis-card{background: var(--card); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--lime); margin-bottom: 1rem; text-align:left;}
+@media(max-width:768px){ .field-grid{grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div id="cursor"></div><div id="cursor-dot"></div>
+<nav><div class="nav-logo" onclick="showLanding()">TRADE<em>IQ</em></div><button class="nav-cta" onclick="showApp()">Analyse Trade →</button></nav>
+
+<div id="landing-view">
+  <h1 style="font-family:var(--font); font-size:clamp(3.5rem, 8vw, 7rem); line-height:0.9;">TU JAANTA HAI <br> <span style="color:var(--lime)">KYA GALAT HUA.</span></h1>
+  <p style="color:var(--grey); margin: 2rem 0; font-size: 1.2rem;">Stop lying to yourself. Vikram is the only one who gives it to you straight.</p>
+  <button class="nav-cta" style="padding: 1.2rem 3.5rem; font-size: 1.5rem;" onclick="showApp()">Analyse Free →</button>
+</div>
+
+<div id="app-view">
+  <div id="input-form" class="form-section">
+    <h2 style="font-family:var(--font); font-size:2rem; margin-bottom: 2rem; text-align:center;">📋 Analysis Dashboard</h2>
+    <div class="field-grid">
+      <div class="field"><label>Symbol</label><input type="text" id="f-symbol" placeholder="BANKNIFTY"></div>
+      <div class="field"><label>Market</label><select id="f-market"><option>Indian F&O</option><option>Crypto</option></select></div>
+    </div>
+    <div class="field-grid">
+      <div class="field"><label>Entry</label><input type="number" id="f-entry"></div>
+      <div class="field"><label>Exit</label><input type="number" id="f-exit"></div>
+    </div>
+    <div class="field"><label>Your Notes</label><textarea id="f-notes" rows="4" placeholder="Why did you take this trade? Be direct."></textarea></div>
+    <button class="nav-cta" style="width:100%; padding: 1.2rem;" onclick="runAnalysis()">🧠 Check My Trade →</button>
+  </div>
+  <div id="loading-state">
+    <div class="spinner"></div><h2 style="font-family: var(--font); font-size: 2.5rem;">Vikram is thinking...</h2>
+    <div id="wake-msg">⚠️ Server was sleeping. Waking up engine (10-20s)...</div>
+  </div>
+  <div id="results-state">
+    <div class="score-box"><div class="score-val" id="res-score">0</div><p style="font-family:var(--mono); font-size: 10px; color:var(--grey); letter-spacing: 2px;">OVERALL SCORE</p></div>
+    <div id="res-cards"></div><button class="nav-cta" style="width:100%; background: none; border: 1px solid var(--border3); color: var(--white); margin-top: 1rem;" onclick="resetApp()">Analyse Another</button>
+  </div>
+</div>
+
+<script>
+const BACKEND_URL = 'https://tradeiq-backend-fnz2.onrender.com';
+const cursor = document.getElementById('cursor'), dot = document.getElementById('cursor-dot');
+document.addEventListener('mousemove', (e) => { cursor.style.left = dot.style.left = e.clientX + 'px'; cursor.style.top = dot.style.top = e.clientY + 'px'; });
+function showApp() { document.getElementById('landing-view').style.display = 'none'; document.getElementById('app-view').style.display = 'block'; }
+function showLanding() { document.getElementById('landing-view').style.display = 'block'; document.getElementById('app-view').style.display = 'none'; }
+function resetApp() { document.getElementById('input-form').style.display = 'block'; document.getElementById('results-state').style.display = 'none'; document.getElementById('loading-state').style.display = 'none'; }
+async function runAnalysis() {
+  const data = { symbol: document.getElementById('f-symbol').value, market: document.getElementById('f-market').value, entry: parseFloat(document.getElementById('f-entry').value), exit: parseFloat(document.getElementById('f-exit').value)||0, notes: document.getElementById('f-notes').value, direction: "LONG", emotions: ["Focused"] };
+  if(!data.symbol || !data.entry) return alert("Details dalo, Shubho.");
+  document.getElementById('input-form').style.display = 'none'; document.getElementById('loading-state').style.display = 'block';
+  const wakeTimer = setTimeout(() => document.getElementById('wake-msg').style.display = 'block', 4500);
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/analyse`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tradeData: data, sessionId: 'sid_'+Date.now() }) });
+    clearTimeout(wakeTimer); const result = await res.json();
+    document.getElementById('loading-state').style.display = 'none'; document.getElementById('results-state').style.display = 'block';
+    document.getElementById('res-score').innerText = result.analysis.score;
+    document.getElementById('res-cards').innerHTML = (result.analysis.cards || []).map(c => `<div class="analysis-card"><p style="font-family:var(--mono); font-size:9px; color:var(--lime);">${c.type.toUpperCase()}</p><h3>${c.title}</h3><p style="font-size: 14px; color: var(--grey);">${c.body}</p></div>`).join('');
+  } catch (err) { alert("Server error. Try again."); resetApp(); }
+}
+</script>
+</body>
+</html>
