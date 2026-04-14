@@ -339,9 +339,9 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:1.5rem 
 
 /* Cursor */
 body{cursor:none}
-#cur{position:fixed;width:10px;height:10px;border-radius:50%;background:var(--lime);pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .15s,height .15s;mix-blend-mode:difference;will-change:transform}
-#cur-ring{position:fixed;width:38px;height:38px;border-radius:50%;border:1.5px solid rgba(200,245,58,.45);pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .22s ease,height .22s ease,border-color .2s;will-change:transform}
-#cur-dot{position:fixed;width:4px;height:4px;border-radius:50%;background:rgba(200,245,58,.35);pointer-events:none;z-index:9997;transform:translate(-50%,-50%)}
+#cur{position:fixed;width:10px;height:10px;border-radius:50%;background:var(--lime);pointer-events:none;z-index:100000;transform:translate(-50%,-50%);transition:width .15s,height .15s;mix-blend-mode:difference;will-change:transform}
+#cur-ring{position:fixed;width:38px;height:38px;border-radius:50%;border:1.5px solid rgba(200,245,58,.45);pointer-events:none;z-index:100000;transform:translate(-50%,-50%);transition:width .22s ease,height .22s ease,border-color .2s;will-change:transform}
+#cur-dot{position:fixed;width:4px;height:4px;border-radius:50%;background:rgba(200,245,58,.35);pointer-events:none;z-index:100000;transform:translate(-50%,-50%)}
 body.ch #cur{width:5px;height:5px}
 body.ch #cur-ring{width:50px;height:50px;border-color:rgba(200,245,58,.75)}
 body.ck #cur-ring{width:28px;height:28px}
