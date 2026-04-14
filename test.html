@@ -235,7 +235,13 @@ h1.hero-h .a{color:var(--lime);display:block}
 
 /* ── CTA ── */
 #cta{padding:7rem 5vw;background:var(--lime);text-align:center;position:relative;overflow:hidden}
-#cta::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 60px,rgba(0,0,0,.018) 60px,rgba(0,0,0,.018) 61px)}
+#cta::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:repeating-linear-gradient(45deg,transparent,transparent 60px,rgba(0,0,0,.018) 60px,rgba(0,0,0,.018) 61px);
+  pointer-events: none;   /* ← ADD THIS LINE */
+}
 .cta-tag{font-family:var(--mono);font-size:10px;letter-spacing:4px;color:rgba(0,0,0,.4);margin-bottom:1.1rem;text-transform:uppercase}
 .cta-h{font-family:var(--font);font-size:clamp(3rem,7vw,6.5rem);color:var(--black);letter-spacing:2px;line-height:.92;margin-bottom:1.5rem}
 .cta-sub{font-size:.95rem;color:rgba(0,0,0,.5);max-width:420px;margin:0 auto 2.5rem;line-height:1.7}
