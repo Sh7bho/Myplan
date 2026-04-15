@@ -1152,10 +1152,25 @@ body.ck #cur-ring{width:28px;height:28px}
             <textarea id="f-notes" placeholder="E.g. 'Saw breakout on 15min, entered at resistance. Everyone was buying so I jumped in. Hit SL within 30 mins...'"></textarea>
           </div>
         </div>
+        <div class="form-section">
+        <div class="form-section-title">PROP FIRM SETTINGS</div>
+
+         <div class="field-grid field-grid-2">
+         <div class="field">
+            <label>MAX DAILY DRAWDOWN (₹)</label>
+             <input type="number" id="prop-drawdown" placeholder="e.g. 10000">
+           </div>
+
+         <div class="field">
+              <label>CURRENT DAY P&L (₹)</label>
+              <input type="number" id="prop-pnl" placeholder="e.g. -2500">
+         </div>
+       </div>
+       </div>
 
         <div class="submit-area fade-up fade-up-4">
           <button class="submit-btn" onclick="runAnalysis()" id="submit-btn"><span>🧠</span><span>Analyse My Trade</span></button>
-          <p class="submit-hint" id="submit-hint">Uses 1 of your 3 free analyses</p>
+          <p class="submit-hint" id="submit-hint">Uses 1 of your <span id="free-count-dynamic">3</span> free analyses</p>
         </div>
       </div>
 
@@ -1364,15 +1379,29 @@ async function initFreeCount() {
 
 function updateFreeCountUI(remaining) {
   if (isPaidUser()) return;
+
+  const TOTAL_FREE = 3; // your limit
   const el = document.getElementById('free-count');
   const hint = document.getElementById('submit-hint');
   const btn = document.getElementById('submit-btn');
+
+  // update top banner number
   if (el) el.textContent = remaining;
+
+  // calculate used
+  const used = TOTAL_FREE - remaining;
+
   if (remaining <= 0) {
-    if (hint) { hint.textContent = 'No free analyses left — upgrade to continue'; hint.style.color = 'var(--red)'; }
+    if (hint) {
+      hint.textContent = 'No free analyses left — upgrade to continue';
+      hint.style.color = 'var(--red)';
+    }
     if (btn) btn.disabled = true;
   } else {
-    if (hint) { hint.textContent = `Uses 1 of your ${remaining} free ${remaining === 1 ? 'analysis' : 'analyses'}`; hint.style.color = ''; }
+    if (hint) {
+      hint.textContent = `Uses ${used} of your ${TOTAL_FREE} free ${TOTAL_FREE === 1 ? 'analysis' : 'analyses'}`;
+      hint.style.color = '';
+    }
     if (btn) btn.disabled = false;
   }
 }
@@ -1404,6 +1433,10 @@ function applyPaidUI() {
     loginBtn.onclick = null;
     loginBtn.style.cursor = 'default';
   }
+}
+const saved = localStorage.getItem('tiq_free');
+if (saved !== null) {
+  updateFreeCountUI(parseInt(saved));
 }
 
 // ── UPLOAD SECTION ──
@@ -1760,11 +1793,12 @@ async function runAnalysis() {
     const result = await res.json();
     if (result.ipHash) { ipHash = result.ipHash; localStorage.setItem('tiq_iphash', ipHash); }
     if (typeof result.freeRemaining !== 'undefined' && result.freeRemaining !== null) {
-      updateFreeCountUI(result.freeRemaining);
       localStorage.setItem('tiq_free', result.freeRemaining);
+      updateFreeCountUI(result.freeRemaining);
     }
 
     renderResults(data, result.analysis);
+    checkPropFirmWarning(result.analysis);
     if (isPaidUser()) applyPaidUI();
 
   } catch (err) {
@@ -2253,6 +2287,7 @@ function getAggressionModifier() {
 }
 
 // ── PROP FIRM MODIFIER ──
+let propFirmActive = true;
 function getPropFirmModifier() {
   if (!propFirmActive) return '';
   const drawdown = parseFloat(document.getElementById('prop-drawdown')?.value) || 0;
