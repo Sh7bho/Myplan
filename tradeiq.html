@@ -6,7 +6,18 @@
 <title>TradeIQ — Stop Repeating The Same Mistakes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+function loadRazorpay() {
+  return new Promise(resolve => {
+    if (window.Razorpay) return resolve();
+
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = resolve;
+    document.body.appendChild(script);
+  });
+}
+</script>
 <style>
 
 *{margin:0;padding:0;box-sizing:border-box}
@@ -86,7 +97,10 @@ h1.hero-h .a{color:var(--lime);display:block}
 .btn-main{background:var(--lime);color:var(--black);padding:.9rem 2.25rem;font-family:var(--font);font-size:1.35rem;letter-spacing:2.5px;border:none;cursor:pointer;transition:all .25s;border-radius:var(--radius);display:inline-flex;align-items:center;gap:.6rem}
 .btn-main:hover{background:var(--lime2);transform:translateY(-2px);box-shadow:0 12px 32px rgba(200,245,58,.18)}
 .btn-ghost{background:none;border:1px solid var(--border3);color:var(--grey);padding:.9rem 1.75rem;font-family:var(--mono);font-size:11px;letter-spacing:1.5px;cursor:pointer;transition:all .25s;text-transform:uppercase;border-radius:var(--radius)}
-.btn-ghost:hover{border-color:var(--border2+40);color:var(--white)}
+.btn-ghost:hover{
+  border-color:var(--border2);
+  color:var(--white)
+}
 
 .hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
 .h-stat{padding:1rem 1.25rem;border-right:1px solid var(--border);background:var(--panel)}
@@ -245,7 +259,7 @@ h1.hero-h .a{color:var(--lime);display:block}
 .cta-tag{font-family:var(--mono);font-size:10px;letter-spacing:4px;color:rgba(0,0,0,.4);margin-bottom:1.1rem;text-transform:uppercase}
 .cta-h{font-family:var(--font);font-size:clamp(3rem,7vw,6.5rem);color:var(--black);letter-spacing:2px;line-height:.92;margin-bottom:1.5rem}
 .cta-sub{font-size:.95rem;color:rgba(0,0,0,.5);max-width:420px;margin:0 auto 2.5rem;line-height:1.7}
-.btn-cta{background:var(--black);color:var(--lime);padding:1rem 2.75rem;font-family:var(--font);font-size:1.5rem;letter-spacing:3px;border:none;cursor:pointer;transition:all .25s;border-radius:var(--radius);display:inline-flex;align-items:center;gap:.75remposition: relative;z-index: 10;}
+.btn-cta{background:var(--black);color:var(--lime);padding:1rem 2.75rem;font-family:var(--font);font-size:1.5rem;letter-spacing:3px;border:none;cursor:pointer;transition:all .25s;border-radius:var(--radius);display:inline-flex;align-items:center;gap:.75rem;position: relative;z-index: 10;}
 .btn-cta:hover{transform:translateY(-3px);box-shadow:0 20px 48px rgba(0,0,0,.25)}
 .cta-hint{font-family:var(--mono);font-size:10px;color:rgba(0,0,0,.35);margin-top:.9rem;letter-spacing:1px}
 
@@ -277,29 +291,6 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:1.5rem 
 .modal-btn-skip{background:none;border:none;color:var(--grey2);font-size:12px;cursor:pointer;font-family:var(--mono);letter-spacing:1px;margin-top:.65rem;width:100%;text-align:center;padding:.4rem}
 .modal-btn-skip:hover{color:var(--grey)}
 
-/* ── PAYWALL ── */
-#paywall-overlay{display:none;position:fixed;inset:0;background:rgba(4,5,10,.95);backdrop-filter:blur(20px);z-index:99999 !important;align-items:center;justify-content:center;padding:1rem;overflow-y:auto}
-.pw-card{background:var(--panel);border:1px solid var(--border2);border-radius:12px;max-width:500px;width:100%;margin:auto;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.7);position:relative}
-.pw-top{background:var(--dark);border-bottom:1px solid var(--border);padding:1.75rem 2rem}
-.pw-close{position:absolute;top:1rem;right:1.1rem;background:none;border:none;color:var(--grey2);font-size:1.4rem;cursor:pointer;z-index:10000;transition:color .2s}
-.pw-close:hover{color:var(--white)}
-.pw-plan-tag{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--lime);text-transform:uppercase;margin-bottom:.5rem}
-.pw-price-row{display:flex;align-items:baseline;gap:.6rem;margin-bottom:.15rem}
-.pw-price{font-family:var(--font);font-size:3.5rem;color:var(--lime);line-height:1}
-.pw-og{font-family:var(--mono);font-size:10.5px;color:var(--grey2);text-decoration:line-through;letter-spacing:.5px}
-.pw-period{font-family:var(--mono);font-size:10px;color:var(--grey2);letter-spacing:.5px}
-.pw-body{padding:1.75rem 2rem}
-.pw-feats{list-style:none;display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.75rem}
-.pw-feats li{font-size:13px;color:var(--white);display:flex;align-items:center;gap:.65rem}
-.pw-feats li::before{content:'✓';color:var(--lime);font-weight:700;font-size:11px;flex-shrink:0}
-.pw-email-wrap{margin-bottom:1.25rem}
-.pw-btn{width:100%;padding:.95rem;font-family:var(--font);font-size:1.35rem;letter-spacing:2px;border:none;cursor:pointer;border-radius:var(--radius);background:var(--lime);color:var(--black);transition:all .25s}
-.pw-btn:hover{background:var(--lime2);transform:translateY(-1px)}
-.pw-trust{display:flex;align-items:center;justify-content:center;gap:1.5rem;margin-top:1.1rem;padding-top:1.1rem;border-top:1px solid var(--border)}
-.pw-trust-item{font-family:var(--mono);font-size:9px;color:var(--grey2);letter-spacing:.5px;display:flex;align-items:center;gap:.4rem}
-.pw-switch{text-align:center;margin-top:.75rem}
-.pw-switch button{background:none;border:none;color:var(--grey2);font-family:var(--mono);font-size:10px;cursor:pointer;letter-spacing:.5px;text-decoration:underline;transition:color .2s}
-.pw-switch button:hover{color:var(--grey)}
 
 /* ── ANIMATIONS ── */
 @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
@@ -309,6 +300,52 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:1.5rem 
 /* SCROLL REVEAL */
 .reveal{opacity:0;transform:translateY(16px);transition:opacity .55s ease,transform .55s ease}
 .reveal.in{opacity:1;transform:translateY(0)}
+
+/* ── SETTINGS PANEL ── */
+.settings-fab{position:fixed;bottom:1.5rem;right:1.5rem;z-index:700;width:44px;height:44px;background:var(--bg2);border:1px solid var(--line2);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;transition:all .2s;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.settings-fab:hover{border-color:rgba(200,240,74,.4);transform:translateY(-2px)}
+.settings-panel{position:fixed;bottom:4.5rem;right:1.5rem;z-index:700;background:var(--bg2);border:1px solid var(--line2);border-radius:16px;padding:1.25rem;width:280px;box-shadow:0 16px 48px rgba(0,0,0,.5);display:none}
+.settings-panel.open{display:block}
+.settings-title{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:1rem}
+.settings-section{margin-bottom:1.1rem}
+.settings-label{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:.5rem;display:block}
+.aggression-btns{display:flex;gap:.4rem}
+.agg-btn{flex:1;padding:.4rem .3rem;font-family:var(--mono);font-size:9px;letter-spacing:.5px;border-radius:6px;border:1px solid var(--line2);background:transparent;color:var(--text3);cursor:pointer;transition:all .2s;text-align:center}
+.agg-btn.active{background:var(--accent-dim);border-color:rgba(200,240,74,.35);color:var(--accent)}
+.settings-toggle{display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem}
+.settings-toggle-label{font-size:12px;color:var(--text2)}
+.toggle-switch{width:36px;height:20px;background:var(--line2);border-radius:10px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.toggle-switch.on{background:var(--accent)}
+.toggle-switch::after{content:'';position:absolute;width:14px;height:14px;background:white;border-radius:50%;top:3px;left:3px;transition:left .2s}
+.toggle-switch.on::after{left:19px}
+.prop-fields{
+  display:none;
+  margin-top:.6rem;
+  flex-direction:column;
+  gap:.5rem;
+}
+.prop-fields.visible{display:flex}
+.prop-input{width:100%;background:var(--bg3);border:1px solid var(--line);border-radius:6px;padding:.45rem .7rem;color:var(--text);font-family:var(--mono);font-size:11px;outline:none;transition:border-color .2s}
+.prop-input:focus{border-color:rgba(200,240,74,.35)}
+.prop-input::placeholder{color:var(--text3)}
+
+/* ── RETAKE BUTTON ── */
+.retake-panel{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:1.25rem;margin-top:1rem;display:none}
+.retake-panel.visible{display:block}
+.retake-title{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:.75rem}
+.retake-row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:.6rem}
+.retake-field{display:flex;flex-direction:column;gap:.25rem}
+.retake-field label{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
+.retake-field input{background:var(--bg3);border:1px solid var(--line);border-radius:6px;padding:.4rem .6rem;color:var(--text);font-family:var(--mono);font-size:11px;outline:none;width:100%;transition:border-color .2s}
+.retake-field input:focus{border-color:rgba(200,240,74,.35)}
+.retake-btn{width:100%;padding:.65rem;background:var(--accent-dim);border:1px solid rgba(200,240,74,.25);border-radius:8px;color:var(--accent);font-family:var(--mono);font-size:11px;letter-spacing:1px;cursor:pointer;transition:all .2s;margin-top:.25rem}
+.retake-btn:hover{background:rgba(200,240,74,.15);border-color:rgba(200,240,74,.4)}
+
+/* ── PROP FIRM WARNING ── */
+.prop-warning{background:rgba(255,59,85,.08);border:1px solid rgba(255,59,85,.25);border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem;display:none}
+.prop-warning.visible{display:block}
+.prop-warning-title{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--red);text-transform:uppercase;margin-bottom:.4rem;display:flex;align-items:center;gap:.4rem}
+.prop-warning-body{font-size:12.5px;color:var(--text2);line-height:1.6}
 
 /* ── MOBILE ── */
 @media(max-width:900px){
@@ -338,7 +375,9 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:1.5rem 
 
 
 /* Cursor */
-body{cursor:none}
+@media (pointer: fine) {
+  body { cursor: none; }
+}
 #cur{position:fixed;width:10px;height:10px;border-radius:50%;background:var(--lime);pointer-events:none;z-index:100000;transform:translate(-50%,-50%);transition:width .15s,height .15s;mix-blend-mode:difference;will-change:transform}
 #cur-ring{position:fixed;width:38px;height:38px;border-radius:50%;border:1.5px solid rgba(200,245,58,.45);pointer-events:none;z-index:100000;transform:translate(-50%,-50%);transition:width .22s ease,height .22s ease,border-color .2s;will-change:transform}
 #cur-dot{position:fixed;width:4px;height:4px;border-radius:50%;background:rgba(200,245,58,.35);pointer-events:none;z-index:100000;transform:translate(-50%,-50%)}
@@ -1136,6 +1175,11 @@ body.ck #cur-ring{width:28px;height:28px}
 
       <!-- RESULTS -->
       <div id="results-state">
+        <!-- PROP FIRM WARNING -->
+        <div class="prop-warning" id="prop-warning">
+          <div class="prop-warning-title">⚠️ CRITICAL — PROP FIRM ALERT</div>
+          <div class="prop-warning-body" id="prop-warning-body"></div>
+        </div>
         <div class="results-header fade-up">
           <div class="results-trade-summary" id="results-tags"></div>
           <div class="score-section">
@@ -1150,6 +1194,20 @@ body.ck #cur-ring{width:28px;height:28px}
           <button class="action-btn action-btn-outline" onclick="switchTab('history')">View My Trades</button>
           <button class="action-btn action-btn-accent" id="upgrade-btn" onclick="showPaywall('pro')">Unlock Unlimited →</button>
           <button class="action-btn action-btn-outline" onclick="shareResultCard()" style="border-color:rgba(200,240,74,.3);color:var(--accent)">📤 Share Score</button>
+        </div>
+
+        <!-- RETAKE PANEL -->
+        <div class="retake-panel" id="retake-panel">
+          <div class="retake-title">// Tweak & Rescore</div>
+          <div class="retake-row">
+            <div class="retake-field"><label>SL</label><input type="number" id="rt-sl" placeholder="New stop loss"></div>
+            <div class="retake-field"><label>Target</label><input type="number" id="rt-target" placeholder="New target"></div>
+          </div>
+          <div class="retake-row">
+            <div class="retake-field"><label>Entry</label><input type="number" id="rt-entry" placeholder="New entry"></div>
+            <div class="retake-field"><label>Exit</label><input type="number" id="rt-exit" placeholder="New exit"></div>
+          </div>
+          <button class="retake-btn" onclick="runRetake()">🔄 Rescore with New Values →</button>
         </div>
       </div>
     </div>
@@ -1283,6 +1341,7 @@ document.getElementById('f-date').value = new Date().toISOString().split('T')[0]
   initUploadSection();
   initUsername();
   initFreeCount();
+  initSettings();
 })();
 
 // ── FREE COUNT ──
@@ -1446,7 +1505,9 @@ async function runScreenshotAnalysis() {
         imageType: uploadedImageType,
         email: localStorage.getItem('user_email'),
         username: localStorage.getItem('tiq_username'),
-        sessionId
+        sessionId,
+        aggressionModifier: getAggressionModifier(),
+        propFirmModifier: getPropFirmModifier()
       })
     });
 
@@ -1676,7 +1737,9 @@ async function runAnalysis() {
         tradeData: data,
         sessionId,
         email: localStorage.getItem('user_email'),
-        username: localStorage.getItem('tiq_username')
+        username: localStorage.getItem('tiq_username'),
+        aggressionModifier: getAggressionModifier(),
+        propFirmModifier: getPropFirmModifier()
       })
     });
 
@@ -1719,6 +1782,10 @@ async function runAnalysis() {
 
 // ── RENDER RESULTS ──
 function renderResults(data, analysis) {
+  // Store for retake and share card
+  lastTradeData = data;
+  lastAnalysis = analysis;
+
   document.getElementById('loading-state').style.display = 'none';
   document.getElementById('results-state').style.display = 'block';
   setStep(3);
@@ -1737,8 +1804,8 @@ function renderResults(data, analysis) {
 
   const scoreNum = analysis.score || 0;
   const scoreColor = scoreNum >= 70 ? 'var(--green)' : scoreNum >= 50 ? 'var(--accent)' : 'var(--red)';
-  document.getElementById('score-num').textContent = scoreNum;
-  document.getElementById('score-num').style.color = scoreColor;
+  // Animated score count-up
+  animateScore(scoreNum, scoreColor);
 
   const sb = analysis.scoreBreakdown || {};
   const dims = [
@@ -1810,6 +1877,19 @@ function renderResults(data, analysis) {
     document.getElementById('analysis-cards').after(takeaway);
   }
 
+  // Show retake panel with current values pre-filled
+  const retakePanel = document.getElementById('retake-panel');
+  if (retakePanel && !data.isScreenshot) {
+    retakePanel.classList.add('visible');
+    document.getElementById('rt-sl').value = data.sl || '';
+    document.getElementById('rt-target').value = data.target || '';
+    document.getElementById('rt-entry').value = data.entry || '';
+    document.getElementById('rt-exit').value = data.exit || '';
+  }
+
+  // Check prop firm warning
+  checkPropFirmWarning(analysis);
+
   if (!isPaidUser()) {
     const remaining = parseInt(localStorage.getItem('tiq_free') || '0');
     if (remaining <= 0) setTimeout(() => showPaywall('pro'), 3000);
@@ -1823,6 +1903,11 @@ function resetApp() {
   document.getElementById('results-state').style.display = 'none';
   document.querySelectorAll('.dynamic-insert').forEach(el => el.remove());
   document.getElementById('analysis-cards').innerHTML = '';
+  const retakePanel = document.getElementById('retake-panel');
+  if (retakePanel) retakePanel.classList.remove('visible');
+  const propWarning = document.getElementById('prop-warning');
+  if (propWarning) propWarning.classList.remove('visible');
+  lastTradeData = null; lastAnalysis = null;
   clearUpload();
   setStep(1);
   initFreeCount();
@@ -2114,13 +2199,181 @@ async function handlePayment() {
   }
 }
 
-// ── SHARE CARD ──
+// ── SETTINGS ──
+let aggressionLevel = parseInt(localStorage.getItem('tiq_aggression') || '2');
+let propFirmActive = localStorage.getItem('tiq_prop') === '1';
+let soundEnabled = localStorage.getItem('tiq_sound') !== '0';
+let lastTradeData = null;
+let lastAnalysis = null;
+
+function toggleSettings() {
+  document.getElementById('settings-panel').classList.toggle('open');
+}
+
+function setAggression(level) {
+  aggressionLevel = level;
+  localStorage.setItem('tiq_aggression', level);
+  [1,2,3].forEach(i => {
+    document.getElementById('agg-' + i).classList.toggle('active', i === level);
+  });
+}
+
+function togglePropFirm() {
+  propFirmActive = !propFirmActive;
+  localStorage.setItem('tiq_prop', propFirmActive ? '1' : '0');
+  const toggle = document.getElementById('prop-toggle');
+  const fields = document.getElementById('prop-fields');
+  toggle.classList.toggle('on', propFirmActive);
+  fields.classList.toggle('visible', propFirmActive);
+}
+
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  localStorage.setItem('tiq_sound', soundEnabled ? '1' : '0');
+  document.getElementById('sound-toggle').classList.toggle('on', soundEnabled);
+}
+
+function initSettings() {
+  setAggression(aggressionLevel);
+  const propToggle = document.getElementById('prop-toggle');
+  const propFields = document.getElementById('prop-fields');
+  propToggle.classList.toggle('on', propFirmActive);
+  propFields.classList.toggle('visible', propFirmActive);
+  document.getElementById('sound-toggle').classList.toggle('on', soundEnabled);
+}
+
+// ── AGGRESSION MODIFIER ──
+function getAggressionModifier() {
+  const mods = {
+    1: "Keep the tone professional and constructive. Focus heavily on technical analysis and risk metrics. Point out the mistake clearly, but avoid insults. Use 90% English, 10% Hindi terms.",
+    2: "Be strict and uncompromising. Use strong Hinglish (e.g., 'Bhai kya kar raha hai?', 'Classic late entry'). Highlight their lack of discipline. Tell them exactly why retail traders lose money using their trade as the prime example.",
+    3: "Absolutely roast this trade. Show zero mercy. If it's a stupid FOMO trade, tell them they are donating money to institutions. Use aggressive Hinglish sarcasm (e.g., 'Market tera baap ka nahi hai', 'Paise aag mein daal de bhai'). Make it so brutally honest that they will want to screenshot it and share it with their friends."
+  };
+  return mods[aggressionLevel] || mods[2];
+}
+
+// ── PROP FIRM MODIFIER ──
+function getPropFirmModifier() {
+  if (!propFirmActive) return '';
+  const drawdown = parseFloat(document.getElementById('prop-drawdown')?.value) || 0;
+  const pnl = parseFloat(document.getElementById('prop-pnl')?.value) || 0;
+  if (!drawdown) return '';
+  return `\n\nProp Firm Rules Active: The user is trading a funded evaluation account with a max daily drawdown of ₹${drawdown}. Their current daily P&L before this trade was ₹${pnl}. Calculate if this specific trade's Stop Loss (Risk) would breach their daily drawdown limit. If they are within 20% of blowing their account for the day, trigger a CRITICAL WARNING in the topMistake and verdict fields. Vikram must explicitly tell them to shut down their terminal and step away from the screens to protect the evaluation fee. Focus the cards strictly on capital preservation rather than setup quality.`;
+}
+
+// ── SOUND ──
+function playScoreSound() {
+  if (!soundEnabled) return;
+  try {
+    const audio = new Audio('faah.mp3');
+    audio.volume = 0.6;
+    audio.play().catch(() => {});
+  } catch(e) {}
+}
+
+// ── SCORE COUNTDOWN ANIMATION ──
+function animateScore(targetScore, color) {
+  const el = document.getElementById('score-num');
+  if (!el) return;
+  let current = 0;
+  const duration = 900;
+  const stepTime = 16;
+  const steps = duration / stepTime;
+  const increment = targetScore / steps;
+  el.textContent = '0';
+  const iv = setInterval(() => {
+    current = Math.min(current + increment, targetScore);
+    el.textContent = Math.round(current);
+    if (current >= targetScore) {
+      el.textContent = targetScore;
+      clearInterval(iv);
+      playScoreSound();
+      // Flash effect
+      el.style.transition = 'transform .15s ease';
+      el.style.transform = 'scale(1.15)';
+      setTimeout(() => { el.style.transform = 'scale(1)'; }, 150);
+    }
+  }, stepTime);
+  el.style.color = color;
+}
+
+// ── RETAKE ──
+function runRetake() {
+  if (!lastTradeData || !lastAnalysis) return;
+  const sl = parseFloat(document.getElementById('rt-sl').value) || lastTradeData.sl;
+  const target = parseFloat(document.getElementById('rt-target').value) || lastTradeData.target;
+  const entry = parseFloat(document.getElementById('rt-entry').value) || lastTradeData.entry;
+  const exit = parseFloat(document.getElementById('rt-exit').value) || lastTradeData.exit;
+
+  const newData = { ...lastTradeData, sl, target, entry, exit };
+  const mult = newData.direction === 'LONG' ? 1 : -1;
+  newData.pnl = exit > 0 ? ((exit - entry) * (newData.qty || 1) * mult) : null;
+  newData.isOpen = exit === 0;
+  newData.rrRatio = (sl && target) ? (Math.abs(target - entry) / Math.abs(entry - sl)).toFixed(2) : null;
+
+  // Re-submit to backend with tweaked data
+  document.getElementById('results-state').style.display = 'none';
+  document.getElementById('loading-state').style.display = 'block';
+  document.getElementById('loading-title').textContent = 'Vikram is rescoring...';
+  document.getElementById('loading-sub').textContent = 'Recalculating with new values';
+  startLoadingAnim();
+  window.scrollTo(0, 0);
+
+  fetch(`${BACKEND_URL}/api/analyse`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tradeData: newData,
+      sessionId,
+      email: localStorage.getItem('user_email'),
+      username: localStorage.getItem('tiq_username'),
+      aggressionModifier: getAggressionModifier(),
+      propFirmModifier: getPropFirmModifier()
+    })
+  })
+  .then(r => r.json())
+  .then(result => {
+    stopLoadingAnim();
+    renderResults(newData, result.analysis);
+  })
+  .catch(() => {
+    stopLoadingAnim();
+    document.getElementById('loading-state').style.display = 'none';
+    document.getElementById('results-state').style.display = 'block';
+  });
+}
+
+// ── PROP FIRM CHECK (client side display) ──
+function checkPropFirmWarning(analysis) {
+  const warningEl = document.getElementById('prop-warning');
+  const warningBody = document.getElementById('prop-warning-body');
+  if (!warningEl || !warningBody) return;
+  if (!propFirmActive) { warningEl.classList.remove('visible'); return; }
+
+  const drawdown = parseFloat(document.getElementById('prop-drawdown')?.value) || 0;
+  const pnl = parseFloat(document.getElementById('prop-pnl')?.value) || 0;
+  if (!drawdown) { warningEl.classList.remove('visible'); return; }
+
+  const remaining = drawdown + pnl; // pnl is negative if losing
+  const threshold = drawdown * 0.2;
+
+  if (remaining <= threshold || (analysis.topMistake || '').toLowerCase().includes('prop') || (analysis.verdict || '').toLowerCase().includes('terminal')) {
+    warningEl.classList.add('visible');
+    warningBody.textContent = analysis.topMistake || `You are within ₹${remaining.toFixed(0)} of your daily limit. Vikram says: shut the terminal. Kal trade karna.`;
+  } else {
+    warningEl.classList.remove('visible');
+  }
+}
+
+// ── SHARE CARD (FIXED) ──
 function shareResultCard() {
   const score = document.getElementById('score-num')?.textContent || '—';
   const symbol = document.querySelector('.rtag-sym')?.textContent || '';
-  const verdict = document.querySelector('.dynamic-insert')?.textContent?.replace("VIKRAM'S VERDICT", "").trim() || '';
-  const topMistakeEl = document.querySelector('[style*="var(--red)"] div:last-child');
-  const topMistake = topMistakeEl?.textContent || '';
+  // Fixed: grab full verdict text properly
+  const verdictEl = document.querySelector('.dynamic-insert');
+  const verdict = verdictEl ? (verdictEl.textContent || '').replace("VIKRAM'S VERDICT", "").trim() : '';
+  // Fixed: grab top mistake from lastAnalysis directly (not DOM scraping)
+  const topMistake = (lastAnalysis && lastAnalysis.topMistake) ? lastAnalysis.topMistake : '';
   const name = getUsername();
 
   const canvas = document.createElement('canvas');
@@ -2139,58 +2392,108 @@ function shareResultCard() {
   const scoreNum = parseInt(score) || 0;
   const scoreColor = scoreNum >= 70 ? '#4ade80' : scoreNum >= 50 ? '#c8f04a' : '#ff5c7a';
 
+  // Logo
   ctx.font = 'bold 32px Arial'; ctx.fillStyle = '#f0f4f8'; ctx.textAlign = 'left';
   ctx.fillText('Trade', 80, 90); ctx.fillStyle = '#c8f04a';
   ctx.fillText('IQ', 80 + ctx.measureText('Trade').width, 90);
 
-  ctx.fillStyle = 'rgba(200,240,74,0.12)';
-  ctx.beginPath(); ctx.roundRect(80,115,220,38,8); ctx.fill();
-  ctx.fillStyle = '#c8f04a'; ctx.font = 'bold 16px Arial'; ctx.textAlign = 'center';
-  ctx.fillText(symbol.toUpperCase(), 190, 139);
+  // Symbol pill
+  if (symbol) {
+    ctx.fillStyle = 'rgba(200,240,74,0.12)';
+    ctx.beginPath(); ctx.roundRect(80,110,220,36,8); ctx.fill();
+    ctx.fillStyle = '#c8f04a'; ctx.font = 'bold 15px Arial'; ctx.textAlign = 'center';
+    ctx.fillText(symbol.toUpperCase(), 190, 133);
+  }
 
-  ctx.textAlign = 'center'; ctx.font = 'bold 220px Arial'; ctx.fillStyle = scoreColor;
-  ctx.globalAlpha = 0.12; ctx.fillText(score, 540, 460); ctx.globalAlpha = 1;
-  ctx.font = 'bold 160px Arial'; ctx.fillStyle = scoreColor; ctx.fillText(score, 540, 450);
-  ctx.font = '32px Arial'; ctx.fillStyle = 'rgba(240,244,248,0.4)'; ctx.fillText('/ 100  TRADE SCORE', 540, 510);
+  // Score — big ghost + solid
+  ctx.textAlign = 'center';
+  ctx.font = 'bold 220px Arial'; ctx.fillStyle = scoreColor;
+  ctx.globalAlpha = 0.1; ctx.fillText(score, 540, 440); ctx.globalAlpha = 1;
+  ctx.font = 'bold 150px Arial'; ctx.fillStyle = scoreColor; ctx.fillText(score, 540, 430);
+  ctx.font = '28px Arial'; ctx.fillStyle = 'rgba(240,244,248,0.35)'; ctx.fillText('/ 100  TRADE SCORE', 540, 480);
 
+  // Divider
   ctx.strokeStyle = 'rgba(30,45,66,1)'; ctx.lineWidth = 1.5;
-  ctx.beginPath(); ctx.moveTo(80,560); ctx.lineTo(1000,560); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(80,520); ctx.lineTo(1000,520); ctx.stroke();
 
+  // Verdict — Fixed: 200 chars, max 5 lines, proper overflow guard
   if (verdict) {
-    ctx.font = '26px Arial'; ctx.fillStyle = 'rgba(240,244,248,0.85)'; ctx.textAlign = 'center';
-    const words = verdict.slice(0,120).split(' '); let line = ''; let y = 620;
+    ctx.font = '24px Arial'; ctx.fillStyle = 'rgba(240,244,248,0.82)'; ctx.textAlign = 'center';
+    const truncated = verdict.slice(0, 200);
+    const words = truncated.split(' ');
+    let line = ''; let y = 580; let lineCount = 0; const maxLines = 5; const maxY = 700;
     for (const w of words) {
       const test = line + w + ' ';
-      if (ctx.measureText(test).width > 860 && line) { ctx.fillText(line, 540, y); line = w + ' '; y += 40; }
-      else line = test;
+      if (ctx.measureText(test).width > 860 && line) {
+        if (lineCount >= maxLines || y > maxY) break;
+        ctx.fillText(line.trim(), 540, y);
+        line = w + ' '; y += 38; lineCount++;
+      } else { line = test; }
     }
-    ctx.fillText(line, 540, y);
+    if (line.trim() && lineCount < maxLines && y <= maxY) ctx.fillText(line.trim(), 540, y);
   }
 
+  // Top mistake — Fixed: 90 chars, proper box height
   if (topMistake) {
+    const mistakeText = topMistake.slice(0, 90);
     ctx.fillStyle = 'rgba(255,92,122,0.1)';
-    ctx.beginPath(); ctx.roundRect(80,730,920,70,10); ctx.fill();
-    ctx.font = 'bold 13px Arial'; ctx.fillStyle = '#ff5c7a'; ctx.textAlign = 'left';
-    ctx.fillText('TOP MISTAKE', 110, 758);
-    ctx.font = '20px Arial'; ctx.fillStyle = 'rgba(240,244,248,0.7)';
-    ctx.fillText(topMistake.slice(0,60), 110, 785);
+    ctx.beginPath(); ctx.roundRect(80, 720, 920, 80, 10); ctx.fill();
+    ctx.font = 'bold 12px Arial'; ctx.fillStyle = '#ff5c7a'; ctx.textAlign = 'left';
+    ctx.fillText('TOP MISTAKE', 110, 746);
+    ctx.font = '19px Arial'; ctx.fillStyle = 'rgba(240,244,248,0.72)';
+    ctx.fillText(mistakeText, 110, 775);
   }
 
+  // Name
   if (name) {
-    ctx.font = 'bold 18px Arial'; ctx.fillStyle = 'rgba(200,240,74,0.6)'; ctx.textAlign = 'left';
-    ctx.fillText(name + "'s trade", 80, 870);
+    ctx.font = 'bold 17px Arial'; ctx.fillStyle = 'rgba(200,240,74,0.55)'; ctx.textAlign = 'left';
+    ctx.fillText(name + "'s trade", 80, 860);
   }
 
-  ctx.font = '18px Arial'; ctx.fillStyle = 'rgba(240,244,248,0.25)'; ctx.textAlign = 'center';
+  // Footer
+  ctx.font = '16px Arial'; ctx.fillStyle = 'rgba(240,244,248,0.22)'; ctx.textAlign = 'center';
   ctx.fillText('Analysed by Vikram · TradeIQ · sh7bho.github.io/tradeiq.html', 540, 1020);
 
   const link = document.createElement('a');
-  link.download = 'TradeIQ-' + symbol + '-' + score + '.png';
+  link.download = 'TradeIQ-' + (symbol || 'trade') + '-' + score + '.png';
   link.href = canvas.toDataURL('image/png');
   link.click();
 }
 </script>
 
+
+<!-- SETTINGS FAB -->
+<div class="settings-fab" onclick="toggleSettings()" title="Settings">⚙️</div>
+<div class="settings-panel" id="settings-panel">
+  <div class="settings-title">// Vikram Settings</div>
+
+  <div class="settings-section">
+    <span class="settings-label">Aggression Level</span>
+    <div class="aggression-btns">
+      <button class="agg-btn" id="agg-1" onclick="setAggression(1)">🤝 Mentor</button>
+      <button class="agg-btn active" id="agg-2" onclick="setAggression(2)">⚡ Strict</button>
+      <button class="agg-btn" id="agg-3" onclick="setAggression(3)">🔥 Roast</button>
+    </div>
+  </div>
+
+  <div class="settings-section">
+    <div class="settings-toggle">
+      <span class="settings-toggle-label">🏦 Prop Firm Mode</span>
+      <div class="toggle-switch" id="prop-toggle" onclick="togglePropFirm()"></div>
+    </div>
+    <div class="prop-fields" id="prop-fields">
+      <input class="prop-input" id="prop-drawdown" type="number" placeholder="Max daily drawdown (₹)" />
+      <input class="prop-input" id="prop-pnl" type="number" placeholder="Today's P&L so far (₹)" />
+    </div>
+  </div>
+
+  <div class="settings-section">
+    <div class="settings-toggle">
+      <span class="settings-toggle-label">🔊 Score Sound</span>
+      <div class="toggle-switch on" id="sound-toggle" onclick="toggleSound()"></div>
+    </div>
+  </div>
+</div>
 
 <!-- USERNAME MODAL -->
 <div class="modal-bg" id="username-modal">
