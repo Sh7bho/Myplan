@@ -742,9 +742,69 @@ body.ck #cur-ring{width:28px;height:28px}
   .paywall-card{padding:2rem 1.25rem}
   .welcome-modal-header,.welcome-modal-body,.welcome-modal-footer{padding-left:1.5rem;padding-right:1.5rem}
 }
+
+/* ═══════════════════════════════
+   FUNDED ACCOUNT DEDICATED UI
+═══════════════════════════════ */
+#funded-mode-ui{display:none}
+.funded-ui-header{background:linear-gradient(135deg,rgba(255,170,0,.08) 0%,rgba(255,59,85,.06) 100%);border:1px solid rgba(255,170,0,.25);border-radius:20px;padding:2rem;margin-bottom:1.5rem;position:relative;overflow:hidden}
+.funded-ui-header::before{content:'🏆';position:absolute;right:-10px;bottom:-20px;font-size:6rem;opacity:.06;pointer-events:none}
+.funded-ui-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,170,0,.15);border:1px solid rgba(255,170,0,.3);border-radius:100px;padding:.3rem .9rem;font-family:var(--mono);font-size:10px;color:var(--gold);letter-spacing:1.5px;font-weight:700;margin-bottom:1rem}
+.funded-ui-badge-dot{width:5px;height:5px;background:var(--gold);border-radius:50%;animation:pulse 1.5s infinite}
+.funded-ui-title{font-family:var(--font);font-size:1.6rem;letter-spacing:1px;color:var(--text);margin-bottom:.35rem}
+.funded-ui-sub{font-size:13px;color:rgba(255,200,100,.7);line-height:1.6}
+.funded-dd-live{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1.5rem}
+.funded-dd-card{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:1rem;text-align:center}
+.funded-dd-card.danger{border-color:rgba(255,59,85,.35);background:rgba(255,59,85,.06)}
+.funded-dd-card.warn{border-color:rgba(255,170,0,.35);background:rgba(255,170,0,.05)}
+.funded-dd-card.safe{border-color:rgba(0,212,106,.25);background:rgba(0,212,106,.04)}
+.funded-dd-label{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:.4rem}
+.funded-dd-val{font-family:var(--font);font-size:1.5rem;font-weight:800}
+.funded-dd-card.danger .funded-dd-val{color:var(--red)}
+.funded-dd-card.warn .funded-dd-val{color:var(--gold)}
+.funded-dd-card.safe .funded-dd-val{color:var(--green)}
+.funded-dd-bar-wrap{margin-bottom:1.5rem;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:1.25rem}
+.funded-dd-bar-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem}
+.funded-dd-bar-title{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase}
+.funded-dd-bar-pct{font-family:var(--font);font-size:1.2rem;font-weight:800;color:var(--red)}
+.funded-dd-track{height:8px;background:var(--line2);border-radius:4px;overflow:hidden;margin-bottom:.5rem}
+.funded-dd-fill{height:100%;border-radius:4px;transition:width .8s ease,background .5s;background:var(--green)}
+.funded-dd-fill.warn{background:var(--gold)}
+.funded-dd-fill.danger{background:var(--red)}
+.funded-dd-markers{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--text3)}
+.funded-form-section{background:var(--bg2);border:1px solid rgba(255,170,0,.15);border-radius:20px;padding:2.5rem;margin-bottom:1.5rem}
+.funded-form-title{font-family:var(--font);font-size:.85rem;font-weight:700;color:rgba(255,170,0,.7);letter-spacing:1.5px;margin-bottom:1.75rem;display:flex;align-items:center;gap:.75rem}
+.funded-form-title::after{content:'';flex:1;height:1px;background:rgba(255,170,0,.15)}
+.funded-market-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-bottom:1.25rem}
+.funded-mkt-btn{background:var(--bg3);border:1px solid var(--line2);border-radius:10px;padding:.75rem .5rem;text-align:center;cursor:pointer;transition:all .25s;font-size:11px;color:var(--text3);font-family:var(--mono)}
+.funded-mkt-btn:hover{border-color:rgba(255,170,0,.3);color:var(--text2)}
+.funded-mkt-btn.selected{background:rgba(255,170,0,.1);border-color:rgba(255,170,0,.4);color:var(--gold)}
+.funded-mkt-icon{font-size:1.4rem;display:block;margin-bottom:.3rem}
+.funded-pair-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.75rem;margin-bottom:1rem;min-height:28px}
+.funded-pair-chip{padding:.3rem .7rem;border-radius:6px;border:1px solid var(--line2);background:var(--bg3);color:var(--text3);font-size:11px;font-family:var(--mono);cursor:pointer;transition:all .2s}
+.funded-pair-chip:hover{border-color:rgba(255,170,0,.3);color:var(--text2)}
+.funded-pair-chip.selected{border-color:rgba(255,170,0,.5);background:rgba(255,170,0,.12);color:var(--gold)}
+.funded-disclaimer{background:rgba(255,59,85,.05);border:1px solid rgba(255,59,85,.15);border-radius:10px;padding:.85rem 1rem;font-size:11.5px;color:rgba(255,180,180,.7);line-height:1.6;margin-bottom:1.5rem;display:flex;align-items:flex-start;gap:.6rem}
+.funded-disclaimer strong{color:rgba(255,200,200,.9)}
+.submit-btn-funded{background:linear-gradient(135deg,rgba(255,170,0,.9),rgba(255,140,0,.9));color:#000;padding:1rem 3rem;border-radius:10px;font-size:15px;font-weight:800;font-family:var(--font);border:none;cursor:pointer;transition:all .3s;letter-spacing:.5px;display:inline-flex;align-items:center;gap:.75rem;box-shadow:0 8px 24px rgba(255,170,0,.2)}
+.submit-btn-funded:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 16px 40px rgba(255,170,0,.3)}
+.submit-btn-funded:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.funded-switch-link{font-size:12px;color:var(--text3);margin-top:.75rem;cursor:pointer;font-family:var(--mono)}
+.funded-switch-link:hover{color:var(--text2)}
+.funded-field input,.funded-field select{background:rgba(255,255,255,.04);border:1px solid rgba(255,170,0,.2);border-radius:8px;padding:.75rem 1rem;color:var(--text);font-family:var(--body);font-size:14px;outline:none;transition:all .25s;width:100%}
+.funded-field input:focus,.funded-field select:focus{border-color:rgba(255,170,0,.5);background:rgba(255,170,0,.04);box-shadow:0 0 0 3px rgba(255,170,0,.06)}
+.funded-field input::placeholder{color:var(--text3)}
+.funded-field label{font-size:11px;color:rgba(255,170,0,.6);font-family:var(--mono);letter-spacing:1px;margin-bottom:.4rem;display:block}
+.funded-dir-toggle{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.funded-dir-btn{padding:.75rem;border-radius:8px;border:1px solid rgba(255,170,0,.2);background:rgba(255,255,255,.03);color:var(--text2);font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;transition:all .25s;letter-spacing:.5px}
+.funded-dir-btn.selected-long{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.4);color:var(--green)}
+.funded-dir-btn.selected-short{background:rgba(255,92,122,.1);border-color:rgba(255,92,122,.4);color:var(--red)}
+
 @media(max-width:500px){
   .hero-stats{grid-template-columns:repeat(2,1fr)}.proof-chip{width:100%}
   .cal-day{min-height:50px;padding:.25rem}.cal-weekday{font-size:8px}
+  .funded-market-grid{grid-template-columns:repeat(3,1fr)}
+  .funded-dd-live{grid-template-columns:repeat(3,1fr)}
 }
 </style>
 </head>
@@ -1089,6 +1149,90 @@ body.ck #cur-ring{width:28px;height:28px}
       </div>
 
       <div id="step-1">
+
+        <!-- FUNDED ACCOUNT MODE UI — shown when prop mode active -->
+        <div id="funded-mode-ui">
+          <div class="funded-ui-header fade-up">
+            <div class="funded-ui-badge"><div class="funded-ui-badge-dot"></div>🏆 FUNDED ACCOUNT MODE</div>
+            <div class="funded-ui-title">Drawdown Guard Active</div>
+            <div class="funded-ui-sub">Vikram will check every trade against your daily limit before scoring. Capital protection is the top priority here.</div>
+          </div>
+          <div class="funded-dd-bar-wrap fade-up fade-up-1">
+            <div class="funded-dd-bar-label">
+              <div class="funded-dd-bar-title">Daily Drawdown Used</div>
+              <div class="funded-dd-bar-pct" id="funded-dd-pct">0%</div>
+            </div>
+            <div class="funded-dd-track"><div class="funded-dd-fill" id="funded-dd-fill" style="width:0%"></div></div>
+            <div class="funded-dd-markers"><span>0%</span><span style="color:var(--gold)">50%</span><span style="color:var(--red)">MAX</span></div>
+          </div>
+          <div class="funded-dd-live fade-up fade-up-1">
+            <div class="funded-dd-card safe" id="fdd-max-card"><div class="funded-dd-label">Max Daily DD</div><div class="funded-dd-val" id="fdd-max">—</div></div>
+            <div class="funded-dd-card" id="fdd-pnl-card"><div class="funded-dd-label">Today's P&L</div><div class="funded-dd-val" id="fdd-pnl">—</div></div>
+            <div class="funded-dd-card safe" id="fdd-room-card"><div class="funded-dd-label">Headroom Left</div><div class="funded-dd-val" id="fdd-room">—</div></div>
+          </div>
+          <div class="funded-form-section fade-up fade-up-2">
+            <div class="funded-form-title">INSTRUMENT</div>
+            <div class="funded-market-grid">
+              <div class="funded-mkt-btn selected" id="fmkt-forex" onclick="setFundedMarket('Forex')"><span class="funded-mkt-icon">💱</span>FOREX</div>
+              <div class="funded-mkt-btn" id="fmkt-crypto" onclick="setFundedMarket('Crypto')"><span class="funded-mkt-icon">₿</span>CRYPTO</div>
+              <div class="funded-mkt-btn" id="fmkt-commodity" onclick="setFundedMarket('Commodity')"><span class="funded-mkt-icon">🥇</span>COMMODITY</div>
+            </div>
+            <div class="funded-pair-chips" id="funded-pair-chips"></div>
+            <div class="field-grid field-grid-2" style="margin-top:.5rem">
+              <div class="funded-field field"><label>SYMBOL / PAIR</label><input type="text" id="ff-symbol" placeholder="EURUSD / BTCUSDT / XAUUSD" autocomplete="off"></div>
+              <div class="funded-field field"><label>DATE</label><input type="date" id="ff-date"></div>
+            </div>
+          </div>
+          <div class="funded-form-section fade-up fade-up-3">
+            <div class="funded-form-title">TRADE DETAILS</div>
+            <div style="margin-bottom:1rem">
+              <div class="funded-field field" style="margin-bottom:.5rem"><label>DIRECTION</label></div>
+              <div class="funded-dir-toggle">
+                <button class="funded-dir-btn selected-long" id="fdir-long" onclick="setFundedDir('LONG')">↑ LONG / BUY</button>
+                <button class="funded-dir-btn" id="fdir-short" onclick="setFundedDir('SHORT')">↓ SHORT / SELL</button>
+              </div>
+            </div>
+            <div class="field-grid field-grid-2">
+              <div class="funded-field field"><label>ENTRY PRICE</label><input type="number" id="ff-entry" placeholder="0.00000" step="any" oninput="calcFundedRR()"></div>
+              <div class="funded-field field"><label>EXIT PRICE <span style="color:var(--text3);font-weight:300">(0 if open)</span></label><input type="number" id="ff-exit" placeholder="0.00000" step="any" oninput="calcFundedRR()"></div>
+              <div class="funded-field field"><label>STOP LOSS</label><input type="number" id="ff-sl" placeholder="0.00000" step="any" oninput="calcFundedRR()"></div>
+              <div class="funded-field field"><label>TARGET / TP</label><input type="number" id="ff-target" placeholder="0.00000" step="any" oninput="calcFundedRR()"></div>
+              <div class="funded-field field"><label>LOT SIZE</label><input type="number" id="ff-lots" placeholder="0.01" step="any"></div>
+              <div class="funded-field field"><label>RISK AMOUNT</label><input type="number" id="ff-risk" placeholder="E.g. 50 or 500" step="any"></div>
+            </div>
+            <div style="margin-top:1rem"><div class="rr-display" style="border-color:rgba(255,170,0,.2);background:rgba(255,255,255,.03)"><span class="rr-label">RISK : REWARD</span><span class="rr-value" id="frr-display" style="color:var(--gold)">—</span></div></div>
+          </div>
+          <div class="funded-form-section fade-up fade-up-3">
+            <div class="funded-form-title">MINDSET & NOTES</div>
+            <div class="field" style="margin-bottom:1.25rem">
+              <label style="font-size:11px;color:rgba(255,170,0,.6);font-family:var(--mono);letter-spacing:1px;margin-bottom:.5rem;display:block">HOW WERE YOU FEELING?</label>
+              <div class="emotion-grid" id="funded-emo-grid">
+                <div class="emo-chip selected" onclick="toggleFundedEmo(this,'Disciplined')">Disciplined</div>
+                <div class="emo-chip" onclick="toggleFundedEmo(this,'Confident')">Confident</div>
+                <div class="emo-chip" onclick="toggleFundedEmo(this,'FOMO')">FOMO</div>
+                <div class="emo-chip" onclick="toggleFundedEmo(this,'Revenge')">Revenge Trade</div>
+                <div class="emo-chip" onclick="toggleFundedEmo(this,'Greedy')">Greedy</div>
+                <div class="emo-chip" onclick="toggleFundedEmo(this,'Calm')">Calm</div>
+                <div class="emo-chip" onclick="toggleFundedEmo(this,'Anxious')">Anxious</div>
+                <div class="emo-chip" onclick="toggleFundedEmo(this,'Overconfident')">Overconfident</div>
+              </div>
+            </div>
+            <div class="funded-field field">
+              <label>TELL VIKRAM ABOUT THIS TRADE</label>
+              <textarea id="ff-notes" placeholder="E.g. 'Saw liquidity sweep on EURUSD H1, entered at 1.0845. News event moved 50 pips against me...'" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,170,0,.2);border-radius:8px;padding:.75rem 1rem;color:var(--text);font-family:var(--body);font-size:14px;outline:none;transition:all .25s;resize:vertical;min-height:90px;line-height:1.6;width:100%;box-sizing:border-box" onfocus="this.style.borderColor='rgba(255,170,0,.5)'" onblur="this.style.borderColor='rgba(255,170,0,.2)'"></textarea>
+            </div>
+          </div>
+          <div class="funded-disclaimer fade-up fade-up-4">
+            ⚠️ <div><strong>Not financial or trading advice.</strong> TradeIQ is an educational journaling tool. Vikram's analysis is AI-generated and for self-reflection only — it does not constitute investment or trading advice. Always follow your prop firm's official rules and risk parameters. Past analysis does not guarantee future performance. Trade responsibly and at your own risk.</div>
+          </div>
+          <div class="submit-area fade-up fade-up-4">
+            <button class="submit-btn-funded" onclick="runFundedAnalysis()" id="funded-submit-btn">🏆 <span>Analyse Funded Trade</span></button>
+            <p class="submit-hint" id="funded-submit-hint">Uses 1 of your free analyses</p>
+            <div class="funded-switch-link" onclick="switchToStandardForm()">↓ Switch to standard form instead</div>
+          </div>
+        </div>
+        <!-- END FUNDED UI -->
+
         <!-- UPLOAD SECTION -->
         <div class="upload-feature-card fade-up fade-up-2" id="upload-section">
           <div id="upload-locked" style="display:none">
@@ -1181,6 +1325,7 @@ body.ck #cur-ring{width:28px;height:28px}
         <div class="submit-area fade-up fade-up-4">
           <button class="submit-btn" onclick="runAnalysis()" id="submit-btn"><span id="vikram-mode-emoji">⚡</span><span>Analyse My Trade</span></button>
           <p class="submit-hint" id="submit-hint">Uses 1 of your 3 free analyses</p>
+          <p style="font-size:11px;color:var(--text3);margin-top:.5rem;line-height:1.5;max-width:440px;margin-left:auto;margin-right:auto">Not financial advice. TradeIQ is an educational journaling tool. AI-generated analysis is for self-reflection only — not investment or trading advice. Trade at your own risk.</p>
         </div>
       </div>
 
@@ -1254,8 +1399,8 @@ body.ck #cur-ring{width:28px;height:28px}
   <div class="paywall-card">
     <button class="paywall-close" onclick="hidePaywall()">×</button>
     <div class="paywall-icon">🔓</div>
-    <h2 class="paywall-title" id="pw-title">Unlock Unlimited Analyses</h2>
-    <p class="paywall-sub" id="pw-sub">You've seen what TradeIQ can do. Use it on every trade, every day. Stop losing money to the same mistakes.</p>
+    <h2 class="paywall-title">Unlock Unlimited Analyses</h2>
+    <p class="paywall-sub">You've seen what TradeIQ can do. Use it on every trade, every day. Stop losing money to the same mistakes.</p>
     <div class="paywall-price" id="pw-price">₹99</div>
     <div class="paywall-price-og" id="pw-og">₹299/month regular price</div>
     <div class="paywall-period" id="pw-period">Launch offer · Cancel anytime</div>
@@ -1270,6 +1415,7 @@ body.ck #cur-ring{width:28px;height:28px}
     </div>
     <button style="width:100%;background:var(--accent);color:#080b12;border:none;border-radius:10px;padding:1rem;font-family:var(--font);font-size:1.3rem;letter-spacing:2px;cursor:pointer;transition:all .25s;display:flex;justify-content:center;align-items:center" onclick="handlePayment()">Pay with Razorpay →</button>
     <p style="font-size:11px;color:var(--text3);margin-top:1rem">Secure payment · UPI / Cards / Net Banking</p>
+    <p style="font-size:10px;color:var(--text3);margin-top:.6rem;line-height:1.5;opacity:.7">TradeIQ is an educational tool. Not financial advice. AI analysis is for self-reflection only.</p>
   </div>
 </div>
 
@@ -1385,8 +1531,6 @@ body.ck #cur-ring{width:28px;height:28px}
 const BACKEND_URL='https://tradeiq-backend-fnz2.onrender.com';
 let selectedDir='LONG',selectedEmos=['Confident'];
 let ipHash=localStorage.getItem('tiq_iphash')||null;
-// Also restore from session in case it was set this session
-if(!ipHash&&sessionStorage.getItem('tiq_iphash'))ipHash=sessionStorage.getItem('tiq_iphash');
 let sessionId=localStorage.getItem('tiq_session')||generateId();
 localStorage.setItem('tiq_session',sessionId);
 let uploadedImageBase64=null,uploadedImageType=null;
@@ -1513,7 +1657,7 @@ async function runScreenshotAnalysis(){
     if(res.status===402){document.getElementById('loading-state').style.display='none';document.getElementById('step-1').style.display='block';showPaywall('pro');return;}
     if(!res.ok){const err=await res.json();throw new Error(err.detail||err.error||'Screenshot analysis failed');}
     const result=await res.json();
-    if(result.ipHash){ipHash=result.ipHash;localStorage.setItem('tiq_iphash',ipHash);sessionStorage.setItem('tiq_iphash',ipHash);}
+    if(result.ipHash){ipHash=result.ipHash;localStorage.setItem('tiq_iphash',ipHash);}
     const det=result.analysis.detectedInfo||{};
     const syntheticData={symbol:det.symbol||'Screenshot',market:'Chart Analysis',direction:det.direction||'LONG',entry:det.entry||0,exit:det.exit||0,sl:det.sl||0,target:det.target||0,emotions:[],planFollowed:'—',pnl:null,isOpen:true,rrRatio:null,date:new Date().toISOString().split('T')[0],isScreenshot:true,timeframe:det.timeframe||null};
     renderResults(syntheticData,result.analysis);
@@ -1535,7 +1679,7 @@ function saveUsername(){const val=document.getElementById('username-input').valu
 function skipUsername(){localStorage.setItem('tiq_username_skipped','1');document.getElementById('username-modal').style.display='none';}
 function getUsername(){return localStorage.getItem('tiq_username')||null;}
 
-function openApp(tab){document.getElementById('tiq-landing').style.display='none';document.getElementById('app-page').style.display='block';window.scrollTo(0,0);switchTab(tab||'analyse');updatePropBadge();}
+function openApp(tab){document.getElementById('tiq-landing').style.display='none';document.getElementById('app-page').style.display='block';window.scrollTo(0,0);switchTab(tab||'analyse');updatePropBadge();if(propFirmActive&&(!tab||tab==='analyse')){setTimeout(showFundedUI,50);}}
 function showLanding(){const ld=document.getElementById('tiq-landing');if(ld)ld.style.display='block';document.getElementById('app-page').style.display='none';window.scrollTo(0,0);}
 
 function switchTab(tab){
@@ -1587,9 +1731,13 @@ function validate(){
 // ════════════════════════════════
 async function runAnalysis(){
   if(!validate())return;
+  let freeDeducted=false;
   if(!isPaidUser()){
     const current=parseInt(localStorage.getItem('tiq_free')||'0');
     if(current<=0){showPaywall('pro');return;}
+    localStorage.setItem('tiq_free',current-1);
+    freeDeducted=true;
+    updateFreeCountUI(current-1);
   }
   const data={
     symbol:document.getElementById('f-symbol').value.trim().toUpperCase(),
@@ -1616,23 +1764,19 @@ async function runAnalysis(){
     stopLoadingAnim();
     if(res.status===402){
       document.getElementById('loading-state').style.display='none';document.getElementById('step-1').style.display='block';
-      if(!isPaidUser()){const r=Math.min(3,parseInt(localStorage.getItem('tiq_free')||'0')+1);localStorage.setItem('tiq_free',r);updateFreeCountUI(r);}
+      if(!isPaidUser()&&freeDeducted){const r=Math.min(3,parseInt(localStorage.getItem('tiq_free')||'0')+1);localStorage.setItem('tiq_free',r);updateFreeCountUI(r);}
       showPaywall('pro');return;
     }
     if(!res.ok){const err=await res.json();throw new Error(err.detail||err.error||'Analysis failed');}
     const result=await res.json();
-    if(result.ipHash){ipHash=result.ipHash;localStorage.setItem('tiq_iphash',ipHash);sessionStorage.setItem('tiq_iphash',ipHash);}
-    if(typeof result.freeRemaining!=='undefined'&&result.freeRemaining!==null){
-      localStorage.setItem('tiq_free',result.freeRemaining);updateFreeCountUI(result.freeRemaining);
-    } else if(!isPaidUser()){
-      const current=parseInt(localStorage.getItem('tiq_free')||'0');
-      const next=Math.max(0,current-1);localStorage.setItem('tiq_free',next);updateFreeCountUI(next);
-    }
+    if(result.ipHash){ipHash=result.ipHash;localStorage.setItem('tiq_iphash',ipHash);}
+    if(typeof result.freeRemaining!=='undefined'&&result.freeRemaining!==null){localStorage.setItem('tiq_free',result.freeRemaining);updateFreeCountUI(result.freeRemaining);}
     renderResults(data,result.analysis);
     if(isPaidUser())applyPaidUI();
   }catch(err){
     stopLoadingAnim();document.getElementById('loading-state').style.display='none';document.getElementById('step-1').style.display='block';setStep(1);
-    if(!isPaidUser()){const r=Math.min(3,parseInt(localStorage.getItem('tiq_free')||'0')+1);localStorage.setItem('tiq_free',r);updateFreeCountUI(r);}
+    // Only restore local count on pure network errors (server never processed)
+    if(!isPaidUser()&&freeDeducted&&(err.name==='TypeError'||err.message.includes('fetch'))){const r=Math.min(3,parseInt(localStorage.getItem('tiq_free')||'0')+1);localStorage.setItem('tiq_free',r);updateFreeCountUI(r);}
     const errEl=document.createElement('div');errEl.className='error-card dynamic-insert';errEl.innerHTML=`<p>⚠️ ${err.message||'Something went wrong. Check your connection and try again.'}</p>`;document.getElementById('step-1').prepend(errEl);window.scrollTo(0,0);
   }
 }
@@ -1688,6 +1832,7 @@ function resetApp(){
   const pw=document.getElementById('prop-warning');if(pw)pw.classList.remove('visible');
   lastTradeData=null;lastAnalysis=null;clearUpload();setStep(1);initFreeCount();
   ['Reading trade details','Identifying emotional biases','Checking risk management','Analysing setup quality','Writing your breakdown'].forEach((txt,i)=>{document.getElementById('ls-'+(i+1)).textContent=txt;});
+  if(propFirmActive){showFundedUI();}else{switchToStandardForm();}
   window.scrollTo(0,0);
 }
 
@@ -1829,59 +1974,63 @@ function logoutUser(){
 // PAYWALL
 function showPaywall(plan){
   const overlay=document.getElementById('paywall-overlay');overlay.style.display='flex';
-  const pw=document.getElementById('pw-price');
-  if(plan==='lifetime'){
-    pw.textContent='₹499';pw.dataset.plan='lifetime';pw.dataset.amount='49900';
-    document.getElementById('pw-og').textContent='₹999 regular price';
-    document.getElementById('pw-period').textContent='One time payment · Lifetime access';
-    document.getElementById('pw-title').textContent='Unlock Lifetime Access';
-    document.getElementById('pw-sub').textContent='Ek baar pay karo, hamesha ke liye use karo. Har naya feature bhi.';
-  } else if(plan==='funded'){
-    pw.textContent='₹129';pw.dataset.plan='funded';pw.dataset.amount='12900';
-    document.getElementById('pw-og').textContent='₹299/month regular price';
-    document.getElementById('pw-period').textContent='Per month · Includes all Pro features';
-    document.getElementById('pw-title').textContent='Unlock Funded Account Mode';
-    document.getElementById('pw-sub').textContent='Prop firm pe tera paisa hai. Vikram har trade pe drawdown check karega aur ek baar bhi breach hone se pehle rok dega.';
-  } else {
-    pw.textContent='₹99';pw.dataset.plan='pro';pw.dataset.amount='9900';
-    document.getElementById('pw-og').textContent='₹299/month regular price';
-    document.getElementById('pw-period').textContent='Launch offer · Cancel anytime';
-    document.getElementById('pw-title').textContent='Unlock Unlimited Analyses';
-    document.getElementById('pw-sub').textContent='You\'ve seen what TradeIQ can do. Use it on every trade, every day. Stop losing money to the same mistakes.';
-  }
+  if(plan==='lifetime'){document.getElementById('pw-price').textContent='₹499';document.getElementById('pw-og').textContent='₹999 regular price';document.getElementById('pw-period').textContent='One time payment · Lifetime access';}
+  else{document.getElementById('pw-price').textContent='₹99';document.getElementById('pw-og').textContent='₹299/month regular price';document.getElementById('pw-period').textContent='Launch offer · Cancel anytime';}
 }
 function hidePaywall(){
   document.getElementById('paywall-overlay').style.display='none';
   const ei=document.getElementById('pw-email'),ee=document.getElementById('pw-email-err');if(ei)ei.value='';if(ee)ee.style.display='none';
 }
+// Lazy-load Razorpay script if not already loaded
+function loadRazorpay(){
+  return new Promise((resolve,reject)=>{
+    if(window.Razorpay){resolve();return;}
+    const s=document.createElement('script');
+    s.src='https://checkout.razorpay.com/v1/checkout.js';
+    s.onload=resolve;
+    s.onerror=()=>reject(new Error('Razorpay failed to load. Check your internet connection.'));
+    document.head.appendChild(s);
+  });
+}
+
 async function handlePayment(){
   const ei=document.getElementById('pw-email'),ee=document.getElementById('pw-email-err'),email=ei?ei.value.trim():'';
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){if(ee)ee.style.display='block';if(ei)ei.focus();return;}
   if(ee)ee.style.display='none';localStorage.setItem('user_email',email);
-  const pwPrice=document.getElementById('pw-price');
-  const planType=pwPrice.dataset.plan||'pro';
-  const amount=parseInt(pwPrice.dataset.amount||'9900');
-  const planLabel=planType==='lifetime'?'Lifetime Plan':planType==='funded'?'Funded Account Mode':'Pro Plan';
+  const price=document.getElementById('pw-price').textContent,isLifetime=price==='₹499',amount=isLifetime?49900:9900;
+  const payBtn=document.querySelector('#paywall-overlay button[onclick="handlePayment()"]');
+  if(payBtn){payBtn.textContent='Please wait...';payBtn.disabled=true;}
   try{
+    // Load Razorpay script first, THEN hit backend
     await loadRazorpay();
     const res=await fetch(`${BACKEND_URL}/create-order`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({amount})});
-    const order=await res.json();if(!order.id){alert('Payment initiation failed. Try again.');return;}
-    const rzp=new Razorpay({key:'rzp_live_SbMDVHgkRpAXR1',amount,currency:'INR',name:'TradeIQ',description:planLabel,order_id:order.id,
+    if(!res.ok){throw new Error('Order creation failed ('+res.status+')');}
+    const order=await res.json();
+    if(!order.id){throw new Error('Order ID missing. Backend error.');}
+    const rzp=new Razorpay({
+      key:'rzp_live_SbMDVHgkRpAXR1',
+      amount,currency:'INR',
+      name:'TradeIQ',
+      description:isLifetime?'Lifetime Plan':'Pro Plan',
+      order_id:order.id,
+      prefill:{email},
       handler:async function(response){
-        const verify=await fetch(`${BACKEND_URL}/verify-payment`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,amount,plan:planType,razorpay_order_id:response.razorpay_order_id,razorpay_payment_id:response.razorpay_payment_id,razorpay_signature:response.razorpay_signature})});
-        const data=await verify.json();
-        if(data.success){
-          localStorage.setItem('user_plan',data.plan||planType);
-          hidePaywall();
-          updateNavForLoggedIn(email);
-          applyPaidUI();
-          if(planType==='funded'){propFirmActive=true;localStorage.setItem('tiq_prop','1');updatePropBadge();const sw=document.getElementById('prop-toggle-switch');const fields=document.getElementById('prop-fields-wrap');const card=document.getElementById('prop-toggle-card');if(sw)sw.classList.add('on');if(fields)fields.classList.add('visible');if(card)card.classList.add('active');}
-          const successMsg=planType==='funded'?'Payment successful ✅ Funded Account Mode is now active!':planType==='lifetime'?'Payment successful ✅ Lifetime access unlocked!':'Payment successful ✅ Welcome to Pro!';
-          alert(successMsg);
-        }else{alert('Payment verification failed ❌ Contact support.');}
-      },theme:{color:'#c8f04a'}});
+        try{
+          const verify=await fetch(`${BACKEND_URL}/verify-payment`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,amount,razorpay_order_id:response.razorpay_order_id,razorpay_payment_id:response.razorpay_payment_id,razorpay_signature:response.razorpay_signature})});
+          const data=await verify.json();
+          if(data.success){localStorage.setItem('user_plan',data.plan||'pro');hidePaywall();updateNavForLoggedIn(email);applyPaidUI();alert('Payment successful ✅ Welcome to TradeIQ Pro!');}
+          else{alert('Payment verification failed ❌ Contact support@tradeiq.in');}
+        }catch(verErr){alert('Verification error. Contact support@tradeiq.in with your payment ID: '+response.razorpay_payment_id);}
+      },
+      modal:{ondismiss:function(){if(payBtn){payBtn.textContent='Pay with Razorpay →';payBtn.disabled=false;}}},
+      theme:{color:'#c8f04a'}
+    });
     rzp.open();
-  }catch(e){alert('Something went wrong. Try again.');}
+  }catch(e){
+    console.error('Payment error:',e);
+    alert('Payment failed: '+(e.message||'Something went wrong. Check your connection and try again.'));
+    if(payBtn){payBtn.textContent='Pay with Razorpay →';payBtn.disabled=false;}
+  }
 }
 
 // SETTINGS
@@ -1915,11 +2064,16 @@ function updateModePreview(){
 }
 
 function togglePropFirm(){
-  if(!isPaidUser()){showPaywall('funded');return;}
   propFirmActive=!propFirmActive;localStorage.setItem('tiq_prop',propFirmActive?'1':'0');
   const sw=document.getElementById('prop-toggle-switch'),fields=document.getElementById('prop-fields-wrap'),card=document.getElementById('prop-toggle-card');
   if(sw)sw.classList.toggle('on',propFirmActive);if(fields)fields.classList.toggle('visible',propFirmActive);if(card)card.classList.toggle('active',propFirmActive);
   updatePropBadge();
+  // live swap UI if currently on the analyse tab
+  const appVisible=document.getElementById('app-page').style.display!=='none';
+  const analyseVisible=document.getElementById('analyse-tab').style.display!=='none';
+  if(appVisible&&analyseVisible){
+    if(propFirmActive){showFundedUI();}else{switchToStandardForm();}
+  }
 }
 function updatePropBadge(){const b=document.getElementById('prop-active-badge');if(b)b.classList.toggle('visible',propFirmActive);}
 function toggleSound(){soundEnabled=!soundEnabled;localStorage.setItem('tiq_sound',soundEnabled?'1':'0');document.getElementById('sound-toggle').classList.toggle('on',soundEnabled);}
@@ -1930,6 +2084,8 @@ function initSettings(){
   if(sw)sw.classList.toggle('on',propFirmActive);if(fields)fields.classList.toggle('visible',propFirmActive);if(card)card.classList.toggle('active',propFirmActive);
   document.getElementById('sound-toggle').classList.toggle('on',soundEnabled);
   updateModePreview();updatePropBadge();
+  // sync DD meter when settings inputs change
+  ['prop-drawdown','prop-pnl'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',updateFundedDDMeter);});
 }
 
 function getAggressionModifier(){
@@ -1948,6 +2104,181 @@ function getPropFirmModifier(){
   return `\n\nFUNDED ACCOUNT MODE ACTIVE: Prop firm evaluation. Max daily drawdown: ₹${drawdown}. P&L before this trade: ₹${pnl}. Calculate: if SL fires, would total daily loss exceed drawdown limit? If yes — CRITICAL WARNING. Tell them: "Terminal band kar. Kal trade karna." Capital preservation takes TOTAL priority.`;
 }
 
+
+// ════════════════════════════════
+// FUNDED ACCOUNT DEDICATED UI
+// ════════════════════════════════
+let fundedSelectedDir='LONG';
+let fundedSelectedEmos=['Disciplined'];
+let fundedSelectedMarket='Forex';
+
+const FUNDED_PAIRS={
+  'Forex':['EURUSD','GBPUSD','USDJPY','USDCHF','AUDUSD','USDCAD','NZDUSD','GBPJPY','EURJPY','XAUUSD'],
+  'Crypto':['BTCUSDT','ETHUSDT','SOLUSDT','BNBUSDT','XRPUSDT','ADAUSDT','AVAXUSDT','DOGEUSDT'],
+  'Commodity':['XAUUSD','XAGUSD','USOIL','UKOIL','NATGAS','COPPER','WHEAT','CORN']
+};
+
+function setFundedMarket(mkt){
+  fundedSelectedMarket=mkt;
+  ['forex','crypto','commodity'].forEach(m=>{
+    const el=document.getElementById('fmkt-'+m);
+    if(el)el.className='funded-mkt-btn'+(mkt.toLowerCase()===m?' selected':'');
+  });
+  renderFundedPairChips();
+}
+
+function renderFundedPairChips(){
+  const wrap=document.getElementById('funded-pair-chips');if(!wrap)return;
+  const pairs=FUNDED_PAIRS[fundedSelectedMarket]||[];
+  wrap.innerHTML=pairs.map(p=>`<div class="funded-pair-chip" onclick="selectFundedPair(this,'${p}')">${p}</div>`).join('');
+}
+
+function selectFundedPair(el,pair){
+  document.querySelectorAll('#funded-pair-chips .funded-pair-chip').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  const sym=document.getElementById('ff-symbol');if(sym)sym.value=pair;
+}
+
+function setFundedDir(d){
+  fundedSelectedDir=d;
+  document.getElementById('fdir-long').className='funded-dir-btn'+(d==='LONG'?' selected-long':'');
+  document.getElementById('fdir-short').className='funded-dir-btn'+(d==='SHORT'?' selected-short':'');
+  calcFundedRR();
+}
+
+function toggleFundedEmo(el,emo){
+  if(el.classList.contains('selected')){el.classList.remove('selected');fundedSelectedEmos=fundedSelectedEmos.filter(e=>e!==emo);}
+  else{el.classList.add('selected');fundedSelectedEmos.push(emo);}
+}
+
+function calcFundedRR(){
+  const entry=parseFloat(document.getElementById('ff-entry').value)||0,
+        sl=parseFloat(document.getElementById('ff-sl').value)||0,
+        target=parseFloat(document.getElementById('ff-target').value)||0,
+        el=document.getElementById('frr-display');
+  if(!entry||!sl||!target){if(el)el.textContent='—';return;}
+  const risk=Math.abs(entry-sl),reward=Math.abs(target-entry);
+  if(!risk){if(el)el.textContent='—';return;}
+  const rr=(reward/risk).toFixed(2);
+  if(el){el.textContent='1 : '+rr;el.style.color=parseFloat(rr)>=2?'var(--green)':parseFloat(rr)>=1?'var(--gold)':'var(--red)';}
+}
+
+function updateFundedDDMeter(){
+  const drawdown=parseFloat(document.getElementById('prop-drawdown')?.value)||0;
+  const pnl=parseFloat(document.getElementById('prop-pnl')?.value)||0;
+  const maxEl=document.getElementById('fdd-max'),pnlEl=document.getElementById('fdd-pnl'),roomEl=document.getElementById('fdd-room');
+  const pctEl=document.getElementById('funded-dd-pct'),fillEl=document.getElementById('funded-dd-fill');
+  const pnlCard=document.getElementById('fdd-pnl-card'),roomCard=document.getElementById('fdd-room-card');
+  if(!drawdown){
+    if(maxEl)maxEl.textContent='Not set';
+    if(pnlEl)pnlEl.textContent='—';
+    if(roomEl)roomEl.textContent='—';
+    return;
+  }
+  const used=Math.max(0,-pnl);const room=drawdown-used;
+  const pct=Math.min(100,Math.round((used/drawdown)*100));
+  if(maxEl)maxEl.textContent='₹'+drawdown.toLocaleString('en-IN');
+  if(pnlEl)pnlEl.textContent=(pnl>=0?'+₹':'−₹')+Math.abs(pnl).toLocaleString('en-IN');
+  if(roomEl)roomEl.textContent=(room<=0?'NONE':'₹'+room.toLocaleString('en-IN'));
+  if(pctEl)pctEl.textContent=pct+'%';
+  if(fillEl){fillEl.style.width=pct+'%';fillEl.className='funded-dd-fill'+(pct>=80?' danger':pct>=50?' warn':'');}
+  if(pnlCard){pnlCard.className='funded-dd-card'+(pnl<0?' danger':' safe');}
+  if(roomCard){roomCard.className='funded-dd-card'+(room<=0?' danger':room<drawdown*0.2?' warn':' safe');}
+}
+
+function showFundedUI(){
+  const fundedUI=document.getElementById('funded-mode-ui');
+  const standardSections=document.querySelectorAll('#upload-section,#step-1 > .form-section,#step-1 > .submit-area');
+  if(fundedUI)fundedUI.style.display='block';
+  standardSections.forEach(el=>el.style.display='none');
+  // init date
+  const fd=document.getElementById('ff-date');if(fd)fd.value=new Date().toISOString().split('T')[0];
+  renderFundedPairChips();
+  updateFundedDDMeter();
+  updateFundedSubmitHint();
+}
+
+function switchToStandardForm(){
+  const fundedUI=document.getElementById('funded-mode-ui');
+  const standardSections=document.querySelectorAll('#upload-section,#step-1 > .form-section,#step-1 > .submit-area');
+  if(fundedUI)fundedUI.style.display='none';
+  standardSections.forEach(el=>el.style.display='');
+}
+
+function updateFundedSubmitHint(){
+  const hint=document.getElementById('funded-submit-hint'),btn=document.getElementById('funded-submit-btn');
+  if(isPaidUser()){if(hint)hint.style.display='none';return;}
+  const rem=parseInt(localStorage.getItem('tiq_free')||'0');
+  if(hint){hint.textContent=rem<=0?'No free analyses left — upgrade to continue':`Uses 1 of your ${rem} free ${rem===1?'analysis':'analyses'}`;hint.style.color=rem<=0?'var(--red)':'';}
+  if(btn)btn.disabled=rem<=0&&!isPaidUser();
+}
+
+async function runFundedAnalysis(){
+  const sym=document.getElementById('ff-symbol').value.trim();
+  const entry=parseFloat(document.getElementById('ff-entry').value);
+  if(!sym){alert('Please enter a symbol (e.g. EURUSD, BTCUSDT)');return;}
+  if(!entry||entry<=0){alert('Please enter a valid entry price');return;}
+
+  let freeDeducted=false;
+  if(!isPaidUser()){
+    const current=parseInt(localStorage.getItem('tiq_free')||'0');
+    if(current<=0){showPaywall('pro');return;}
+    localStorage.setItem('tiq_free',current-1);freeDeducted=true;
+    updateFreeCountUI(current-1);updateFundedSubmitHint();
+  }
+
+  const sl=parseFloat(document.getElementById('ff-sl').value)||0;
+  const target=parseFloat(document.getElementById('ff-target').value)||0;
+  const exit=parseFloat(document.getElementById('ff-exit').value)||0;
+  const lots=parseFloat(document.getElementById('ff-lots').value)||1;
+  const risk=parseFloat(document.getElementById('ff-risk').value)||null;
+  const notes=document.getElementById('ff-notes').value.trim();
+  const mult=fundedSelectedDir==='LONG'?1:-1;
+  const pnl=exit>0?((exit-entry)*lots*mult*100000):null; // rough pip-based
+  const rrRatio=(sl&&target)?(Math.abs(target-entry)/Math.abs(entry-sl)).toFixed(2):null;
+
+  const data={
+    symbol:sym.toUpperCase(),market:fundedSelectedMarket,
+    date:document.getElementById('ff-date').value,
+    direction:fundedSelectedDir,entry,exit,sl,target,
+    qty:lots,setup:'Funded Account Trade',
+    emotions:fundedSelectedEmos,planFollowed:'Evaluation mode',
+    notes,pnl,isOpen:exit===0,rrRatio,
+    isFundedMode:true,riskAmount:risk
+  };
+
+  document.getElementById('funded-mode-ui').style.display='none';
+  document.getElementById('loading-state').style.display='block';
+  document.getElementById('results-state').style.display='none';
+  setLoadingModeUI();
+  document.getElementById('loading-title').textContent='Vikram is reviewing your funded trade...';
+  document.getElementById('loading-sub').textContent='Drawdown check + full trade analysis incoming';
+  document.querySelectorAll('.dynamic-insert').forEach(el=>el.remove());
+  document.getElementById('analysis-cards').innerHTML='';
+  ['ls-1','ls-2','ls-3','ls-4','ls-5'].forEach((id,i)=>{const el=document.getElementById(id);el.textContent=['Checking drawdown headroom','Reading trade structure','Analysing risk management','Evaluating execution vs plan','Writing Vikram\'s verdict'][i];el.className='loading-step';});
+  setStep(2);startLoadingAnim();window.scrollTo(0,0);
+
+  try{
+    const res=await fetch(`${BACKEND_URL}/api/analyse`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tradeData:data,sessionId,email:localStorage.getItem('user_email'),username:localStorage.getItem('tiq_username'),aggressionModifier:getAggressionModifier(),propFirmModifier:getPropFirmModifier()})});
+    stopLoadingAnim();
+    if(res.status===402){
+      document.getElementById('loading-state').style.display='none';document.getElementById('funded-mode-ui').style.display='block';
+      if(!isPaidUser()&&freeDeducted){const r=Math.min(3,parseInt(localStorage.getItem('tiq_free')||'0')+1);localStorage.setItem('tiq_free',r);updateFreeCountUI(r);updateFundedSubmitHint();}
+      showPaywall('pro');return;
+    }
+    if(!res.ok){const err=await res.json();throw new Error(err.detail||err.error||'Analysis failed');}
+    const result=await res.json();
+    if(result.ipHash){ipHash=result.ipHash;localStorage.setItem('tiq_iphash',ipHash);}
+    if(typeof result.freeRemaining!=='undefined'&&result.freeRemaining!==null){localStorage.setItem('tiq_free',result.freeRemaining);updateFreeCountUI(result.freeRemaining);updateFundedSubmitHint();}
+    renderResults(data,result.analysis);
+    if(isPaidUser())applyPaidUI();
+  }catch(err){
+    stopLoadingAnim();document.getElementById('loading-state').style.display='none';
+    document.getElementById('funded-mode-ui').style.display='block';setStep(1);
+    if(!isPaidUser()&&freeDeducted&&(err.name==='TypeError'||err.message.includes('fetch'))){const r=Math.min(3,parseInt(localStorage.getItem('tiq_free')||'0')+1);localStorage.setItem('tiq_free',r);updateFreeCountUI(r);updateFundedSubmitHint();}
+    const errEl=document.createElement('div');errEl.className='error-card dynamic-insert';errEl.innerHTML=`<p>⚠️ ${err.message||'Something went wrong. Check your connection and try again.'}</p>`;document.getElementById('funded-mode-ui').prepend(errEl);window.scrollTo(0,0);
+  }
+}
 function playScoreSound(){if(!soundEnabled)return;try{const a=new Audio('faah.mp3');a.volume=0.6;a.play().catch(()=>{});}catch(e){}}
 
 function animateScore(targetScore,color){
