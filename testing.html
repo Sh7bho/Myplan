@@ -9,6 +9,20 @@
 <script>
 function loadRazorpay(){return new Promise(resolve=>{if(window.Razorpay)return resolve();const s=document.createElement("script");s.src="https://checkout.razorpay.com/v1/checkout.js";s.onload=resolve;document.body.appendChild(s);});}
 </script>
+  <script>
+// ───────── SESSION ID (MUST RUN BEFORE ANY API CALL) ─────────
+function getSessionId(){
+  let sid = localStorage.getItem("sessionId");
+  if(!sid){
+    sid = "sid_" + Math.random().toString(36).slice(2) + Date.now();
+    localStorage.setItem("sessionId", sid);
+  }
+  return sid;
+}
+
+// make it global
+window.sessionId = getSessionId();
+</script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -1709,31 +1723,42 @@ document.getElementById('f-date').value=new Date().toISOString().split('T')[0];
 // Button stays disabled until count confirmed.
 // ════════════════════════════════
 async function initFreeCount(){
+  if (freeCountLoaded) return;
+  freeCountLoaded = true;
+
   if(isPaidUser()){
-    const b=document.getElementById('free-banner');if(b)b.style.display='none';
-    const btn=document.getElementById('submit-btn'),fbtn=document.getElementById('funded-submit-btn');
-    if(btn)btn.disabled=false;if(fbtn)fbtn.disabled=false;
+    const b=document.getElementById('free-banner'); if(b) b.style.display='none';
+    const btn=document.getElementById('submit-btn'), fbtn=document.getElementById('funded-submit-btn');
+    if(btn) btn.disabled=false; if(fbtn) fbtn.disabled=false;
     return;
   }
-  // Disable buttons immediately — server must confirm before enabling
-  const btn=document.getElementById('submit-btn'),fbtn=document.getElementById('funded-submit-btn');
-  if(btn)btn.disabled=true;if(fbtn)fbtn.disabled=true;
 
-  // Always hit the server using ipHash OR sessionId as identifier
-  // Never trust localStorage as the source of truth for free count
-  const identifier=ipHash||sessionId;
+  const btn=document.getElementById('submit-btn'), fbtn=document.getElementById('funded-submit-btn');
+  if(btn) btn.disabled=true; if(fbtn) fbtn.disabled=true;
+
+  const identifier = sessionId || ipHash;
+
+  if(!identifier){
+    updateFreeCountUI(3);
+    return;
+  }
+
   try{
-    const res=await fetch(`${BACKEND_URL}/api/freecount/${identifier}`);
+    const res = await fetch(`${BACKEND_URL}/api/freecount/${identifier}`);
     if(res.ok){
-      const data=await res.json();
-      const sv=parseInt(data.remaining);
-      // Server is always authoritative — set and use server value
-      localStorage.setItem('tiq_free',sv);
-      updateFreeCountUI(sv);
-      return;
-    }
-  }catch{}
+      const data = await res.json();
+      const sv = parseInt(data.remaining);
 
+      updateFreeCountUI(sv);
+
+      if(btn) btn.disabled = sv <= 0;
+      if(fbtn) fbtn.disabled = sv <= 0;
+    }
+  } catch(e){
+    console.error(e);
+    updateFreeCountUI(3);
+  }
+}
   // Server unreachable — only fall back to localStorage if we've never done an analysis
   // (ipHash is set after first analysis, so if it exists, we know server has a record)
   if(!ipHash){
