@@ -1079,7 +1079,7 @@ body.ck #cur-ring{width:28px;height:28px}
       </div>
       <div class="prop-cta-row">
         <button class="btn-prop-hero" onclick="if(isPaidUser()){openApp();setTimeout(()=>{openSettingsDrawer();setTimeout(()=>togglePropFirm(),300);},600);}else{showFundedPaywall();}">🏆 Funded Mode Activate Karo →</button>
-        <div class="prop-cta-note">PRO FEATURE · ₹99/MONTH</div>
+        <div class="prop-cta-note">PRO FEATURE · ₹129/MONTH</div>
       </div>
     </div>
     <div class="prop-visual reveal">
@@ -1139,12 +1139,12 @@ body.ck #cur-ring{width:28px;height:28px}
     <div class="p-card feat reveal">
       <div class="p-popular">// Sabse Popular</div>
       <div class="p-tier ft">Pro</div><div class="p-price lime"><em>₹</em>99</div><div class="p-period">PER MONTH · CANCEL ANYTIME</div><div class="p-div"></div>
-      <ul class="p-feats"><li class="on">Unlimited analyses</li><li class="on">All 3 Vikram personalities</li><li class="on">📸 Screenshot → Vikram reads it</li><li class="on">🏆 Funded Account Mode</li><li class="on">Pattern tracking across trades</li><li class="on">Trade history dashboard</li></ul>
+      <ul class="p-feats"><li class="on">100 analyses per month</li><li class="on">All 3 Vikram personalities</li><li class="on">📸 Screenshot → Vikram reads it</li><li class="on">🏆 Funded Account Mode</li><li class="on">Pattern tracking across trades</li><li class="on">Trade history dashboard</li></ul>
       <button class="p-btn p-btn-l" onclick="showPaywall('pro')">Pro Lo →</button>
     </div>
     <div class="p-card reveal">
-      <div class="p-tier">Lifetime</div><div class="p-price"><em>₹</em>499</div><div class="p-period">BAAR BAAR NAHI · HAMESHA KE LIYE</div><div class="p-div"></div>
-      <ul class="p-feats"><li class="on">Pro mein jo bhi hai sab</li><li class="on">Lifetime access</li><li class="on">🏆 Funded Account Mode</li><li class="on">Future features bhi</li><li class="on">Priority support</li><li class="on">Founding member status</li></ul>
+      <div class="p-tier">Lifetime</div><div class="p-price"><em>₹</em>499</div><div class="p-period">ONE TIME · 1 YEAR ACCESS</div><div class="p-div"></div>
+      <ul class="p-feats"><li class="on">2,000 analyses (1 year)</li><li class="on">🏆 Funded Account Mode</li><li class="on">All 3 Vikram personalities</li><li class="on">📸 Screenshot analysis</li><li class="on">Priority support</li><li class="on">Founding member status</li></ul>
       <button class="p-btn p-btn-o" onclick="showPaywall('lifetime')">Lifetime Lo →</button>
     </div>
   </div>
@@ -1166,7 +1166,7 @@ body.ck #cur-ring{width:28px;height:28px}
       <div class="fo-h">PEHLE LOG<br>MEIN SE EK BAN.</div>
       <p class="fo-body">TradeIQ naya hai. Main 10–20 real traders dhundh raha hoon jo ise try karein, tod karein, aur bataein kya galat hai.</p>
       <ul class="fo-perks"><li>Lifetime access launch price pe</li><li>Direct line to me — tera feedback roadmap banata hai</li><li>App mein founding member badge</li><li>Har naye feature ka first access</li></ul>
-      <button class="p-btn p-btn-l" style="width:100%;margin-bottom:0" onclick="showPaywall('lifetime')">Founding Trader Bano — ₹499 →</button>
+      <button class="p-btn p-btn-l" style="width:100%;margin-bottom:0" onclick="showPaywall('lifetime')">Founding Trader Bano — ₹499 → (1 Year · 2,000 Analyses)</button>
       <div class="fo-disc"><div class="fo-disc-label">// Honest Disclaimer</div><p class="fo-disc-text">TradeIQ tujhe ek raat mein profitable trader nahi banayega. Yeh <strong>tere patterns dikhayega</strong> — kya galat kar raha hai, kab, aur kyun. Uske baad kya karna hai — woh tere upar hai.</p></div>
     </div>
   </div>
@@ -1482,7 +1482,7 @@ body.ck #cur-ring{width:28px;height:28px}
         <li><strong>🛡️ Real-time Drawdown Guard</strong> — Vikram alerts before you breach</li>
         <li>All Funded Account Mode features (Forex, Crypto, Commodity)</li>
         <li>Drawdown meter + headroom tracking</li>
-        <li>Unlimited funded trade analyses</li>
+        <li>100 funded trade analyses per month</li>
         <li>Works with FTMO, Funded Next, The5ers, any prop firm</li>
       </ul>
       <label class="funded-paywall-email-label">Your Email</label>
@@ -1499,13 +1499,13 @@ body.ck #cur-ring{width:28px;height:28px}
   <div class="paywall-card">
     <button class="paywall-close" onclick="hidePaywall()">×</button>
     <div class="paywall-icon">🔓</div>
-    <h2 class="paywall-title">Unlock Unlimited Analyses</h2>
+    <h2 class="paywall-title">Unlock Pro Analyses</h2>
     <p class="paywall-sub">You've seen what TradeIQ can do. Use it on every trade, every day. Stop losing money to the same mistakes.</p>
     <div class="paywall-price" id="pw-price">₹99</div>
     <div class="paywall-price-og" id="pw-og">₹299/month regular price</div>
     <div class="paywall-period" id="pw-period">Launch offer · Cancel anytime</div>
     <ul class="paywall-features">
-      <li>Unlimited trade analyses</li><li>📸 Drop any chart — Vikram reads it directly</li>
+      <li>100 trade analyses per month</li><li>📸 Drop any chart — Vikram reads it directly</li>
       <li>🏆 Funded Account Mode</li><li>All 3 Vikram personalities</li><li>Pattern tracking + trade history</li>
     </ul>
     <div style="margin-bottom:1rem;text-align:left">
@@ -1902,9 +1902,11 @@ function validate(){
 async function runAnalysis(){
   if(!validate())return;
   let freeDeducted=false;
+  let preDeductCount=0;
   if(!isPaidUser()){
     const current=parseInt(localStorage.getItem('tiq_free')||'0');
     if(current<=0){showPaywall('pro');return;}
+    preDeductCount=current;
     localStorage.setItem('tiq_free',current-1);
     freeDeducted=true;
     updateFreeCountUI(current-1);
@@ -1934,7 +1936,7 @@ async function runAnalysis(){
     stopLoadingAnim();
     if(res.status===402){
       document.getElementById('loading-state').style.display='none';document.getElementById('step-1').style.display='block';
-      if(!isPaidUser()&&freeDeducted){const r=Math.min(3,parseInt(localStorage.getItem('tiq_free')||'0')+1);localStorage.setItem('tiq_free',r);updateFreeCountUI(r);}
+      if(!isPaidUser()&&freeDeducted){localStorage.setItem('tiq_free',preDeductCount);updateFreeCountUI(preDeductCount);}
       showPaywall('pro');return;
     }
     if(!res.ok){const err=await res.json();throw new Error(err.detail||err.error||'Analysis failed');}
@@ -1951,7 +1953,7 @@ async function runAnalysis(){
   }catch(err){
     stopLoadingAnim();document.getElementById('loading-state').style.display='none';document.getElementById('step-1').style.display='block';setStep(1);
     // Only restore local count on pure network errors (server never processed)
-    if(!isPaidUser()&&freeDeducted&&(err.name==='TypeError'||err.message.includes('fetch'))){const r=Math.min(3,parseInt(localStorage.getItem('tiq_free')||'0')+1);localStorage.setItem('tiq_free',r);updateFreeCountUI(r);}
+    if(!isPaidUser()&&freeDeducted&&(err.name==='TypeError'||err.message.includes('fetch'))){localStorage.setItem('tiq_free',preDeductCount);updateFreeCountUI(preDeductCount);}
     const errEl=document.createElement('div');errEl.className='error-card dynamic-insert';errEl.innerHTML=`<p>⚠️ ${err.message||'Something went wrong. Check your connection and try again.'}</p>`;document.getElementById('step-1').prepend(errEl);window.scrollTo(0,0);
   }
 }
@@ -2005,7 +2007,8 @@ function resetApp(){
   document.querySelectorAll('.dynamic-insert').forEach(el=>el.remove());document.getElementById('analysis-cards').innerHTML='';
   const rp=document.getElementById('retake-panel');if(rp)rp.classList.remove('visible');
   const pw=document.getElementById('prop-warning');if(pw)pw.classList.remove('visible');
-  lastTradeData=null;lastAnalysis=null;clearUpload();setStep(1);initFreeCount();
+  lastTradeData=null;lastAnalysis=null;clearUpload();setStep(1);
+  if(!isPaidUser()){const rem=parseInt(localStorage.getItem('tiq_free')||'0');updateFreeCountUI(rem);}else{initFreeCount();}
   ['Reading trade details','Identifying emotional biases','Checking risk management','Analysing setup quality','Writing your breakdown'].forEach((txt,i)=>{document.getElementById('ls-'+(i+1)).textContent=txt;});
   if(propFirmActive){showFundedUI();}else{switchToStandardForm();}
   window.scrollTo(0,0);
@@ -2206,8 +2209,8 @@ async function handleFundedPayment(){
 // PAYWALL
 function showPaywall(plan){
   const overlay=document.getElementById('paywall-overlay');overlay.style.display='flex';
-  if(plan==='lifetime'){document.getElementById('pw-price').textContent='₹499';document.getElementById('pw-og').textContent='₹999 regular price';document.getElementById('pw-period').textContent='One time payment · Lifetime access';}
-  else{document.getElementById('pw-price').textContent='₹99';document.getElementById('pw-og').textContent='₹299/month regular price';document.getElementById('pw-period').textContent='Launch offer · Cancel anytime';}
+  if(plan==='lifetime'){document.getElementById('pw-price').textContent='₹499';document.getElementById('pw-og').textContent='₹999 regular price';document.getElementById('pw-period').textContent='One time payment · 1 year access · 2,000 analyses';}
+  else{document.getElementById('pw-price').textContent='₹99';document.getElementById('pw-og').textContent='₹299/month regular price';document.getElementById('pw-period').textContent='100 analyses/month · Cancel anytime';}
 }
 function hidePaywall(){
   document.getElementById('paywall-overlay').style.display='none';
@@ -2468,9 +2471,11 @@ async function runFundedAnalysis(){
   if(!entry||entry<=0){alert('Please enter a valid entry price');return;}
 
   let freeDeducted=false;
+  let preDeductCount=0;
   if(!isPaidUser()){
     const current=parseInt(localStorage.getItem('tiq_free')||'0');
     if(current<=0){showPaywall('pro');return;}
+    preDeductCount=current;
     localStorage.setItem('tiq_free',current-1);freeDeducted=true;
     updateFreeCountUI(current-1);updateFundedSubmitHint();
   }
@@ -2511,7 +2516,7 @@ async function runFundedAnalysis(){
     stopLoadingAnim();
     if(res.status===402){
       document.getElementById('loading-state').style.display='none';document.getElementById('funded-mode-ui').style.display='block';
-      if(!isPaidUser()&&freeDeducted){const r=Math.min(3,parseInt(localStorage.getItem('tiq_free')||'0')+1);localStorage.setItem('tiq_free',r);updateFreeCountUI(r);updateFundedSubmitHint();}
+      if(!isPaidUser()&&freeDeducted){localStorage.setItem('tiq_free',preDeductCount);updateFreeCountUI(preDeductCount);updateFundedSubmitHint();}
       showPaywall('pro');return;
     }
     if(!res.ok){const err=await res.json();throw new Error(err.detail||err.error||'Analysis failed');}
@@ -2523,7 +2528,7 @@ async function runFundedAnalysis(){
   }catch(err){
     stopLoadingAnim();document.getElementById('loading-state').style.display='none';
     document.getElementById('funded-mode-ui').style.display='block';setStep(1);
-    if(!isPaidUser()&&freeDeducted&&(err.name==='TypeError'||err.message.includes('fetch'))){const r=Math.min(3,parseInt(localStorage.getItem('tiq_free')||'0')+1);localStorage.setItem('tiq_free',r);updateFreeCountUI(r);updateFundedSubmitHint();}
+    if(!isPaidUser()&&freeDeducted&&(err.name==='TypeError'||err.message.includes('fetch'))){localStorage.setItem('tiq_free',preDeductCount);updateFreeCountUI(preDeductCount);updateFundedSubmitHint();}
     const errEl=document.createElement('div');errEl.className='error-card dynamic-insert';errEl.innerHTML=`<p>⚠️ ${err.message||'Something went wrong. Check your connection and try again.'}</p>`;document.getElementById('funded-mode-ui').prepend(errEl);window.scrollTo(0,0);
   }
 }
