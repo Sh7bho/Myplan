@@ -1722,6 +1722,7 @@ document.getElementById('f-date').value=new Date().toISOString().split('T')[0];
 // Server count is ALWAYS authoritative.
 // Button stays disabled until count confirmed.
 // ════════════════════════════════
+  let freeCountLoaded = false;
 async function initFreeCount(){
   if (freeCountLoaded) return;
   freeCountLoaded = true;
