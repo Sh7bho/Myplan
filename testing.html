@@ -1678,8 +1678,13 @@ body.ck #cur-ring{width:28px;height:28px}
 const BACKEND_URL='https://tradeiq-backend-fnz2.onrender.com';
 let selectedDir='LONG',selectedEmos=['Confident'];
 let ipHash=localStorage.getItem('tiq_iphash')||null;
+
+// 🔥 FIXED: generateId defined BEFORE use
+function generateId(){return 'sid_'+Math.random().toString(36).slice(2)+Date.now().toString(36);}
+
 let sessionId=localStorage.getItem('tiq_session')||generateId();
 localStorage.setItem('tiq_session',sessionId);
+
 let uploadedImageBase64=null,uploadedImageType=null;
 let lastTradeData=null,lastAnalysis=null;
 let aggressionLevel=parseInt(localStorage.getItem('tiq_aggression')||'2');
@@ -1688,7 +1693,9 @@ let soundEnabled=localStorage.getItem('tiq_sound')!=='0';
 let calCurrentYear=new Date().getFullYear(),calCurrentMonth=new Date().getMonth();
 let calTradesData=[],calSelectedDay=null;
 
-function generateId(){return 'sid_'+Math.random().toString(36).slice(2)+Date.now().toString(36);}
+// 🔥 FIXED: must be declared before use
+let freeCountLoaded = false;
+
 
 // CURSOR
 const _cur=document.getElementById('cur'),_ring=document.getElementById('cur-ring'),_dot=document.getElementById('cur-dot');
@@ -1709,33 +1716,58 @@ document.getElementById('f-date').value=new Date().toISOString().split('T')[0];
   const email=localStorage.getItem('user_email'),plan=localStorage.getItem('user_plan');
   if(email&&plan&&plan!=='free'){
     updateNavForLoggedIn(email);applyPaidUI();
-    try{const res=await fetch(`${BACKEND_URL}/check-user`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});const data=await res.json();if(data.paid){localStorage.setItem('user_plan',data.plan||'pro');}else{localStorage.removeItem('user_plan');}}catch{}
+    try{
+      const res=await fetch(`${BACKEND_URL}/check-user`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({email})
+      });
+      const data=await res.json();
+      if(data.paid){
+        localStorage.setItem('user_plan',data.plan||'pro');
+      }else{
+        localStorage.removeItem('user_plan');
+      }
+    }catch{}
   } else {
-    // Not a paid user — ensure funded mode is off (can't be activated without Pro)
-    if(propFirmActive){propFirmActive=false;localStorage.setItem('tiq_prop','0');}
+    if(propFirmActive){
+      propFirmActive=false;
+      localStorage.setItem('tiq_prop','0');
+    }
   }
-  initUploadSection();initUsername();initFreeCount();initSettings();
+
+  initUploadSection();
+  initUsername();
+  initFreeCount();
+  initSettings();
 })();
 
+
 // ════════════════════════════════
-// FREE COUNT — NO RESET ON RELOAD
-// Server count is ALWAYS authoritative.
-// Button stays disabled until count confirmed.
+// FREE COUNT — SERVER AUTHORITATIVE
 // ════════════════════════════════
-  let freeCountLoaded = false;
+
 async function initFreeCount(){
   if (freeCountLoaded) return;
   freeCountLoaded = true;
 
   if(isPaidUser()){
-    const b=document.getElementById('free-banner'); if(b) b.style.display='none';
-    const btn=document.getElementById('submit-btn'), fbtn=document.getElementById('funded-submit-btn');
-    if(btn) btn.disabled=false; if(fbtn) fbtn.disabled=false;
+    const b=document.getElementById('free-banner'); 
+    if(b) b.style.display='none';
+
+    const btn=document.getElementById('submit-btn'),
+          fbtn=document.getElementById('funded-submit-btn');
+
+    if(btn) btn.disabled=false;
+    if(fbtn) fbtn.disabled=false;
     return;
   }
 
-  const btn=document.getElementById('submit-btn'), fbtn=document.getElementById('funded-submit-btn');
-  if(btn) btn.disabled=true; if(fbtn) fbtn.disabled=true;
+  const btn=document.getElementById('submit-btn'),
+        fbtn=document.getElementById('funded-submit-btn');
+
+  if(btn) btn.disabled=true;
+  if(fbtn) fbtn.disabled=true;
 
   const identifier = sessionId || ipHash;
 
@@ -1746,35 +1778,24 @@ async function initFreeCount(){
 
   try{
     const res = await fetch(`${BACKEND_URL}/api/freecount/${identifier}`);
+
     if(res.ok){
       const data = await res.json();
-      const sv = parseInt(data.remaining);
+      const remaining = parseInt(data.remaining);
 
-      updateFreeCountUI(sv);
+      updateFreeCountUI(remaining);
 
-      if(btn) btn.disabled = sv <= 0;
-      if(fbtn) fbtn.disabled = sv <= 0;
+      if(btn) btn.disabled = remaining <= 0;
+      if(fbtn) fbtn.disabled = remaining <= 0;
+    } else {
+      updateFreeCountUI(3);
     }
+
   } catch(e){
     console.error(e);
     updateFreeCountUI(3);
   }
 }
-  // Server unreachable — only fall back to localStorage if we've never done an analysis
-  // (ipHash is set after first analysis, so if it exists, we know server has a record)
-  if(!ipHash){
-    // Truly first visit, server never saw this user — give 3
-    if(!localStorage.getItem('tiq_free_initialized')){
-      localStorage.setItem('tiq_free','3');
-      localStorage.setItem('tiq_free_initialized','1');
-    }
-    const local=parseInt(localStorage.getItem('tiq_free')||'3');
-    updateFreeCountUI(local);
-  } else {
-    // ipHash exists = server has a record of this user
-    // If server is unreachable, show 0 to be safe (prevents bypass)
-    updateFreeCountUI(0);
-  }
   
 function updateFreeCountUI(remaining){
   if(isPaidUser()){
