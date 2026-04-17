@@ -1157,7 +1157,7 @@ body.ck #cur-ring{width:28px;height:28px}
   <p class="sec-sub">No VC money. No 20-person team. Ek banda jo apni hi galtiyan repeat karte karte thak gaya.</p>
   <div class="f-grid">
     <div class="f-card reveal">
-      <div class="f-tag">// Founder</div><div class="f-name">SHUBHO</div><div class="f-role">Builder · TradeIQ · Mumbai</div>
+      <div class="f-tag">// Founder</div><div class="f-name">SHUBHO</div><div class="f-role">Builder · TradeIQ </div>
       <p class="f-story">Maine yeh isliye banaya kyunki main baar baar <strong>same trades pe paisa khota tha</strong> — FOMO entries, galat SL sizing, red day ke baad revenge. Journal karta tha, reflect karta tha — par kuch kaam nahi aata tha.<br><br>Toh maine Vikram banaya — ek AI jo mujhe har baar seedha bolta hai ki main kya galat kar raha tha. <strong>Koi sugarcoating nahi.</strong><br><br>TradeIQ naya hai aur honest hai. <strong>3 free analyses try karo. Khud judge karo.</strong></p>
       <div class="f-signal"><div class="f-signal-dot"></div><div class="f-signal-text">Actively building · Feedback pe personally respond karta hoon</div></div>
     </div>
@@ -1183,7 +1183,7 @@ body.ck #cur-ring{width:28px;height:28px}
 
 <footer>
   <div class="f-logo">TRADE<em>IQ</em></div>
-  <div class="f-tagline">© 2026 · Mumbai se, <strong>Shubho</strong> ne banaya · Maine baar baar same trade pe paisa khoya. Toh woh tool banaya jo kash pehle hota.</div>
+  <div class="f-tagline">© 2026 · Made by <strong>Shubho</strong> · Maine baar baar same trade pe paisa khoya. Toh woh tool banaya jo kash pehle hota.</div>
   <div class="f-links"><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a><a href="refund.html">Refund</a><a href="cancellation.html">Cancellation</a><a href="mailto:contact@tradeiq.in">Contact</a></div>
 </footer>
 </div><!-- end landing -->
@@ -1709,48 +1709,47 @@ document.getElementById('f-date').value=new Date().toISOString().split('T')[0];
 // Button stays disabled until count confirmed.
 // ════════════════════════════════
 async function initFreeCount(){
-  if(isPaidUser()){const b=document.getElementById('free-banner');if(b)b.style.display='none';
+  if(isPaidUser()){
+    const b=document.getElementById('free-banner');if(b)b.style.display='none';
     const btn=document.getElementById('submit-btn'),fbtn=document.getElementById('funded-submit-btn');
     if(btn)btn.disabled=false;if(fbtn)fbtn.disabled=false;
     return;
   }
-  // Disable buttons until count is confirmed — prevents bypass on fresh load
+  // Disable buttons immediately — server must confirm before enabling
   const btn=document.getElementById('submit-btn'),fbtn=document.getElementById('funded-submit-btn');
   if(btn)btn.disabled=true;if(fbtn)fbtn.disabled=true;
 
-  // First-time init: set 3 only if no ipHash exists yet (truly new user)
-  // If ipHash exists, server is authoritative — don't trust localStorage
-  if(!localStorage.getItem('tiq_free_initialized')&&!ipHash){
-    localStorage.setItem('tiq_free','3');
-    localStorage.setItem('tiq_free_initialized','1');
-  }
-  const local=parseInt(localStorage.getItem('tiq_free')||'0');
-  // Show local count immediately for UX, but don't enable button yet
-  const el=document.getElementById('free-count');if(el)el.textContent=local;
+  // Always hit the server using ipHash OR sessionId as identifier
+  // Never trust localStorage as the source of truth for free count
+  const identifier=ipHash||sessionId;
+  try{
+    const res=await fetch(`${BACKEND_URL}/api/freecount/${identifier}`);
+    if(res.ok){
+      const data=await res.json();
+      const sv=parseInt(data.remaining);
+      // Server is always authoritative — set and use server value
+      localStorage.setItem('tiq_free',sv);
+      updateFreeCountUI(sv);
+      return;
+    }
+  }catch{}
 
-  // Always fetch server count — it's authoritative
-  if(ipHash){
-    try{
-      const res=await fetch(`${BACKEND_URL}/api/freecount/${ipHash}`);
-      if(res.ok){
-        const data=await res.json();
-        const sv=parseInt(data.remaining);
-        // Server wins — if server says less, use server. Never inflate above server value.
-        const trusted=Math.min(local,sv);
-        localStorage.setItem('tiq_free',trusted);
-        localStorage.setItem('tiq_free_initialized','1');
-        updateFreeCountUI(trusted);
-        return;
-      }
-    }catch{}
-    // If server fetch fails but we have ipHash, use local (network error only)
+  // Server unreachable — only fall back to localStorage if we've never done an analysis
+  // (ipHash is set after first analysis, so if it exists, we know server has a record)
+  if(!ipHash){
+    // Truly first visit, server never saw this user — give 3
+    if(!localStorage.getItem('tiq_free_initialized')){
+      localStorage.setItem('tiq_free','3');
+      localStorage.setItem('tiq_free_initialized','1');
+    }
+    const local=parseInt(localStorage.getItem('tiq_free')||'3');
     updateFreeCountUI(local);
   } else {
-    // No ipHash yet (truly first visit) — show local count of 3
-    updateFreeCountUI(local);
+    // ipHash exists = server has a record of this user
+    // If server is unreachable, show 0 to be safe (prevents bypass)
+    updateFreeCountUI(0);
   }
 }
-
 function updateFreeCountUI(remaining){
   if(isPaidUser()){
     const btn=document.getElementById('submit-btn'),fbtn=document.getElementById('funded-submit-btn');
@@ -1936,7 +1935,11 @@ async function runAnalysis(){
     stopLoadingAnim();
     if(res.status===402){
       document.getElementById('loading-state').style.display='none';document.getElementById('step-1').style.display='block';
-      if(!isPaidUser()&&freeDeducted){localStorage.setItem('tiq_free',preDeductCount);updateFreeCountUI(preDeductCount);}
+     // Only restore count on network errors before server ever received the request
+    // If we got any HTTP response (even an error), server already decremented — don't restore
+    if(!isPaidUser()&&freeDeducted&&err.name==='TypeError'){
+      localStorage.setItem('tiq_free',preDeductCount);updateFreeCountUI(preDeductCount);
+    }
       showPaywall('pro');return;
     }
     if(!res.ok){const err=await res.json();throw new Error(err.detail||err.error||'Analysis failed');}
@@ -2528,7 +2531,9 @@ async function runFundedAnalysis(){
   }catch(err){
     stopLoadingAnim();document.getElementById('loading-state').style.display='none';
     document.getElementById('funded-mode-ui').style.display='block';setStep(1);
-    if(!isPaidUser()&&freeDeducted&&(err.name==='TypeError'||err.message.includes('fetch'))){localStorage.setItem('tiq_free',preDeductCount);updateFreeCountUI(preDeductCount);updateFundedSubmitHint();}
+   if(!isPaidUser()&&freeDeducted&&err.name==='TypeError'){
+      localStorage.setItem('tiq_free',preDeductCount);updateFreeCountUI(preDeductCount);updateFundedSubmitHint();
+    }
     const errEl=document.createElement('div');errEl.className='error-card dynamic-insert';errEl.innerHTML=`<p>⚠️ ${err.message||'Something went wrong. Check your connection and try again.'}</p>`;document.getElementById('funded-mode-ui').prepend(errEl);window.scrollTo(0,0);
   }
 }
