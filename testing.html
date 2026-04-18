@@ -2017,7 +2017,7 @@ function renderResults(data,analysis){
   const dirClass=data.direction==='LONG'?'rtag-long':'rtag-short';
   tagsEl.innerHTML=`<span class="rtag rtag-sym">${data.symbol}</span><span class="rtag ${dirClass}">${data.direction}</span><span class="rtag rtag-mkt">${data.market}</span>${data.date?`<span class="rtag rtag-mkt">${data.date}</span>`:''} ${data.isScreenshot?`<span class="rtag" style="background:rgba(96,165,250,.1);color:var(--blue);border:1px solid rgba(96,165,250,.2)">📸 Screenshot</span>`:''}`;
   const scoreNum=analysis.score||0,scoreColor=scoreNum>=70?'var(--green)':scoreNum>=50?'var(--accent)':'var(--red)';
-  animateScore(scoreNum,scoreColor);
+  animateScore(scoreNum,scoreColor,data.pnl);
   const sb=analysis.scoreBreakdown||{};
   const dims=[{key:'discipline',label:'Discipline'},{key:'riskManagement',label:'Risk Mgmt'},{key:'emotionalControl',label:'Emotion'},{key:'setupQuality',label:'Setup'}];
   document.getElementById('score-breakdown').innerHTML=dims.map(d=>{const val=Math.max(0,Math.min(100,Math.round(sb[d.key]||50)));const col=val>=70?'var(--green)':val>=50?'var(--accent)':'var(--red)';return `<div class="score-item"><span class="score-item-label">${d.label}</span><div class="score-item-bar"><div class="score-item-fill" style="width:${val}%;background:${col}"></div></div><span class="score-item-val">${val}</span></div>`;}).join('');
@@ -2579,15 +2579,22 @@ async function runFundedAnalysis(){
     const errEl=document.createElement('div');errEl.className='error-card dynamic-insert';errEl.innerHTML=`<p>⚠️ ${err.message||'Something went wrong. Check your connection and try again.'}</p>`;document.getElementById('funded-mode-ui').prepend(errEl);window.scrollTo(0,0);
   }
 }
-function playScoreSound(){if(!soundEnabled)return;try{const a=new Audio('faah.mp3');a.volume=0.6;a.play().catch(()=>{});}catch(e){}}
+function playScoreSound(pnl){
+  if(!soundEnabled)return;
+  try{
+    const isWin=pnl!==null&&pnl!==undefined&&pnl>0;
+    const a=new Audio(isWin?'win.mp3':'faah.mp3');
+    a.volume=0.6;a.play().catch(()=>{});
+  }catch(e){}
+}
 
-function animateScore(targetScore,color){
+function animateScore(targetScore,color,pnl){
   const el=document.getElementById('score-num');if(!el)return;
   let current=0;const duration=900,stepTime=16,steps=duration/stepTime,increment=targetScore/steps;
   el.textContent='0';
   const iv=setInterval(()=>{
     current=Math.min(current+increment,targetScore);el.textContent=Math.round(current);
-    if(current>=targetScore){el.textContent=targetScore;clearInterval(iv);playScoreSound();el.style.transition='transform .15s ease';el.style.transform='scale(1.15)';setTimeout(()=>{el.style.transform='scale(1)';},150);}
+    if(current>=targetScore){el.textContent=targetScore;clearInterval(iv);playScoreSound(pnl);el.style.transition='transform .15s ease';el.style.transform='scale(1.15)';setTimeout(()=>{el.style.transform='scale(1)';},150);}
   },stepTime);
   el.style.color=color;
 }
