@@ -2246,7 +2246,7 @@ async function handleFundedPayment(){
     alert('Payment successful ✅ Pro access is now active!');
   }
 }
-          } else {alert('Payment verification failed ❌ Contact support@tradeiq.in');}
+       else {alert('Payment verification failed ❌ Contact support@tradeiq.in');}
         }catch(verErr){alert('Verification error. Contact support@tradeiq.in with your payment ID: '+response.razorpay_payment_id);}
       },
       modal:{ondismiss:function(){if(payBtn){payBtn.textContent='🏆 Unlock Funded Mode →';payBtn.disabled=false;}}},
