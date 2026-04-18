@@ -2611,9 +2611,18 @@ function runRetake(){
   setLoadingModeUI();document.getElementById('loading-title').textContent='Vikram is rescoring...';document.getElementById('loading-sub').textContent='Recalculating with new values';
   startLoadingAnim();window.scrollTo(0,0);
   fetch(`${BACKEND_URL}/api/analyse`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tradeData:newData,sessionId,email:localStorage.getItem('user_email'),username:localStorage.getItem('tiq_username'),aggressionModifier:getAggressionModifier(),propFirmModifier:getPropFirmModifier()})})
-  .then(r=>r.json()).then(result=>{stopLoadingAnim();renderResults(newData,result.analysis);})
-  .catch(()=>{stopLoadingAnim();document.getElementById('loading-state').style.display='none';document.getElementById('results-state').style.display='block';});
-}
+  .then(r => r.json()).then(result => {
+  stopLoadingAnim();
+  renderResults(newData, result.analysis);
+  if (typeof result.freeRemaining !== 'undefined' && result.freeRemaining !== null) {
+    updateFreeCountUI(result.freeRemaining);
+    localStorage.setItem('tiq_free', result.freeRemaining);
+  }
+}).catch(() => {
+  stopLoadingAnim();
+  document.getElementById('loading-state').style.display = 'none';
+  document.getElementById('results-state').style.display = 'block';
+});
 
 function checkPropFirmWarning(analysis){
   const warningEl=document.getElementById('prop-warning'),wb=document.getElementById('prop-warning-body');
