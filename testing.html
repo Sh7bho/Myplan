@@ -1748,52 +1748,47 @@ document.getElementById('f-date').value=new Date().toISOString().split('T')[0];
 // ════════════════════════════════
 
 async function initFreeCount(){
-  if (freeCountLoaded) return;
-  freeCountLoaded = true;
-
   if(isPaidUser()){
     const b=document.getElementById('free-banner'); 
     if(b) b.style.display='none';
-
     const btn=document.getElementById('submit-btn'),
           fbtn=document.getElementById('funded-submit-btn');
-
     if(btn) btn.disabled=false;
     if(fbtn) fbtn.disabled=false;
     return;
   }
-
   const btn=document.getElementById('submit-btn'),
         fbtn=document.getElementById('funded-submit-btn');
-
   if(btn) btn.disabled=true;
   if(fbtn) fbtn.disabled=true;
-
   const identifier = sessionId || ipHash;
-
   if(!identifier){
     updateFreeCountUI(3);
+    if(btn) btn.disabled=false;
+    if(fbtn) fbtn.disabled=false;
     return;
   }
-
   try{
     const res = await fetch(`${BACKEND_URL}/api/freecount/${identifier}`);
-
     if(res.ok){
       const data = await res.json();
       const remaining = parseInt(data.remaining);
-
+      localStorage.setItem('tiq_free', remaining);
       updateFreeCountUI(remaining);
-
       if(btn) btn.disabled = remaining <= 0;
       if(fbtn) fbtn.disabled = remaining <= 0;
     } else {
-      updateFreeCountUI(3);
+      const local = parseInt(localStorage.getItem('tiq_free') ?? '3');
+      updateFreeCountUI(local);
+      if(btn) btn.disabled = local <= 0;
+      if(fbtn) fbtn.disabled = local <= 0;
     }
-
   } catch(e){
-    console.error(e);
-    updateFreeCountUI(3);
+    console.error('initFreeCount error:', e);
+    const local = parseInt(localStorage.getItem('tiq_free') ?? '3');
+    updateFreeCountUI(local);
+    if(btn) btn.disabled = local <= 0;
+    if(fbtn) fbtn.disabled = local <= 0;
   }
 }
   
