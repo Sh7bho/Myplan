@@ -2228,16 +2228,24 @@ async function handleFundedPayment(){
         try{
           const verify=await fetch(`${BACKEND_URL}/verify-payment`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,amount,plan:'funded',razorpay_order_id:response.razorpay_order_id,razorpay_payment_id:response.razorpay_payment_id,razorpay_signature:response.razorpay_signature})});
           const data=await verify.json();
-          if(data.success){
-            localStorage.setItem('user_plan',data.plan||'funded');
-            hideFundedPaywall();updateNavForLoggedIn(email);applyPaidUI();
-            // Auto-activate funded mode
-            propFirmActive=true;localStorage.setItem('tiq_prop','1');
-            initSettings();
-            const appVisible=document.getElementById('app-page').style.display!=='none';
-            const analyseVisible=document.getElementById('analyse-tab').style.display!=='none';
-            if(appVisible&&analyseVisible)showFundedUI();
-            alert('Payment successful ✅ Funded Account Mode is now active!');
+          if (data.success) {
+                localStorage.setItem('user_plan', data.plan); // ✅ use exactly what backend returns
+
+                hideFundedPaywall();
+                updateNavForLoggedIn(email);
+                 applyPaidUI();
+
+  // Only activate funded mode if plan is actually funded
+  if (data.plan === 'funded') {               // ✅
+    propFirmActive = true;
+    localStorage.setItem('tiq_prop', '1');
+    initSettings();
+    if (appVisible && analyseVisible) showFundedUI();
+    alert('Payment successful ✅ Funded Account Mode is now active!');
+  } else {
+    alert('Payment successful ✅ Pro access is now active!');
+  }
+}
           } else {alert('Payment verification failed ❌ Contact support@tradeiq.in');}
         }catch(verErr){alert('Verification error. Contact support@tradeiq.in with your payment ID: '+response.razorpay_payment_id);}
       },
