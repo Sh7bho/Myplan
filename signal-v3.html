@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SIGNAL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#080808; --surface:#101010; --surface2:#161616;
+  --border:#1e1e1e; --border2:#2a2a2a;
+  --text:#efefef; --muted:#555; --muted2:#888;
+  --accent:#c8ff00; --accent-dim:rgba(200,255,0,0.08); --accent-dim2:rgba(200,255,0,0.15);
+  --r:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Instrument Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+
+/* HEADER */
+.hdr{position:sticky;top:0;z-index:200;background:rgba(8,8,8,0.96);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--border);}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;padding:13px 16px 10px;}
+.logo{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.5px;display:flex;align-items:center;gap:6px;}
+.logo-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);}
+.refresh-btn{display:flex;align-items:center;gap:6px;background:var(--accent);color:#000;border:none;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;padding:8px 14px;border-radius:100px;cursor:pointer;transition:opacity .15s,transform .15s;white-space:nowrap;}
+.refresh-btn:active{transform:scale(0.95);}
+.refresh-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.ri{display:inline-block;font-style:normal;}
+.refresh-btn.spin .ri{animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* PILLS */
+.pills{display:flex;gap:7px;overflow-x:auto;padding:0 16px 11px;scrollbar-width:none;}
+.pills::-webkit-scrollbar{display:none;}
+.pill{flex-shrink:0;font-family:'Syne',sans-serif;font-size:11px;font-weight:600;letter-spacing:.3px;padding:5px 13px;border-radius:100px;border:1px solid var(--border2);color:var(--muted2);background:transparent;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.pill.active{background:var(--accent-dim2);border-color:var(--accent);color:var(--accent);}
+
+/* STATUS */
+.status{padding:8px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);min-height:34px;}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--muted);flex-shrink:0;transition:background .3s,box-shadow .3s;}
+.dot.on{background:var(--accent);box-shadow:0 0 5px var(--accent);}
+.stxt{font-size:11.5px;color:var(--muted);}
+.cbadge{margin-left:auto;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--muted);}
+
+/* FEED */
+.feed{padding:10px 12px 30px;display:flex;flex-direction:column;gap:8px;}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;animation:up .25s ease both;}
+@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.card-body{padding:13px 13px 11px;}
+.card-meta{display:flex;align-items:center;gap:7px;margin-bottom:8px;flex-wrap:wrap;}
+.ttag{font-family:'Syne',sans-serif;font-size:9.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:3px 8px;border-radius:4px;}
+.niche-pill{font-size:9px;font-weight:600;font-family:'Syne',sans-serif;color:var(--accent);background:var(--accent-dim);padding:2px 6px;border-radius:3px;letter-spacing:.3px;}
+.sname{font-size:11px;color:var(--muted2);}
+.ctime{font-size:11px;color:var(--muted);margin-left:auto;}
+.ctitle{font-family:'Syne',sans-serif;font-size:14.5px;font-weight:700;line-height:1.38;color:var(--text);margin-bottom:7px;letter-spacing:-.1px;}
+.cdesc{font-size:13px;line-height:1.58;color:var(--muted2);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.card-foot{display:flex;align-items:center;border-top:1px solid var(--border);}
+.rbtn{flex:1;display:flex;align-items:center;gap:5px;background:none;border:none;color:var(--accent);font-family:'Syne',sans-serif;font-size:11.5px;font-weight:700;padding:10px 13px;cursor:pointer;text-decoration:none;letter-spacing:.2px;}
+.rbtn:active{opacity:.6;}
+.vl{width:1px;height:18px;background:var(--border);flex-shrink:0;}
+.cpbtn{background:none;border:none;color:var(--muted);font-size:13px;padding:10px 13px;cursor:pointer;}
+.cpbtn:active{color:var(--accent);}
+
+/* TOPIC COLORS */
+.tg{color:#ff8c42;background:rgba(255,140,66,.1);}
+.tf{color:#3ddc84;background:rgba(61,220,132,.1);}
+.tt{color:#42b4ff;background:rgba(66,180,255,.1);}
+.ts{color:#b36aff;background:rgba(179,106,255,.1);}
+.tc{color:#ffb347;background:rgba(255,179,71,.1);}
+.tsc{color:#3dffee;background:rgba(61,255,238,.1);}
+.ti{color:#ff5c72;background:rgba(255,92,114,.1);}
+.tr{color:#ff47bb;background:rgba(255,71,187,.1);}
+.tcy{color:#ff6b3d;background:rgba(255,107,61,.1);}
+.ttr{color:var(--accent);background:var(--accent-dim);}
+
+/* SKELETON */
+.skel-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:13px;display:flex;flex-direction:column;gap:9px;animation:up .25s ease both;}
+.skel{border-radius:5px;background:linear-gradient(90deg,var(--surface2) 25%,#1c1c1c 50%,var(--surface2) 75%);background-size:200% 100%;animation:sh 1.3s infinite;}
+@keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* STATES */
+.cstate{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:70px 30px;gap:10px;text-align:center;}
+.cicon{font-size:38px;margin-bottom:4px;}
+.ctit{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;}
+.csub{font-size:13.5px;color:var(--muted2);line-height:1.6;max-width:250px;}
+.cbtn{margin-top:10px;background:var(--accent);color:#000;border:none;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;padding:11px 26px;border-radius:100px;cursor:pointer;}
+.fhint{text-align:center;font-size:11.5px;color:var(--muted);padding:16px 0 4px;}
+
+/* NICHE SECTION DIVIDER */
+.section-div{display:flex;align-items:center;gap:10px;padding:4px 2px;}
+.section-div span{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--accent);white-space:nowrap;}
+.section-div::before,.section-div::after{content:'';flex:1;height:1px;background:var(--border2);}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-top">
+    <div class="logo"><div class="logo-dot"></div>SIGNAL</div>
+    <button class="refresh-btn" id="rBtn" onclick="loadFeed()">
+      <i class="ri">↻</i> Refresh
+    </button>
+  </div>
+  <div class="pills">
+    <div class="pill active" onclick="setFilter(this,'all')">All</div>
+    <div class="pill" onclick="setFilter(this,'india')">India</div>
+    <div class="pill" onclick="setFilter(this,'geopolitics')">Geopolitics</div>
+    <div class="pill" onclick="setFilter(this,'tech')">Tech & AI</div>
+    <div class="pill" onclick="setFilter(this,'finance')">Finance</div>
+    <div class="pill" onclick="setFilter(this,'startups')">Startups</div>
+    <div class="pill" onclick="setFilter(this,'crypto')">Crypto</div>
+    <div class="pill" onclick="setFilter(this,'cybersecurity')">Cybersecurity</div>
+    <div class="pill" onclick="setFilter(this,'science')">Science</div>
+    <div class="pill" onclick="setFilter(this,'regulation')">Regulation</div>
+    <div class="pill" onclick="setFilter(this,'trends')">Trends</div>
+  </div>
+</div>
+
+<div class="status">
+  <div class="dot" id="dot"></div>
+  <div class="stxt" id="stxt">Tap Refresh to load stories</div>
+  <div class="cbadge" id="cbadge"></div>
+</div>
+
+<div class="feed" id="feed">
+  <div class="cstate">
+    <div class="cicon">⚡</div>
+    <div class="ctit">No noise. Just signal.</div>
+    <div class="csub">Real stories from 35+ sources — India & global. Free, no algorithms.</div>
+    <button class="cbtn" onclick="loadFeed()">Load Feed</button>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// SOURCES
+// niche:true = shown with ⚡ badge, surfaces underground/community stories
+// ─────────────────────────────────────────────
+const SOURCES = [
+  // INDIA — mainstream + niche
+  { url:'https://economictimes.indiatimes.com/rssfeedstopstories.cms',      topic:'india',         name:'Economic Times',      niche:false },
+  { url:'https://www.livemint.com/rss/news',                                 topic:'india',         name:'Mint',                niche:false },
+  { url:'https://feeds.feedburner.com/ndtvnews-top-stories',                 topic:'india',         name:'NDTV',                niche:false },
+  { url:'https://www.thehindubusinessline.com/feeder/default.rss',           topic:'india',         name:'BusinessLine',        niche:false },
+  { url:'https://inc42.com/feed/',                                            topic:'india',         name:'Inc42',               niche:true  },
+  { url:'https://entrackr.com/feed/',                                         topic:'india',         name:'Entrackr',            niche:true  },
+  { url:'https://www.reddit.com/r/india/top/.rss?t=day',                     topic:'india',         name:'r/india',             niche:true  },
+  { url:'https://www.reddit.com/r/IndiaTech/top/.rss?t=day',                 topic:'india',         name:'r/IndiaTech',         niche:true  },
+  { url:'https://www.reddit.com/r/IndiaInvestments/top/.rss?t=day',          topic:'india',         name:'r/IndiaInvestments',  niche:true  },
+
+  // GEOPOLITICS
+  { url:'https://feeds.bbci.co.uk/news/world/rss.xml',                       topic:'geopolitics',   name:'BBC World',           niche:false },
+  { url:'https://www.aljazeera.com/xml/rss/all.xml',                         topic:'geopolitics',   name:'Al Jazeera',          niche:false },
+  { url:'https://rss.nytimes.com/services/xml/rss/nyt/World.xml',            topic:'geopolitics',   name:'NY Times World',      niche:false },
+  { url:'https://feeds.reuters.com/reuters/topNews',                          topic:'geopolitics',   name:'Reuters',             niche:false },
+  { url:'https://www.reddit.com/r/geopolitics/top/.rss?t=day',               topic:'geopolitics',   name:'r/geopolitics',       niche:true  },
+  { url:'https://foreignpolicy.com/feed/',                                    topic:'geopolitics',   name:'Foreign Policy',      niche:true  },
+
+  // TECH & AI
+  { url:'https://techcrunch.com/feed/',                                       topic:'tech',          name:'TechCrunch',          niche:false },
+  { url:'https://www.theverge.com/rss/index.xml',                            topic:'tech',          name:'The Verge',           niche:false },
+  { url:'https://feeds.arstechnica.com/arstechnica/index',                   topic:'tech',          name:'Ars Technica',        niche:false },
+  { url:'https://www.technologyreview.com/feed/',                             topic:'tech',          name:'MIT Tech Review',     niche:false },
+  { url:'https://hnrss.org/frontpage',                                        topic:'tech',          name:'Hacker News',         niche:true  },
+  { url:'https://hnrss.org/show',                                             topic:'tech',          name:'HN: Show HN',         niche:true  },
+  { url:'https://restofworld.org/feed/latest',                                topic:'tech',          name:'Rest of World',       niche:true  },
+  { url:'https://www.reddit.com/r/MachineLearning/top/.rss?t=day',           topic:'tech',          name:'r/MachineLearning',   niche:true  },
+  { url:'https://www.reddit.com/r/artificial/top/.rss?t=day',                topic:'tech',          name:'r/artificial',        niche:true  },
+
+  // FINANCE & MARKETS
+  { url:'https://feeds.marketwatch.com/marketwatch/topstories/',             topic:'finance',       name:'MarketWatch',         niche:false },
+  { url:'https://www.ft.com/?format=rss',                                     topic:'finance',       name:'Financial Times',     niche:false },
+  { url:'https://www.reddit.com/r/investing/top/.rss?t=day',                 topic:'finance',       name:'r/investing',         niche:true  },
+  { url:'https://www.reddit.com/r/wallstreetbets/top/.rss?t=day',            topic:'finance',       name:'r/wallstreetbets',    niche:true  },
+
+  // STARTUPS
+  { url:'https://inc42.com/feed/',                                            topic:'startups',      name:'Inc42',               niche:true  },
+  { url:'https://entrackr.com/feed/',                                         topic:'startups',      name:'Entrackr',            niche:true  },
+  { url:'https://www.reddit.com/r/startups/top/.rss?t=day',                  topic:'startups',      name:'r/startups',          niche:true  },
+  { url:'https://www.reddit.com/r/SaaS/top/.rss?t=day',                      topic:'startups',      name:'r/SaaS',              niche:true  },
+
+  // CRYPTO
+  { url:'https://www.coindesk.com/arc/outboundfeeds/rss/',                   topic:'crypto',        name:'CoinDesk',            niche:false },
+  { url:'https://decrypt.co/feed',                                            topic:'crypto',        name:'Decrypt',             niche:false },
+  { url:'https://www.reddit.com/r/CryptoCurrency/top/.rss?t=day',            topic:'crypto',        name:'r/CryptoCurrency',    niche:true  },
+  { url:'https://www.reddit.com/r/defi/top/.rss?t=day',                      topic:'crypto',        name:'r/DeFi',              niche:true  },
+
+  // CYBERSECURITY
+  { url:'https://krebsonsecurity.com/feed/',                                  topic:'cybersecurity', name:'Krebs on Security',   niche:true  },
+  { url:'https://feeds.feedburner.com/TheHackersNews',                       topic:'cybersecurity', name:'The Hacker News',     niche:false },
+  { url:'https://www.darkreading.com/rss.xml',                               topic:'cybersecurity', name:'Dark Reading',        niche:false },
+  { url:'https://www.reddit.com/r/netsec/top/.rss?t=day',                    topic:'cybersecurity', name:'r/netsec',            niche:true  },
+  { url:'https://www.reddit.com/r/cybersecurity/top/.rss?t=day',             topic:'cybersecurity', name:'r/cybersecurity',     niche:true  },
+
+  // SCIENCE & SPACE
+  { url:'https://www.sciencedaily.com/rss/top/science.xml',                  topic:'science',       name:'Science Daily',       niche:false },
+  { url:'https://www.newscientist.com/feed/home/',                           topic:'science',       name:'New Scientist',       niche:false },
+  { url:'https://www.reddit.com/r/science/top/.rss?t=day',                   topic:'science',       name:'r/science',           niche:false },
+  { url:'https://www.reddit.com/r/space/top/.rss?t=day',                     topic:'science',       name:'r/space',             niche:false },
+
+  // REGULATION
+  { url:'https://techpolicy.press/feed/',                                     topic:'regulation',    name:'Tech Policy Press',   niche:true  },
+  { url:'https://www.theregister.com/headlines.atom',                        topic:'regulation',    name:'The Register',        niche:true  },
+  { url:'https://www.reddit.com/r/privacy/top/.rss?t=day',                   topic:'regulation',    name:'r/privacy',           niche:true  },
+
+  // TRENDS — specifically underground, pre-mainstream sources
+  { url:'https://hnrss.org/ask',                                              topic:'trends',        name:'HN: Ask HN',          niche:true  },
+  { url:'https://www.reddit.com/r/Futurology/top/.rss?t=day',                topic:'trends',        name:'r/Futurology',        niche:true  },
+  { url:'https://www.reddit.com/r/singularity/top/.rss?t=day',               topic:'trends',        name:'r/singularity',       niche:true  },
+  { url:'https://www.reddit.com/r/programming/top/.rss?t=day',               topic:'trends',        name:'r/programming',       niche:true  },
+  { url:'https://www.reddit.com/r/cscareerquestions/top/.rss?t=day',         topic:'trends',        name:'r/cscareerquestions', niche:true  },
+  { url:'https://www.reddit.com/r/webdev/top/.rss?t=day',                    topic:'trends',        name:'r/webdev',            niche:true  },
+  { url:'https://thenextweb.com/feed/',                                       topic:'trends',        name:'The Next Web',        niche:false },
+];
+
+const TM = {
+  geopolitics:   { label:'Geopolitics',    cls:'tg' },
+  finance:       { label:'Finance',        cls:'tf' },
+  tech:          { label:'Tech & AI',      cls:'tt' },
+  startups:      { label:'Startups',       cls:'ts' },
+  crypto:        { label:'Crypto',         cls:'tc' },
+  science:       { label:'Science',        cls:'tsc'},
+  india:         { label:'India',          cls:'ti' },
+  regulation:    { label:'Regulation',     cls:'tr' },
+  cybersecurity: { label:'Cybersecurity',  cls:'tcy'},
+  trends:        { label:'Trends',         cls:'ttr'},
+};
+
+let allItems = [], activeFilter = 'all', loading = false;
+
+// ── PROXIES (tried in order per source) ──
+const ts = () => Math.floor(Date.now() / 300000); // changes every 5 min = cache busting
+
+async function viaRss2json(url) {
+  // &_=ts forces fresh fetch, bypasses their 1hr cache
+  const api = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}&count=12&_=${ts()}`;
+  const r = await fetch(api, { signal: AbortSignal.timeout(10000) });
+  if (!r.ok) throw new Error('r2j fail');
+  const d = await r.json();
+  if (d.status !== 'ok' || !d.items?.length) throw new Error('r2j bad');
+  return d.items.map(i => ({
+    title: strip(i.title || ''),
+    link:  i.link || i.guid || '',
+    desc:  strip((i.description || i.content || '').replace(/<[^>]+>/g,' ')).slice(0,250),
+    pub:   i.pubDate || '',
+  })).filter(i => i.title && i.link);
+}
+
+async function viaCorsproxy(url) {
+  const api = `https://corsproxy.io/?${encodeURIComponent(url)}`;
+  const r = await fetch(api, { signal: AbortSignal.timeout(10000) });
+  if (!r.ok) throw new Error('cp fail');
+  return parseXML(await r.text());
+}
+
+async function viaAllorigins(url) {
+  const api = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&_=${ts()}`;
+  const r = await fetch(api, { signal: AbortSignal.timeout(10000) });
+  if (!r.ok) throw new Error('ao fail');
+  const d = await r.json();
+  return parseXML(d.contents || '');
+}
+
+function parseXML(xml) {
+  const doc = new DOMParser().parseFromString(xml, 'text/xml');
+  return [...doc.querySelectorAll('item,entry')].slice(0,12).map(el => {
+    const g = (...t) => { for (const x of t) { const e=el.querySelector(x); if(e) return (e.textContent||'').trim(); } return ''; };
+    const link = el.querySelector('link');
+    const href = link ? (link.getAttribute('href') || link.textContent.trim()) : g('guid');
+    return {
+      title: strip(g('title')),
+      link:  href,
+      desc:  strip(g('description','summary','content').replace(/<[^>]+>/g,' ')).slice(0,250),
+      pub:   g('pubDate','published','updated'),
+    };
+  }).filter(i => i.title && i.link);
+}
+
+function strip(s) {
+  return s.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#039;/g,"'").replace(/&[a-z#0-9]+;/gi,' ').replace(/\s+/g,' ').trim();
+}
+
+async function fetchSource(src) {
+  for (const fn of [viaRss2json, viaCorsproxy, viaAllorigins]) {
+    try {
+      const items = await fn(src.url);
+      if (items.length) return items.map(i => ({...i, topic:src.topic, source:src.name, niche:src.niche, id:i.link+i.title}));
+    } catch (_) {}
+  }
+  return [];
+}
+
+function timeAgo(pub) {
+  if (!pub) return '';
+  const d = new Date(pub);
+  if (isNaN(d)) return '';
+  const m = Math.floor((Date.now()-d)/60000);
+  if (m < 2)  return 'just now';
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m/60);
+  if (h < 24) return `${h}h ago`;
+  return `${Math.floor(h/24)}d ago`;
+}
+
+function dedup(items) {
+  const s = new Set();
+  return items.filter(i => { if(s.has(i.id)) return false; s.add(i.id); return true; });
+}
+
+function sortByDate(items) {
+  return items.sort((a,b) => {
+    const da = a.pub ? new Date(a.pub) : 0;
+    const db = b.pub ? new Date(b.pub) : 0;
+    return db - da;
+  });
+}
+
+function skeletons() {
+  document.getElementById('feed').innerHTML = Array(7).fill(0).map((_,i)=>`
+    <div class="skel-card" style="animation-delay:${i*.06}s">
+      <div style="display:flex;gap:8px;align-items:center">
+        <div class="skel" style="height:18px;width:75px;border-radius:4px"></div>
+        <div class="skel" style="height:12px;width:55px;margin-left:auto;border-radius:4px"></div>
+      </div>
+      <div class="skel" style="height:17px;width:95%"></div>
+      <div class="skel" style="height:17px;width:78%"></div>
+      <div class="skel" style="height:13px;width:100%"></div>
+      <div class="skel" style="height:13px;width:60%"></div>
+    </div>`).join('');
+}
+
+function buildCard(item, idx) {
+  const tm = TM[item.topic] || TM.trends;
+  const T  = (item.title||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const D  = (item.desc ||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const L  = (item.link ||'').replace(/"/g,'&quot;');
+  const et = T.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+  const t  = timeAgo(item.pub);
+  const nichePill = item.niche ? `<span class="niche-pill">⚡ NICHE</span>` : '';
+  return `<div class="card" style="animation-delay:${Math.min(idx,20)*.04}s">
+    <div class="card-body">
+      <div class="card-meta">
+        <span class="ttag ${tm.cls}">${tm.label}</span>
+        ${nichePill}
+        <span class="sname">${item.source}</span>
+        ${t?`<span class="ctime">${t}</span>`:''}
+      </div>
+      <div class="ctitle">${T}</div>
+      ${D?`<div class="cdesc">${D}</div>`:''}
+    </div>
+    <div class="card-foot">
+      <a class="rbtn" href="${L}" target="_blank" rel="noopener noreferrer">Read full story ↗</a>
+      <div class="vl"></div>
+      <button class="cpbtn" onclick="cp(this,'${L}','${et}')">⎘</button>
+    </div>
+  </div>`;
+}
+
+function renderFeed() {
+  const feed = document.getElementById('feed');
+  const badge = document.getElementById('cbadge');
+  const items = activeFilter==='all' ? allItems : allItems.filter(i=>i.topic===activeFilter);
+  badge.textContent = items.length ? `${items.length} stories` : '';
+  if (!items.length) {
+    feed.innerHTML = `<div class="cstate"><div class="cicon">🔍</div><div class="ctit">Nothing here yet</div><div class="csub">Try a different topic or refresh.</div></div>`;
+    return;
+  }
+  feed.innerHTML = items.slice(0,80).map((item,i)=>buildCard(item,i)).join('')
+    + `<div class="fhint">↑ Refresh for the latest</div>`;
+}
+
+function setFilter(el, topic) {
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  activeFilter = topic;
+  renderFeed();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function cp(btn, url, title) {
+  navigator.clipboard.writeText(`${title}\n${url}`).then(()=>{
+    const o=btn.textContent; btn.textContent='✓'; btn.style.color='var(--accent)';
+    setTimeout(()=>{btn.textContent=o;btn.style.color='';},1500);
+  }).catch(()=>{});
+}
+
+async function loadFeed() {
+  if (loading) return;
+  loading = true;
+
+  const btn  = document.getElementById('rBtn');
+  const dot  = document.getElementById('dot');
+  const stxt = document.getElementById('stxt');
+
+  btn.disabled=true; btn.classList.add('spin');
+  btn.innerHTML='<i class="ri">↻</i> Loading...';
+  dot.classList.add('on');
+  stxt.textContent='Fetching fresh stories...';
+  document.getElementById('cbadge').textContent='';
+  skeletons();
+
+  const BATCH = 8;
+  let results = [];
+
+  for (let i=0; i<SOURCES.length; i+=BATCH) {
+    const batch = SOURCES.slice(i,i+BATCH);
+    const res   = await Promise.allSettled(batch.map(s=>fetchSource(s)));
+    res.forEach(r=>{ if(r.status==='fulfilled') results.push(...r.value); });
+    stxt.textContent = `Loading ${Math.min(i+BATCH,SOURCES.length)}/${SOURCES.length} sources...`;
+  }
+
+  allItems = sortByDate(dedup(results));
+
+  if (!allItems.length) {
+    document.getElementById('feed').innerHTML=`<div class="cstate">
+      <div class="cicon">⚠️</div>
+      <div class="ctit">Couldn't load stories</div>
+      <div class="csub">Check your connection and try again.</div>
+      <button class="cbtn" onclick="loadFeed()">Retry</button>
+    </div>`;
+    stxt.textContent='Failed. Try again.';
+    dot.classList.remove('on');
+  } else {
+    renderFeed();
+    const now = new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+    stxt.textContent=`Updated · ${now}`;
+  }
+
+  btn.disabled=false; btn.classList.remove('spin');
+  btn.innerHTML='<i class="ri">↻</i> Refresh';
+  loading=false;
+}
+
+window.addEventListener('load', loadFeed);
+</script>
+</body>
+</html>
