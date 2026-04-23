@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SIGNAL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080808;
+  --surface: #101010;
+  --surface2: #161616;
+  --border: #1e1e1e;
+  --border2: #2a2a2a;
+  --text: #efefef;
+  --muted: #555;
+  --muted2: #888;
+  --accent: #c8ff00;
+  --accent-dim: rgba(200,255,0,0.08);
+  --accent-dim2: rgba(200,255,0,0.15);
+  --r: 12px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Instrument Sans', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── HEADER ── */
+.hdr {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(8,8,8,0.94);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border);
+}
+
+.hdr-top {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 13px 16px 10px;
+}
+
+.logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px; font-weight: 800;
+  letter-spacing: -0.5px;
+  display: flex; align-items: center; gap: 6px;
+}
+
+.logo-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+
+.refresh-btn {
+  display: flex; align-items: center; gap: 7px;
+  background: var(--accent);
+  color: #000;
+  border: none;
+  font-family: 'Syne', sans-serif;
+  font-size: 12px; font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 100px;
+  cursor: pointer;
+  letter-spacing: 0.2px;
+  transition: opacity 0.15s, transform 0.15s;
+  white-space: nowrap;
+}
+.refresh-btn:active { transform: scale(0.95); opacity: 0.85; }
+.refresh-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+.refresh-icon { font-size: 13px; display: inline-block; }
+.refresh-btn.loading .refresh-icon { animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── TOPIC PILLS ── */
+.pills-wrap {
+  display: flex; gap: 7px;
+  overflow-x: auto; padding: 0 16px 11px;
+  scrollbar-width: none;
+}
+.pills-wrap::-webkit-scrollbar { display: none; }
+
+.pill {
+  flex-shrink: 0;
+  font-family: 'Syne', sans-serif;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.3px;
+  padding: 5px 13px;
+  border-radius: 100px;
+  border: 1px solid var(--border2);
+  color: var(--muted2);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.pill.active {
+  background: var(--accent-dim2);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── STATUS ── */
+.status {
+  padding: 8px 16px;
+  display: flex; align-items: center; gap: 8px;
+  border-bottom: 1px solid var(--border);
+  min-height: 34px;
+}
+
+.live-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--muted);
+  flex-shrink: 0;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+.live-dot.on {
+  background: var(--accent);
+  box-shadow: 0 0 5px var(--accent);
+}
+
+.status-txt {
+  font-size: 11.5px;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.count-badge {
+  margin-left: auto;
+  font-family: 'Syne', sans-serif;
+  font-size: 11px; font-weight: 700;
+  color: var(--muted);
+}
+
+/* ── FEED ── */
+.feed {
+  padding: 10px 12px 30px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+
+/* ── CARD ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  animation: fadeUp 0.25s ease both;
+  transition: border-color 0.2s;
+}
+.card:active { border-color: var(--border2); }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.card-body { padding: 13px 13px 11px; }
+
+.card-meta {
+  display: flex; align-items: center;
+  gap: 7px; margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.topic-tag {
+  font-family: 'Syne', sans-serif;
+  font-size: 9.5px; font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.source-name {
+  font-size: 11px;
+  color: var(--muted2);
+  font-weight: 400;
+}
+
+.card-time {
+  font-size: 11px;
+  color: var(--muted);
+  margin-left: auto;
+}
+
+.card-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 14.5px; font-weight: 700;
+  line-height: 1.38;
+  color: var(--text);
+  margin-bottom: 7px;
+  letter-spacing: -0.1px;
+}
+
+.card-desc {
+  font-size: 13px;
+  line-height: 1.58;
+  color: var(--muted2);
+  font-weight: 400;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  margin-top: 1px;
+}
+
+.read-btn {
+  flex: 1;
+  display: flex; align-items: center; gap: 5px;
+  background: none; border: none;
+  color: var(--accent);
+  font-family: 'Syne', sans-serif;
+  font-size: 11.5px; font-weight: 700;
+  padding: 10px 13px;
+  cursor: pointer;
+  text-decoration: none;
+  letter-spacing: 0.2px;
+  transition: opacity 0.15s;
+}
+.read-btn:active { opacity: 0.6; }
+
+.read-arrow { font-size: 13px; }
+
+.vline { width: 1px; height: 18px; background: var(--border); flex-shrink: 0; }
+
+.copy-btn {
+  background: none; border: none;
+  color: var(--muted);
+  font-size: 13px;
+  padding: 10px 13px;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.copy-btn:active { color: var(--accent); }
+
+/* ── TOPIC COLORS ── */
+.t-geopolitics { color: #ff8c42; background: rgba(255,140,66,0.1); }
+.t-finance      { color: #3ddc84; background: rgba(61,220,132,0.1); }
+.t-tech         { color: #42b4ff; background: rgba(66,180,255,0.1); }
+.t-startups     { color: #b36aff; background: rgba(179,106,255,0.1); }
+.t-crypto       { color: #ffb347; background: rgba(255,179,71,0.1); }
+.t-science      { color: #3dffee; background: rgba(61,255,238,0.1); }
+.t-india        { color: #ff5c72; background: rgba(255,92,114,0.1); }
+.t-regulation   { color: #ff47bb; background: rgba(255,71,187,0.1); }
+.t-cybersecurity{ color: #ff6b3d; background: rgba(255,107,61,0.1); }
+.t-trends       { color: var(--accent); background: var(--accent-dim); }
+
+/* ── SKELETON ── */
+.skel-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 13px;
+  display: flex; flex-direction: column; gap: 9px;
+  animation: fadeUp 0.25s ease both;
+}
+
+.skel {
+  border-radius: 5px;
+  background: linear-gradient(90deg, var(--surface2) 25%, #1c1c1c 50%, var(--surface2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.3s infinite;
+}
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── EMPTY / ERROR ── */
+.center-state {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 70px 30px; gap: 10px; text-align: center;
+}
+.center-icon { font-size: 38px; margin-bottom: 4px; }
+.center-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 17px; font-weight: 700;
+}
+.center-sub {
+  font-size: 13.5px; color: var(--muted2);
+  line-height: 1.6; max-width: 250px;
+}
+.cta-btn {
+  margin-top: 10px;
+  background: var(--accent); color: #000;
+  border: none;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px; font-weight: 700;
+  padding: 11px 26px; border-radius: 100px;
+  cursor: pointer; transition: transform 0.15s;
+}
+.cta-btn:active { transform: scale(0.95); }
+
+/* ── SECTION LABEL ── */
+.section-label {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 4px 2px 2px;
+}
+
+.footer-hint {
+  text-align: center;
+  font-size: 11.5px;
+  color: var(--muted);
+  padding: 16px 0 4px;
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-top">
+    <div class="logo">
+      <div class="logo-dot"></div>
+      SIGNAL
+    </div>
+    <button class="refresh-btn" id="refreshBtn" onclick="loadFeed()">
+      <span class="refresh-icon">↻</span> Refresh
+    </button>
+  </div>
+  <div class="pills-wrap" id="pillsBar">
+    <div class="pill active" data-t="all" onclick="setFilter(this,'all')">All</div>
+    <div class="pill" data-t="india" onclick="setFilter(this,'india')">India</div>
+    <div class="pill" data-t="geopolitics" onclick="setFilter(this,'geopolitics')">Geopolitics</div>
+    <div class="pill" data-t="tech" onclick="setFilter(this,'tech')">Tech & AI</div>
+    <div class="pill" data-t="finance" onclick="setFilter(this,'finance')">Finance</div>
+    <div class="pill" data-t="startups" onclick="setFilter(this,'startups')">Startups</div>
+    <div class="pill" data-t="crypto" onclick="setFilter(this,'crypto')">Crypto</div>
+    <div class="pill" data-t="cybersecurity" onclick="setFilter(this,'cybersecurity')">Cybersecurity</div>
+    <div class="pill" data-t="science" onclick="setFilter(this,'science')">Science</div>
+    <div class="pill" data-t="regulation" onclick="setFilter(this,'regulation')">Regulation</div>
+    <div class="pill" data-t="trends" onclick="setFilter(this,'trends')">Trends</div>
+  </div>
+</div>
+
+<div class="status">
+  <div class="live-dot" id="liveDot"></div>
+  <div class="status-txt" id="statusTxt">Pull the latest — tap Refresh</div>
+  <div class="count-badge" id="countBadge"></div>
+</div>
+
+<div class="feed" id="feed">
+  <div class="center-state">
+    <div class="center-icon">⚡</div>
+    <div class="center-title">No noise. Just signal.</div>
+    <div class="center-sub">Real stories from the sources that matter — India & global. Free, no algorithms.</div>
+    <button class="cta-btn" onclick="loadFeed()">Load Feed</button>
+  </div>
+</div>
+
+<script>
+// ── RSS SOURCES (via allorigins proxy — free, no key needed) ──
+const SOURCES = [
+  // INDIA
+  { url:'https://economictimes.indiatimes.com/rssfeedstopstories.cms',        topic:'india',        name:'Economic Times' },
+  { url:'https://www.livemint.com/rss/news',                                   topic:'india',        name:'Mint' },
+  { url:'https://feeds.feedburner.com/ndtvnews-top-stories',                   topic:'india',        name:'NDTV' },
+  { url:'https://www.thehindubusinessline.com/feeder/default.rss',             topic:'finance',      name:'BusinessLine' },
+  { url:'https://inc42.com/feed/',                                              topic:'startups',     name:'Inc42' },
+  { url:'https://entrackr.com/feed/',                                           topic:'startups',     name:'Entrackr' },
+  // GEOPOLITICS
+  { url:'https://feeds.bbci.co.uk/news/world/rss.xml',                         topic:'geopolitics',  name:'BBC World' },
+  { url:'https://rss.nytimes.com/services/xml/rss/nyt/World.xml',              topic:'geopolitics',  name:'NY Times' },
+  { url:'https://www.aljazeera.com/xml/rss/all.xml',                           topic:'geopolitics',  name:'Al Jazeera' },
+  { url:'https://feeds.reuters.com/reuters/topNews',                            topic:'geopolitics',  name:'Reuters' },
+  // TECH & AI
+  { url:'https://techcrunch.com/feed/',                                         topic:'tech',         name:'TechCrunch' },
+  { url:'https://www.theverge.com/rss/index.xml',                              topic:'tech',         name:'The Verge' },
+  { url:'https://hnrss.org/frontpage',                                          topic:'tech',         name:'Hacker News' },
+  { url:'https://feeds.arstechnica.com/arstechnica/index',                     topic:'tech',         name:'Ars Technica' },
+  { url:'https://www.technologyreview.com/feed/',                               topic:'tech',         name:'MIT Tech Review' },
+  { url:'https://restofworld.org/feed/latest',                                  topic:'tech',         name:'Rest of World' },
+  // FINANCE
+  { url:'https://feeds.marketwatch.com/marketwatch/topstories/',               topic:'finance',      name:'MarketWatch' },
+  { url:'https://www.ft.com/?format=rss',                                       topic:'finance',      name:'Financial Times' },
+  // CRYPTO
+  { url:'https://www.coindesk.com/arc/outboundfeeds/rss/',                     topic:'crypto',       name:'CoinDesk' },
+  { url:'https://decrypt.co/feed',                                              topic:'crypto',       name:'Decrypt' },
+  // CYBERSECURITY
+  { url:'https://krebsonsecurity.com/feed/',                                    topic:'cybersecurity',name:'Krebs on Security' },
+  { url:'https://feeds.feedburner.com/TheHackersNews',                         topic:'cybersecurity',name:'Hacker News Sec' },
+  { url:'https://www.darkreading.com/rss.xml',                                 topic:'cybersecurity',name:'Dark Reading' },
+  // SCIENCE
+  { url:'https://www.sciencedaily.com/rss/top/science.xml',                    topic:'science',      name:'Science Daily' },
+  { url:'https://www.newscientist.com/feed/home/',                             topic:'science',      name:'New Scientist' },
+  // REGULATION
+  { url:'https://techpolicy.press/feed/',                                       topic:'regulation',   name:'Tech Policy Press' },
+  // TRENDS
+  { url:'https://thenextweb.com/feed/',                                         topic:'trends',       name:'The Next Web' },
+  { url:'https://www.wired.com/feed/rss',                                       topic:'trends',       name:'Wired' },
+];
+
+const PROXY = url => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+
+const topicMeta = {
+  geopolitics:   { label:'Geopolitics',    cls:'t-geopolitics' },
+  finance:       { label:'Finance',        cls:'t-finance' },
+  tech:          { label:'Tech & AI',      cls:'t-tech' },
+  startups:      { label:'Startups',       cls:'t-startups' },
+  crypto:        { label:'Crypto',         cls:'t-crypto' },
+  science:       { label:'Science',        cls:'t-science' },
+  india:         { label:'India',          cls:'t-india' },
+  regulation:    { label:'Regulation',     cls:'t-regulation' },
+  cybersecurity: { label:'Cybersecurity',  cls:'t-cybersecurity' },
+  trends:        { label:'Trends',         cls:'t-trends' },
+};
+
+let allItems = [];
+let activeFilter = 'all';
+let loading = false;
+
+// ── TIME AGO ──
+function timeAgo(date) {
+  if (!date) return '';
+  const d = new Date(date);
+  if (isNaN(d)) return '';
+  const mins = Math.floor((Date.now() - d) / 60000);
+  if (mins < 2)  return 'just now';
+  if (mins < 60) return `${mins}m ago`;
+  const h = Math.floor(mins / 60);
+  if (h < 24)    return `${h}h ago`;
+  return `${Math.floor(h/24)}d ago`;
+}
+
+// ── PARSE RSS XML ──
+function parseRSS(xmlStr, topic, sourceName) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(xmlStr, 'text/xml');
+  const items = [...doc.querySelectorAll('item, entry')];
+  return items.slice(0, 8).map(item => {
+    const get = (tags) => {
+      for (const t of tags) {
+        const el = item.querySelector(t);
+        if (el) return (el.textContent || el.getAttribute('href') || '').trim();
+      }
+      return '';
+    };
+    const title = get(['title']);
+    const link  = get(['link', 'origLink', 'feedburner\\:origLink']);
+    const desc  = get(['description', 'summary', 'content'])
+                    .replace(/<[^>]+>/g, '')
+                    .replace(/&[a-z]+;/gi, ' ')
+                    .replace(/\s+/g,' ')
+                    .trim()
+                    .slice(0, 200);
+    const pub   = get(['pubDate', 'published', 'updated', 'dc\\:date']);
+    if (!title || !link) return null;
+    return { title, link, desc, pub, topic, source: sourceName, id: link + title };
+  }).filter(Boolean);
+}
+
+// ── FETCH ONE SOURCE ──
+async function fetchSource(src) {
+  try {
+    const res = await fetch(PROXY(src.url), { signal: AbortSignal.timeout(8000) });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return parseRSS(data.contents || '', src.topic, src.name);
+  } catch { return []; }
+}
+
+// ── DEDUP ──
+function dedup(items) {
+  const seen = new Set();
+  return items.filter(i => {
+    if (seen.has(i.id)) return false;
+    seen.add(i.id);
+    return true;
+  });
+}
+
+// ── SORT BY DATE ──
+function sortByDate(items) {
+  return items.sort((a, b) => {
+    const da = a.pub ? new Date(a.pub) : 0;
+    const db = b.pub ? new Date(b.pub) : 0;
+    return db - da;
+  });
+}
+
+// ── SKELETONS ──
+function showSkeletons() {
+  const feed = document.getElementById('feed');
+  feed.innerHTML = Array(7).fill(0).map((_,i) => `
+    <div class="skel-card" style="animation-delay:${i*0.06}s">
+      <div style="display:flex;gap:8px;align-items:center">
+        <div class="skel" style="height:18px;width:70px;border-radius:4px"></div>
+        <div class="skel" style="height:12px;width:50px;margin-left:auto;border-radius:4px"></div>
+      </div>
+      <div class="skel" style="height:17px;width:95%"></div>
+      <div class="skel" style="height:17px;width:80%"></div>
+      <div class="skel" style="height:13px;width:100%"></div>
+      <div class="skel" style="height:13px;width:65%"></div>
+    </div>`).join('');
+}
+
+// ── RENDER FEED ──
+function renderFeed() {
+  const feed = document.getElementById('feed');
+  const badge = document.getElementById('countBadge');
+
+  const filtered = activeFilter === 'all'
+    ? allItems
+    : allItems.filter(i => i.topic === activeFilter);
+
+  badge.textContent = filtered.length ? `${filtered.length} stories` : '';
+
+  if (!filtered.length) {
+    feed.innerHTML = `<div class="center-state">
+      <div class="center-icon">🔍</div>
+      <div class="center-title">Nothing here yet</div>
+      <div class="center-sub">Try a different topic or refresh to fetch more stories.</div>
+    </div>`;
+    return;
+  }
+
+  // Group by topic for "All" view
+  let html = '';
+  if (activeFilter === 'all') {
+    // show newest 60 mixed
+    html = filtered.slice(0, 60).map((item, i) => buildCard(item, i)).join('');
+  } else {
+    html = filtered.slice(0, 40).map((item, i) => buildCard(item, i)).join('');
+  }
+
+  feed.innerHTML = html + `<div class="footer-hint">↑ Refresh for more stories</div>`;
+}
+
+// ── BUILD CARD ──
+function buildCard(item, idx) {
+  const tm = topicMeta[item.topic] || topicMeta.trends;
+  const safeTitle = item.title.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const safeDesc  = item.desc  ? item.desc.replace(/</g,'&lt;').replace(/>/g,'&gt;') : '';
+  const safeLink  = item.link.replace(/"/g,'&quot;');
+  const t = timeAgo(item.pub);
+  const descHTML = safeDesc ? `<div class="card-desc">${safeDesc}</div>` : '';
+
+  return `<div class="card" style="animation-delay:${Math.min(idx,12)*0.04}s">
+    <div class="card-body">
+      <div class="card-meta">
+        <span class="topic-tag ${tm.cls}">${tm.label}</span>
+        <span class="source-name">${item.source}</span>
+        ${t ? `<span class="card-time">${t}</span>` : ''}
+      </div>
+      <div class="card-title">${safeTitle}</div>
+      ${descHTML}
+    </div>
+    <div class="card-footer">
+      <a class="read-btn" href="${safeLink}" target="_blank" rel="noopener noreferrer">
+        Read full story <span class="read-arrow">↗</span>
+      </a>
+      <div class="vline"></div>
+      <button class="copy-btn" onclick="copyItem(this,'${safeLink}','${safeTitle.replace(/'/g,"\\'")}')">⎘</button>
+    </div>
+  </div>`;
+}
+
+// ── COPY ──
+function copyItem(btn, url, title) {
+  const text = `${title}\n${url}`;
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✓';
+    btn.style.color = 'var(--accent)';
+    setTimeout(() => { btn.textContent = orig; btn.style.color = ''; }, 1500);
+  }).catch(() => {});
+}
+
+// ── FILTER ──
+function setFilter(el, topic) {
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  activeFilter = topic;
+  renderFeed();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── MAIN LOAD ──
+async function loadFeed() {
+  if (loading) return;
+  loading = true;
+
+  const btn     = document.getElementById('refreshBtn');
+  const dot     = document.getElementById('liveDot');
+  const status  = document.getElementById('statusTxt');
+  const badge   = document.getElementById('countBadge');
+
+  btn.disabled = true;
+  btn.classList.add('loading');
+  btn.innerHTML = '<span class="refresh-icon">↻</span> Loading...';
+
+  dot.classList.add('on');
+  status.textContent = 'Fetching from sources...';
+  badge.textContent = '';
+
+  showSkeletons();
+
+  // Fetch all sources in parallel, in batches to avoid overwhelming
+  const batchSize = 8;
+  let results = [];
+  for (let i = 0; i < SOURCES.length; i += batchSize) {
+    const batch = SOURCES.slice(i, i + batchSize);
+    const batchRes = await Promise.allSettled(batch.map(s => fetchSource(s)));
+    batchRes.forEach(r => { if (r.status === 'fulfilled') results.push(...r.value); });
+
+    // update status progressively
+    const loaded = Math.min(i + batchSize, SOURCES.length);
+    status.textContent = `Loading sources ${loaded}/${SOURCES.length}...`;
+  }
+
+  allItems = sortByDate(dedup(results));
+
+  if (allItems.length === 0) {
+    document.getElementById('feed').innerHTML = `<div class="center-state">
+      <div class="center-icon">⚠️</div>
+      <div class="center-title">Couldn't load stories</div>
+      <div class="center-sub">Check your internet connection and try again.</div>
+      <button class="cta-btn" onclick="loadFeed()">Retry</button>
+    </div>`;
+    status.textContent = 'Failed to load. Try again.';
+    dot.classList.remove('on');
+  } else {
+    renderFeed();
+    const now = new Date().toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
+    status.textContent = `Updated · ${now}`;
+  }
+
+  btn.disabled = false;
+  btn.classList.remove('loading');
+  btn.innerHTML = '<span class="refresh-icon">↻</span> Refresh';
+  loading = false;
+}
+
+// Auto-load on start
+window.addEventListener('load', loadFeed);
+</script>
+</body>
+</html>
