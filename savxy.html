@@ -242,11 +242,11 @@ html.rm .mf-line{--i:1}
 
 /* footer */
 footer{position:relative;z-index:10;border-top:1px solid var(--line);padding:90px 52px 40px;background:rgba(3,3,5,.92);text-align:center}
-.wm{font-family:var(--serif);font-weight:300;font-size:clamp(96px,23vw,270px);line-height:1;letter-spacing:-.03em;text-align:center;margin:0 auto 56px;padding:0 .08em .2em;
-  background:linear-gradient(180deg,rgba(214,199,157,.3) 0%,rgba(184,168,120,.07) 70%,rgba(184,168,120,.02) 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;transition:clip-path 2.2s var(--ease)}
-.wm em{font-style:italic}
-.js .wm{clip-path:inset(0 100% 0 0)}
-.js .wm.draw{clip-path:inset(0 -2% 0 -2%)}
+.gem-wrap{position:relative;width:min(94vw,780px);aspect-ratio:2/1;margin:0 auto 4px}
+.gem-wrap::before{content:'';position:absolute;inset:-20%;background:radial-gradient(circle at 50% 50%,rgba(184,168,120,.13),transparent 62%);pointer-events:none}
+#gem{position:relative;display:block;width:100%;height:100%;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+.wm-hint{text-align:center;font-size:12px;letter-spacing:.14em;color:var(--muted);margin-bottom:56px;opacity:0;transition:opacity 1.2s ease 1.2s}
+.wm-hint.on{opacity:.85}
 .ft{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);letter-spacing:.06em}
 .ft a{text-decoration:none;letter-spacing:.16em;text-transform:uppercase;font-size:11px}
 .ft a:hover{color:var(--gold)}
@@ -503,7 +503,8 @@ footer{position:relative;z-index:10;border-top:1px solid var(--line);padding:90p
 </main>
 
 <footer>
-  <div class="wm" id="wm" role="img" aria-label="Savxy">Sav<em>xy</em></div>
+  <div class="gem-wrap"><canvas id="gem" role="img" aria-label="The Savxy wordmark, written in gold. Click to write it again."></canvas></div>
+  <p class="wm-hint" id="wm-hint" aria-hidden="true"></p>
   <div class="ft">
     <span>© <span id="yr">2025</span> Savxy. All rights reserved.</span>
     <a href="#home">Back to top ↑</a>
@@ -950,6 +951,160 @@ $$('.mq-in').forEach(m => {
   m.innerHTML = html + html;
 });
 
+
+/* ── Footer centerpiece: a pen writes S‑a‑v‑x‑y, signs underneath, holds, un‑writes, repeats ──
+   Letters are real single‑line script strokes (Hershey "Script Simplex", public domain data),
+   smoothed with a Catmull‑Rom spline. Click / tap to start the writing again.                    */
+function initGem() {
+  const cv = $('#gem'), hint = $('#wm-hint'); if (!cv) return { reveal() {} };
+  const ctx = cv.getContext('2d');
+  hint.textContent = FINE ? 'Click to write it again.' : 'Tap to write it again.';
+
+  // one array per pen stroke: x,y,x,y… in word units (word is 2.485 wide, 1 tall, baseline at .636)
+  const RAW = [[0.0,0.636,0.061,0.606,0.121,0.545,0.212,0.424,0.273,0.333,0.333,0.212,0.364,0.121,0.364,0.03,0.333,0.0,0.303,0.0,0.273,0.03,0.242,0.091,0.242,0.152,0.273,0.212,0.333,0.273,0.424,0.333,0.485,0.394,0.515,0.455,0.515,0.515,0.485,0.576,0.455,0.606,0.364,0.636,0.242,0.636,0.152,0.606,0.091,0.545,0.061,0.485,0.061,0.424],[0.879,0.455,0.848,0.394,0.788,0.364,0.727,0.364,0.667,0.394,0.636,0.424,0.606,0.485,0.606,0.545,0.636,0.606,0.697,0.636,0.758,0.636,0.818,0.606,0.848,0.545,0.909,0.364,0.879,0.515,0.879,0.606,0.909,0.636,0.939,0.636,1.0,0.606,1.03,0.576,1.091,0.485,1.152,0.364,1.121,0.515,1.121,0.606,1.152,0.636,1.182,0.636,1.273,0.606,1.333,0.545,1.364,0.455,1.364,0.364,1.394,0.485,1.424,0.515,1.485,0.515,1.545,0.485,1.606,0.394,1.667,0.364,1.727,0.364,1.758,0.394,1.758,0.606,1.788,0.636,1.879,0.636,1.97,0.576,2.03,0.485],[1.939,0.394,1.909,0.364,1.848,0.364,1.818,0.394,1.697,0.606,1.667,0.636,1.606,0.636,1.576,0.606],[2.03,0.485,2.091,0.364,2.03,0.545,2.03,0.606,2.061,0.636,2.121,0.636,2.182,0.606,2.242,0.545,2.303,0.455],[2.333,0.364,2.152,0.909,2.121,0.97,2.061,1.0,2.03,0.97,2.03,0.909,2.061,0.818,2.152,0.727,2.242,0.667,2.303,0.636,2.394,0.576,2.485,0.485]];
+  const WU = 2.485, BASE = .636;
+  const WRITE = 4.4,      // seconds the pen spends writing (letters + underline)
+        HOLD  = 2.8,      // seconds the finished signature rests
+        LIFT  = .14,      // pen-lift pause between strokes
+        UNDO  = 2.4,      // un-writing speed vs writing speed
+        GAP   = .8;       // empty pause before it starts again
+  const eio = k => (1 - Math.cos(Math.PI * k)) / 2;
+
+  function mk(X, Y) {
+    const c = new Float32Array(X.length);
+    for (let i = 1; i < X.length; i++) c[i] = c[i - 1] + Math.hypot(X[i] - X[i - 1], Y[i] - Y[i - 1]);
+    return { x: X, y: Y, c, len: c[c.length - 1] };
+  }
+  function spline(P, m) {                 // Catmull-Rom through the points
+    const X = [], Y = [], n = P.length;
+    for (let i = 0; i < n - 1; i++) {
+      const a = P[Math.max(i - 1, 0)], b = P[i], c = P[i + 1], d = P[Math.min(i + 2, n - 1)];
+      for (let k = 0; k < m; k++) {
+        const t = k / m, t2 = t * t, t3 = t2 * t, f = j => .5 * (2 * b[j] + (-a[j] + c[j]) * t + (2 * a[j] - 5 * b[j] + 4 * c[j] - d[j]) * t2 + (-a[j] + 3 * b[j] - 3 * c[j] + d[j]) * t3);
+        X.push(f(0)); Y.push(f(1));
+      }
+    }
+    X.push(P[n - 1][0]); Y.push(P[n - 1][1]);
+    return mk(X, Y);
+  }
+  function bez(p, n, X, Y) {              // cubic bezier p = [x0,y0,x1,y1,x2,y2,x3,y3]
+    for (let k = X.length ? 1 : 0; k <= n; k++) {
+      const t = k / n, u = 1 - t, a = u * u * u, b = 3 * u * u * t, c = 3 * u * t * t, d = t * t * t;
+      X.push(a * p[0] + b * p[2] + c * p[4] + d * p[6]); Y.push(a * p[1] + b * p[3] + c * p[5] + d * p[7]);
+    }
+  }
+  const at = (S, d) => {                  // point at distance d along stroke
+    let lo = 0, hi = S.c.length - 1;
+    while (hi - lo > 1) { const m = (lo + hi) >> 1; if (S.c[m] <= d) lo = m; else hi = m; }
+    const t = (d - S.c[lo]) / ((S.c[lo + 1] - S.c[lo]) || 1);
+    return { i: lo, x: S.x[lo] + (S.x[lo + 1] - S.x[lo]) * t, y: S.y[lo] + (S.y[lo + 1] - S.y[lo]) * t };
+  };
+  function trace(S, a, b) {               // add the part of the stroke between a and b to the current path
+    const A = at(S, a), B = at(S, b);
+    ctx.beginPath(); ctx.moveTo(A.x, A.y);
+    for (let k = A.i + 1; k <= B.i; k++) ctx.lineTo(S.x[k], S.y[k]);
+    ctx.lineTo(B.x, B.y);
+  }
+
+  let W = 0, H = 0, D = 1, s = 100, x0 = 0, x1 = 0, lw = 2, ST = [], T1 = 1, CYC = 10;
+  let revealed = false, tRev = 0, visible = false, running = false, lastCyc = -1, flared = false;
+  const sparks = [];
+
+  function fit() {
+    D = Math.min(devicePixelRatio || 1, 2);
+    W = cv.clientWidth; H = cv.clientHeight;
+    cv.width = Math.round(W * D); cv.height = Math.round(H * D);
+    ctx.setTransform(D, 0, 0, D, 0, 0);
+
+    s = W * .72 / WU;                                    // px per word unit
+    const ox = (W - WU * s) / 2, oy = H * .14, by = oy + BASE * s;
+    x0 = ox; x1 = ox + WU * s; lw = Math.max(1.4, s * .0085);
+    ST = RAW.map(r => { const P = []; for (let i = 0; i < r.length; i += 2) P.push([ox + r[i] * s, oy + r[i + 1] * s]); return spline(P, 8); });
+
+    // underline: starts left of the S, sweeps right under the word, ends in a small loop
+    const w = x1 - x0, f = s, y = by + f * .22, X = [], Y = [];
+    bez([x0 - w * .05, y + f * .03, x0 + w * .25, y + f * .21, x0 + w * .62, y - f * .07, x1 + w * .03, y - f * .03], 90, X, Y);
+    bez([x1 + w * .03, y - f * .03, x1 + w * .12, y - f * .01, x1 + w * .12, y + f * .15, x1 + w * .05, y + f * .15], 30, X, Y);
+    bez([x1 + w * .05, y + f * .15, x1 - w * .01, y + f * .15, x1 - w * .01, y + f * .04, x1 + w * .06, y + f * .02], 30, X, Y);
+    ST.push(mk(X, Y));
+    ST[ST.length - 1].swash = true;
+
+    // timeline: write → hold → un-write → pause → again
+    const v = ST.reduce((a, q) => a + q.len, 0) / WRITE;
+    let t = .3; ST.forEach(q => { q.t0 = t; q.d = q.len / v; t += q.d + LIFT; });
+    T1 = t - LIFT;
+    let e = T1 + HOLD; ST.forEach(q => { q.e0 = e; q.ed = q.len / (v * UNDO); e += q.ed + LIFT * .4; });
+    CYC = e + GAP;
+  }
+
+  function draw(now) {
+    if (cv.clientWidth !== W || cv.clientHeight !== H) fit();
+    const tt = RM ? T1 + .01 : (now - tRev) / 1000;
+    const cyc = Math.floor(tt / CYC), tc = tt - cyc * CYC;
+    if (cyc !== lastCyc) { lastCyc = cyc; flared = false; }
+    ctx.clearRect(0, 0, W, H);
+
+    const lg = ctx.createLinearGradient(x0, 0, x1, 0);
+    lg.addColorStop(0, '#d9c995'); lg.addColorStop(1, '#f6edd2');
+    const sg = ctx.createLinearGradient(x0 - (x1 - x0) * .05, 0, x1 + (x1 - x0) * .12, 0);
+    sg.addColorStop(0, 'rgba(184,168,120,0)'); sg.addColorStop(.25, 'rgba(184,168,120,.75)'); sg.addColorStop(.8, '#d6c79d'); sg.addColorStop(1, '#f3ead0');
+
+    ctx.save();
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.lineWidth = lw;
+    ctx.shadowColor = 'rgba(214,199,157,.85)'; ctx.shadowBlur = RM ? 10 : 10 + 4 * Math.sin(tt * 1.7);
+    let head = null;
+    ST.forEach(q => {
+      const u = clamp((tc - q.t0) / q.d, 0, 1), b = q.len * eio(u);
+      const ue = clamp((tc - q.e0) / q.ed, 0, 1), a = q.len * eio(ue);
+      if (b - a > .01) { ctx.strokeStyle = q.swash ? sg : lg; trace(q, a, b); ctx.stroke(); }
+      if (u > 0 && u < 1) head = { p: at(q, b), k: 1 };
+      else if (ue > 0 && ue < 1) head = { p: at(q, a), k: .55 };
+    });
+    ctx.restore();
+
+    if (!RM) {
+      if (head) {                                            // pen tip
+        const { x, y } = head.p, r = 15, hg = ctx.createRadialGradient(x, y, 0, x, y, r);
+        hg.addColorStop(0, `rgba(255,248,226,${head.k})`); hg.addColorStop(.25, `rgba(237,220,170,${.6 * head.k})`); hg.addColorStop(1, 'rgba(184,168,120,0)');
+        ctx.fillStyle = hg; ctx.fillRect(x - r, y - r, r * 2, r * 2);
+        if (head.k === 1) for (let i = 0; i < 2; i++) sparks.push({ x, y, vx: rnd(-.6, .6), vy: rnd(-.9, .1), l: 1 });
+      }
+      if (tc >= T1 && tc < T1 + .5 && !flared) {              // signature finished
+        flared = true;
+        const q = ST[ST.length - 1], p = at(q, q.len);
+        for (let i = 0; i < 22; i++) { const a = rnd(0, 6.2832), v = rnd(.5, 2.4); sparks.push({ x: p.x, y: p.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - .5, l: 1 }); }
+      }
+    }
+    ctx.fillStyle = '#f3ead0';
+    for (let i = sparks.length - 1; i >= 0; i--) {
+      const p = sparks[i]; p.x += p.vx; p.y += p.vy; p.vy += .03; p.l -= .025;
+      if (p.l <= 0) { sparks.splice(i, 1); continue; }
+      ctx.globalAlpha = p.l; ctx.beginPath(); ctx.arc(p.x, p.y, 1.1, 0, 6.2832); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function loop(now) { if (!visible) { running = false; return; } requestAnimationFrame(loop); draw(now); }
+  function kick() { if (!running && visible && revealed && !RM) { running = true; requestAnimationFrame(loop); } }
+
+  new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible) kick(); }, { threshold: 0 }).observe(cv);
+  addEventListener('resize', () => { if (RM && revealed) { W = 0; draw(performance.now()); } });
+  cv.addEventListener('click', e => {
+    if (RM) return;
+    tRev = performance.now(); lastCyc = -1; sparks.length = 0;
+    if (window.burst) window.burst(e.clientX, e.clientY);
+  });
+
+  return {
+    reveal() {
+      if (revealed) return; revealed = true; tRev = performance.now(); hint.classList.add('on');
+      if (RM) draw(tRev); else kick();
+    },
+    _draw: draw, _t(v) { tRev = v; }
+  };
+}
+const wmApi = initGem();
+
 /* ── Observers ─────────────────────────────────────────── */
 (function observers() {
   const rev = new IntersectionObserver(es => es.forEach(e => {
@@ -964,9 +1119,9 @@ $$('.mq-in').forEach(m => {
 
   const wm = $('#wm');
   const wo = new IntersectionObserver(es => es.forEach(e => {
-    if (e.isIntersecting) { wm.classList.add('draw'); wo.disconnect(); }
-  }), { threshold: .3 });
-  wo.observe(wm);
+    if (e.isIntersecting) { wmApi.reveal(); wo.disconnect(); }
+  }), { threshold: .2 });
+  wo.observe($('footer'));
 })();
 
 /* ── Mobile menu ───────────────────────────────────────── */
